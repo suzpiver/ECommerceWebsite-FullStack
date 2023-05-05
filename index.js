@@ -22,6 +22,14 @@
     // when you click product do something
     // when you click logo do something
     // when you click scroll arrow scroll to next images
+    id("leftButton").addEventListener('click', () => {
+      id("justAdded").scrollLeft -= 900;
+      console.log("scrollleft");
+    });
+    id("rightButton").addEventListener('click', () => {
+      id("justAdded").scrollLeft += 300;
+      console.log("scrollright");
+    });
     // when you click on cart image do something
     // when you click on a profile drop down item, do something X drop down items
   }
