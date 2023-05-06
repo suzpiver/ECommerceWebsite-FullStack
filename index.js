@@ -22,16 +22,23 @@
     // when you click product do something
     // when you click logo do something
     // when you click scroll arrow scroll to next images
-    id("leftButton").addEventListener('click', () => {
-      id("justAdded").scrollLeft -= 900;
-      console.log("scrollleft");
-    });
-    id("rightButton").addEventListener('click', () => {
-      id("justAdded").scrollLeft += 300;
-      console.log("scrollright");
-    });
+    qsa(".scrollButton").forEach(button => button.addEventListener('click', scrollBehavior));
     // when you click on cart image do something
     // when you click on a profile drop down item, do something X drop down items
+  }
+
+    /**
+   * scrolls the images within a container to the next set of images
+   * No paramaters, returns nothing
+   */
+  function scrollBehavior() {
+    // let parentID = this.parentNode.firstElementChild.nextElementSibling.id;
+    let scroller = qs("#" + this.parentNode.id + " .scrollerContent");
+    if (this.classList.contains("leftScroll")) {
+      scroller.scrollLeft -= qs("#" + scroller.id + " div").offsetWidth;
+    } else {
+      scroller.scrollLeft += qs("#" + scroller.id + " div").offsetWidth;
+    }
   }
 
   // -------------------------HELPER FUNCTIONS---------------------------
