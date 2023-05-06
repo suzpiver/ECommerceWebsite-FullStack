@@ -26,7 +26,7 @@
     // when you click on cart image do something
     // when you click on a profile drop down item, do something X drop down items
     */
-    qsa(".scrollButton").forEach(button => button.addEventListener('click', scrollBehavior));
+    qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
   }
 
     /**
@@ -35,8 +35,8 @@
    */
   function scrollBehavior() {
     // let parentID = this.parentNode.firstElementChild.nextElementSibling.id;
-    let scroller = qs("#" + this.parentNode.id + " .scrollerContent");
-    if (this.classList.contains("leftScroll")) {
+    let scroller = qs("#" + this.parentNode.id + " .scroller-content");
+    if (this.classList.contains("left-scroll")) {
       scroller.scrollLeft -= qs("#" + scroller.id + " div").offsetWidth;
     } else {
       scroller.scrollLeft += qs("#" + scroller.id + " div").offsetWidth;
