@@ -18,13 +18,15 @@
    * runs once the window has loaded and DOM is ready to access
    */
   function init() {
+    /*
     // when you type in search and hit enter do something
     // when you click product do something
     // when you click logo do something
     // when you click scroll arrow scroll to next images
-    qsa(".scrollButton").forEach(button => button.addEventListener('click', scrollBehavior));
     // when you click on cart image do something
     // when you click on a profile drop down item, do something X drop down items
+    */
+    qsa(".scrollButton").forEach(button => button.addEventListener('click', scrollBehavior));
   }
 
     /**
@@ -70,10 +72,10 @@
   }
 
   /**
- * Returns the element that has the ID attribute with the specified value.
- * @param {string} element - js element to create
- * @returns {object} - DOM object associated with element.
- */
+   * Returns the element that has the ID attribute with the specified value.
+   * @param {string} element - js element to create
+   * @returns {object} - DOM object associated with element.
+   */
   function gen(element) {
     return document.createElement(element);
   }
