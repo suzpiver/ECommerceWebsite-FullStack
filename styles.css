@@ -23,12 +23,12 @@ header a {
   background-color: #4F4646;
 }
 
-.logo, .searchTerm {
+#logo, .searchTerm {
   margin-right: auto;
   margin-left: 20px;
 }
 
-.nav-icon, .logo {
+.nav-icon, #logo {
   width: 45px;
   border-radius: 50%;
   cursor: pointer;
@@ -55,6 +55,10 @@ header a {
 } */
 
 /* End: Header Nav Bar */
+
+.hidden {
+  display: none;
+}
 
 h2 {
   font-size: 3vw;

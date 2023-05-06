@@ -27,6 +27,56 @@
      *when you click on a profile drop down item, do something X drop down items
      */
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
+    console.log(id("profile"));
+    id("profile").addEventListener("click", loadProfilePage);
+    id("logo").addEventListener("click", loadMainPage);
+    id("cart").addEventListener("click", loadCartPage);
+  }
+
+  /**
+   * takes the user to their current cart of items
+   * No paramaters, returns nothing
+   */
+  function loadCartPage() {
+    clearPage();
+    let cartMsg = gen('p');
+    cartMsg.textContent = "There are no items in your cart :(";
+    id("temp-msgs").appendChild(cartMsg);
+    // TODO need to add cart page details
+  }
+
+  /**
+   * takes the user to their profile page
+   * No paramaters, returns nothing
+   */
+  function loadProfilePage() {
+    clearPage();
+    let profileMsg = gen('p');
+    profileMsg.textContent = "We're still building your profile, check back later";
+    id("temp-msgs").appendChild(profileMsg);
+    // TODO need to add profile page details
+  }
+
+  /**
+   * returns user to the main page of the website
+   * No paramaters, returns nothing
+   */
+  function loadMainPage() {
+    id("temp-msgs").classList.add("hidden");
+    id("everything-but-header").classList.remove("hidden");
+    // TODO need to add dynamically added products
+  }
+
+  /**
+   * clears all content on webpage except the website header
+   * No paramaters, returns nothing
+   */
+  function clearPage() {
+    id("everything-but-header").classList.add("hidden");
+    id("temp-msgs").innerHTML = "";
+    id("temp-msgs").classList.remove("hidden");
+    // may need later when we are dynamically adding content
+    // id("everything-but-header").innerHTML = "";
   }
 
   /**
