@@ -19,13 +19,13 @@
    */
   function init() {
     /*
-    *when you type in search and hit enter do something
-    *when you click product do something
-    *when you click logo do something
-    *when you click scroll arrow scroll to next images
-    *when you click on cart image do something
-    *when you click on a profile drop down item, do something X drop down items
-    */
+     *when you type in search and hit enter do something
+     *when you click product do something
+     *when you click logo do something
+     *when you click scroll arrow scroll to next images
+     *when you click on cart image do something
+     *when you click on a profile drop down item, do something X drop down items
+     */
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
   }
 
