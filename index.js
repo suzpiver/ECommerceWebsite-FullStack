@@ -78,7 +78,7 @@
     id("temp-msgs").innerHTML = "";
     id("temp-msgs").classList.remove("hidden");
 
-    // id("everything-but-header").innerHTML = ""; may need later when we are dynamically adding content
+    // id("everything-but-header").innerHTML = ""; may need later when dynamically adding content
   }
 
   /**
