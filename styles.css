@@ -10,7 +10,7 @@ Section: CSE154 AA
   padding: 0;
   background-color: #FCF9EF;
 }
-
+/* Start: Header Nav Bar */
 header {
   display: flex;
   justify-content: flex-end;
@@ -52,4 +52,103 @@ header a {
 
 .nav-links li a:hover {
   /* add an underline underneath the icon */
+}
+/* End: Header Nav Bar */
+
+#justAdded {
+  margin-right: 15px;
+  margin-left: 10px;
+  width: 900px;
+  display: flex;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+}
+
+#justAdded div {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto auto auto; /*three image per row */
+  grid-gap: 20px;
+  padding: 10px;
+  flex: none;
+}
+
+#justAdded div img {
+  width: 100%;
+  transition: transform 0.5s;
+}
+
+#justAdded div img:hover {
+  box-shadow: 0px 0px 10px #4F4646;
+  transform: scale(1.1);
+}
+
+#justAdded::-webkit-scrollbar {
+  display: none;
+}
+
+#justAddedScroll {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10% auto;
+}
+
+#leftButton, #rightButton {
+  max-width: 8%;
+  height: auto;
+  cursor: pointer;
+}
+
+#leftButton:hover, #rightButton:hover {
+  box-shadow: 0px 0px 10px #4F4646;
+}
+
+#justAdded {
+  margin-right: 15px;
+  margin-left: 10px;
+  width: 900px;
+  display: flex;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+}
+
+#justAdded div {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto auto auto; /*three image per row */
+  grid-gap: 20px;
+  padding: 10px;
+  flex: none;
+}
+
+#justAdded div img {
+  width: 100%;
+  transition: transform 0.5s;
+}
+
+#justAdded div img:hover {
+  box-shadow: 0px 0px 10px #4F4646;
+  transform: scale(1.1);
+}
+
+#justAdded::-webkit-scrollbar {
+  display: none;
+}
+
+#justAddedScroll {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10% auto;
+}
+
+#leftButton, #rightButton {
+  max-width: 8%;
+  height: auto;
+  cursor: pointer;
+}
+
+#leftButton:hover, #rightButton:hover {
+  box-shadow: 0px 0px 10px #4F4646;
 }
