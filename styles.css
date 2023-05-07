@@ -59,7 +59,7 @@ header a {
   transition: all 0.3s ease 0s;
 }
 
-nav .toggle-box {
+.toggle-box {
   background-color: red;
   cursor: pointer;
 }
