@@ -15,38 +15,70 @@ Section: CSE154 AA
   </head>
   <body>
     <header>
-      <a href="#"><img class="logo" src="imgs/logo.jpeg" alt="logo"></a>
-      <input class="search-bar" type="search" placeholder="Search...">
+      <a href="#"><img id="logo" src="imgs/logo.jpeg" alt="logo"></a>
+      <input type="text" class="search-term" placeholder="Search...">
       <nav>
         <ul class="nav-links">
-          <li><a href="#"><img src="imgs/cart-icon.png" alt="shopping card icon" class="nav-icon"></a></li>
-          <li><a href="#"><img src="imgs/profile-icon.png" alt="profile icon" class="nav-icon"></a></li>
+          <li><a href="#"><img id="cart" src="imgs/cart-icon.png" alt="shopping card icon" class="nav-icon"></a></li>
+          <li><a href="#"><img id="profile" src="imgs/profile-icon.png" alt="profile icon" class="nav-icon"></a></li>
           <li><div class="toggle-box"></div></li>
         </ul>
         <!-- <div class="toggle-box"></div> -->
       </nav>
     </header>
-    <section id="justAddedScroll">
-      <img id='leftButton' src="imgs/leftButton.png" alt="left scroll button">
-      <section id="justAdded">
-        <div>
-          <img src = "imgs/200x150.png" alt="blank placeholder for product imges">
-          <img src = "imgs/200x150.png" alt="blank placeholder for product imges">
-          <img src = "imgs/200x150.png" alt="blank placeholder for product imges">
-        </div>
-        <div>
-          <img src = "imgs/sampleimg2.png" alt="blank placeholder for product imges">
-          <img src = "imgs/200x150.png" alt="blank placeholder for product imges">
-          <img src = "imgs/200x150.png" alt="blank placeholder for product imges">
-        </div>
-        <div>
-          <img src = "imgs/200x150.png" alt="blank placeholder for product imges">
-          <img src = "imgs/sampleimg2.png" alt="blank placeholder for product imges">
-          <img src = "imgs/200x150.png" alt="blank placeholder for product imges">
-        </div>
+    <section id="temp-msgs"></section>
+    <section id="everything-but-header">
+      <h2>Just Added</h2>
+      <section id="just-added-scroll" class="scroller">
+        <img class="scroll-button left-scroll" src="imgs/lButton.png" alt="left scroll button">
+        <section id="just-added" class="scroller-content">
+          <div>
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+          </div>
+          <div>
+            <img src="imgs/sampleimg2.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+          </div>
+          <div>
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg2.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+          </div>
+        </section>
+        <img class="scroll-button right-scroll" src="imgs/rButton.PNG" alt="right scroll button">
       </section>
-      <img id='rightButton' src="imgs/rightButton.png" alt="right scroll button">
+      <h2>Suggested For You</h2>
+      <section id="suggested-scroll" class="scroller">
+        <img class="scroll-button left-scroll" src="imgs/lButton.png" alt="left scroll button">
+        <section id="suggested" class="scroller-content">
+          <div>
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+          </div>
+          <div>
+            <img src="imgs/sampleimg2.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+          </div>
+          <div>
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg2.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+            <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
+          </div>
+        </section>
+        <img class="scroll-button right-scroll" src="imgs/rButton.PNG" alt="right scroll button">
+      </section>
     </section>
+    <footer></footer>
   </body>
-  <footer></footer>
 </html>

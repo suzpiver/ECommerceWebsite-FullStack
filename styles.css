@@ -5,7 +5,7 @@ Section: CSE154 AA
 {ADD DESCRIPTION}
 */
 
-*{
+* {
   margin: 0;
   padding: 0;
   background-color: #FCF9EF;
@@ -24,7 +24,7 @@ header a {
   background-color: #4F4646;
 }
 
-.logo, .search-bar {
+#logo, .search-term {
   margin-right: auto;
   margin-left: 20px;
 }
@@ -36,7 +36,12 @@ header a {
   border-radius: 0.7rem;
 }
 
-.nav-icon, .logo {
+.nav-icon, #logo, #profile {
+  width: 40px;
+  height: 40px;
+}
+
+.nav-icon, #logo, #profile {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -74,92 +79,72 @@ header a {
   overflow-x: scroll;
   scroll-behavior: smooth;
 }
+/* .nav-links li a:hover {
+   add an underline underneath the icon
+} */
 
-#justAdded div {
-  width: 100%;
-  display: grid;
-  grid-template-columns: auto auto auto; /*three image per row */
-  grid-gap: 20px;
-  padding: 10px;
-  flex: none;
-}
+/* End: Header Nav Bar */
 
-#justAdded div img {
-  width: 100%;
-  transition: transform 0.5s;
-}
-
-#justAdded div img:hover {
-  box-shadow: 0px 0px 10px #4F4646;
-  transform: scale(1.1);
-}
-
-#justAdded::-webkit-scrollbar {
+.hidden {
   display: none;
 }
 
-#justAddedScroll {
+h2 {
+  font-size: 3vw;
+  margin-top: 20px;
+  margin-left: 30px;
+}
+
+.scroller {
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 10% auto;
+  margin-top: 0px;
 }
 
-#leftButton, #rightButton {
-  max-width: 8%;
-  height: auto;
-  cursor: pointer;
-}
-
-#leftButton:hover, #rightButton:hover {
-  box-shadow: 0px 0px 10px #4F4646;
-}
-
-#justAdded {
-  margin-right: 15px;
-  margin-left: 10px;
-  width: 900px;
+.scroller-content {
+  margin: 0px;
+  width: 1000px;
   display: flex;
   overflow-x: scroll;
   scroll-behavior: smooth;
+  align-items: center;
 }
 
-#justAdded div {
-  width: 100%;
+.scroller-content div {
+  width: 95%;
   display: grid;
-  grid-template-columns: auto auto auto; /*three image per row */
+  grid-template-columns: auto auto auto auto;
   grid-gap: 20px;
-  padding: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
   flex: none;
 }
 
-#justAdded div img {
+.scroller-content div img {
   width: 100%;
   transition: transform 0.5s;
+  border-radius: 10%;
 }
 
-#justAdded div img:hover {
+.scroller-content div img:hover {
   box-shadow: 0px 0px 10px #4F4646;
   transform: scale(1.1);
 }
 
-#justAdded::-webkit-scrollbar {
+.scroller-content::-webkit-scrollbar {
   display: none;
 }
 
-#justAddedScroll {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 10% auto;
-}
-
-#leftButton, #rightButton {
-  max-width: 8%;
+.scroll-button {
+  max-width: 5%;
   height: auto;
   cursor: pointer;
+  border-radius: 50%;
+  margin: 5px;
 }
 
-#leftButton:hover, #rightButton:hover {
-  box-shadow: 0px 0px 10px #4F4646;
+.scroll-button:hover {
+  box-shadow: 0px 0px 5px #4F4646;
 }
