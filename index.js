@@ -29,7 +29,7 @@
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
     id("profile").addEventListener("click", loadProfilePage);
     id("logo").addEventListener("click", loadMainPage);
-    id("cart").addEventListener("click", loadCartPage);
+    // id("cart").addEventListener("click", loadCartPage);
   }
 
   /**

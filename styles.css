@@ -36,7 +36,7 @@ header a {
   border-radius: 0.7rem;
 }
 
-.nav-icon, #logo, #profile {
+.nav-icon, #logo {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -59,9 +59,9 @@ header a {
   transition: all 0.3s ease 0s;
 }
 
-.toggle-box {
-  background-color: red;
-  cursor: pointer;
+#profile {
+  color: #FCF9EF;
+  background-color: #4F4646;
 }
 
 /* End: Header Nav Bar */
