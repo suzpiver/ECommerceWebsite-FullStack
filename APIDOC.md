@@ -1,20 +1,22 @@
 # Free People API Documentation
-The Free People API provides information on Free People's womens clothing, specifically tops, bottoms, and dresses. It also enables users to maintian an account to purchase items, personalize item suggestions, and reveiw purchased items.
+The Free People API provides information on Free People's women's clothing, specifically tops, bottoms, and dresses. It also enables users to submit an account to purchase items, access transaction history, and reveiw purchased items.
 
 ## Endpoint 1: Get a list of clothes in this site and their information.
 **Request Format:** /clothes
+
 **QUERY PARAM 1:**
-**Request Format:** ?items=all;
+
+**Request Format:** /clothes
 
 **Request Type:** GET
 
 **Returned Data Format**: Plain text
 
 **Description:** Returns a plain text response of all the items in the API with their full name and shortname seperated by a ":".
-  Full name:shortname
-The shortname is used as the base string to access further details about the item such as its image and color.
+  eq. Full name:shortname
+The shortname is used as the base string to access further details about the item such as its image and color whereas the Full name is the official company assigned name
 
-**Example Request:** /clothes?items=all
+**Example Request:** /clothes
 
 **Example Response:**
 ```
@@ -22,19 +24,20 @@ FP One Lumi Maxi Dress:fp-one-lumi-maxi-dress
 Love Letter Cami:love-letter-cami
 Cool Harbor Wide-Leg Pants:cool-harbor-wide-leg-pants
 Nina Tee:nina-tee
-........etc.
+...
 ```
 
 **QUERY PARAM 2:**
-**Request Format:** /clothes?item={name};
+
+**Request Format:** /clothes?item={shortname}&type={type}&color={color};
 
 **Request Type:** GET
 
 **Returned Data Format**: JSON
 
-**Description:** Given a valid filter parameter (name, type, color) an item or list of items is returned containing the related clothes. If name="All" then all items are returned.
+**Description:** Given a valid query filter parameter (item, type, color) an item or list of items is returned containing the related clothes. If no query parameter given then all items are returned (see query1).
 
-**Example Request:** /Dresses/fp-one-lumi-maxi-dress
+**Example Request:** /clothes?item=fp-one-lumi-maxi-dress
 
 **Example Response:**
 ```json
@@ -69,13 +72,12 @@ Nina Tee:nina-tee
 
 **Error Handling:**
 - Possible 400 (invalid request) errors (all plain text):
-  - If passed in an invalid clothing name, returns an error with the message: `Items not found`
-  - If no items match their filtering, returns an error with message: `Items not found`
+  - If no items match the passed in query parameters, returns an error with message: `No items found`
 - Possible 500 errors (all plain text):
   - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
 
 ## Endpoint 2: Check username and password when a user logs in
-**Request Format:** login/:username/:password
+**Request Format:** /login endpoint with POST parameters of `username` and `password`
 
 **Request Type:** POST
 
@@ -83,23 +85,30 @@ Nina Tee:nina-tee
 
 **Description:** Given a valid username and password, returns the username.
 
-**Example Request:** login/suzpiver/sh0pp1ng!`
+**Example Request:** /login with POST parameters of `username=suzpiver` and `password=sh0pp1ng!`
 
 **Example Response:**
 ```
-suzpiver
+Welcome suzpiver
 ```
 
-## Endpoint 3: Returns the user's information
-**Request Format:** user/:username
+**Error Handling:**
+- Possible 400 (invalid request) errors (all plain text):
+  - If either a username or password is not given, returns error with message: `Please enter a valid username and password`
+  - If passed an invalid username or password combination, returns error with message: `The username or password is incorrect`
+- Possible 500 errors (all plain text):
+  - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
+
+## Endpoint 3: Returns the user's account information and transaction history
+**Request Format:** /user/:username/:password
 
 **Request Type:** GET
 
 **Returned Data Format**: JSON
 
-**Description:** given a valid username a JSON is returned containing the users information including, email and all transaction history details
+**Description:** given a valid username and password, a JSON is returned containing the users information including their email and all transaction history details.
 
-**Example Request:** /user/suzpiver
+**Example Request:** /user/suzpiver/sh0pp1ng!
 
 **Example Response:**
 ```json
@@ -110,12 +119,14 @@ suzpiver
     {
       "shortname":"fp-one-lumi-maxi-dress",
       "size":"small",
-      "date_purchased":"May-15-2023"
+      "date_purchased":"May-15-2023",
+      "confirmation": AG678RDJF8P2B
     }
     {
       "shortname":"love-letter-cami",
       "size":"medium",
-      "date_purchased":"April-3-2023"
+      "date_purchased":"April-3-2023",
+      "confirmation": JHGB87KH453GH
     }
   ]
 }
@@ -123,20 +134,21 @@ suzpiver
 
 **Error Handling:**
 - Possible 400 (invalid request) errors (all plain text):
-  - If passed in an invalid username or password, returns an error with the message: `Username/password incorrect`
+  - If passed an invalid username or password, an error is returned with the message: `Username/password incorrect`
+  - If passed an empty username or password, an error is returned with the message: `Please enter a valid username and password to access account details`
 - Possible 500 errors (all plain text):
   - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
 
-## Endpoint 4: Check if transaction is successful
-**Request Format:** /checkout/:username/:shortname/:size
+## Endpoint 4: Make a transaction
+**Request Format:** /checkout endpoint with POST parameters of `username`, `shortname`, and `size`
 
 **Request Type:** POST
 
 **Returned Data Format**: plain text
 
-**Description:** Given that a user is logged in and there are items available, plain text containing a generated confirmation code is returned.
+**Description:** Given that a user is logged in and there are items available, plain text containing a generated confirmation code is returned. This confirmation code is saved to the user's account
 
-**Example Request:** /checkout/suzpiver/fp-one-lumi-maxi-dress/small
+**Example Request:** /checkout with POST parameters of `username=suzpiver`, `shortname=fp-one-lumi-maxi-dress`, and `size=small`
 
 **Example Response:**
 ```
@@ -145,53 +157,61 @@ AG678RDJF8P2B
 
 **Error Handling:**
 - Possible 400 (invalid request) errors (all plain text):
-  - If passed in an invalid username, returns an error with the message: `Please login with a valid user to purchase items`
-  - If passed in an invalid shortname, returns an error with the message: `Invalid product name`
-  - If passed in an invalid size, returns an error with the message: `Invalid size or no sizes available`
+  - If passed in an invalid or empty username, returns an error with the message: `Please enter a valid user to purchase items`
+  - If passed an invalid or empty shortname, returns an error with the message: `Invalid product name {shortname}`
+  - If passed an invalid or empty size, returns an error with the message: `Invalid size or no size {size} available`
 - Possible 500 errors (all plain text):
   - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
 
 ## Endpoint 5: Create a New User
-**Request Format:** newUser/:username/:password/:email
+**Request Format:** /newUser endpoint with POST parameters of `username`, `password`, and `email`
 
 **Request Type:** POST
 
 **Returned Data Format**: JSON
 
-**Description:** Updates the user directory to add a new user if the username is unique, they included a password, and they included an email. Returns a "welcome" message if new user is created sucessfully.
+**Description:** Updates the user directory to add a new user if the username and email are unique. Returns a "welcome" message if a new user is created sucessfully.
 
-**Example Request:** /miyan/hehehoho/miyan@uw.edu
+**Example Request:** /newUser with POST parameters of `username=miyan`, `password=hehehoho`, and `email=miyan@uw.edu`
 
 **Example Response:**
 ```json
 {
   "username":"miyan",
-  "message":"New user created sucessfully"
+  "message":"New user created. Welcome miyan!"
 }
 ```
 
 **Error Handling:**
 - Possible 400 (invalid request) errors (all plain text):
   - If username already exists, returns an error with the message: `Username already exists`
-  - If email does not contain an "@" symbol, returns an error with the message: `Invalid email`
+  - If email does not contain an "@" symbol, returns an error with the message: `Please enter a valid email address`
+  - If email is already associated with a user: `Account already exists under this email address. Please contact helpdesk at freePeopleAPI@help.com for assistance logging in`
+  - If password is less than 6 characters, returns an error with the message: `Password must be longer than 6 characters`
 - Possible 500 errors (all plain text):
   - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
 
 ## Endpoint 6: Add a review
-**Request Format:** /review endpoint with POST parameters of `username`,`shortname`, `rating`, `comments`
+**Request Format:** /review endpoint with POST parameters of `username`, `confirmation`, `rating`, and `comments`
 
 **Request Type:** POST
 
 **Returned Data Format**: plain text
 
-**Description:**
+**Description:** given a valid username, confirmation number, rating between 1 and 5, and an optional comment, a review is attached to the item for all other users to view. This also updates the average rating for the item.
 
-**Example Request:** /review endpoint with POST parameters of `name=suzpiver`,`shortname=fp-one-lumi-maxi-dress` `rating=5` and `comments=It was alright`
+**Example Request:** /review with POST parameters of `username=suzpiver`,`confirmation=AG678RDJF8P2B`, `rating=4` and `comments=It was alright`
 
 **Example Response:**
-s
-
-
+```
+added 4 star review for fp-one-lumi-maxi-dress.
+```
 
 **Error Handling:**
-*Fill in an example of the error handling*
+- Possible 400 (invalid request) errors (all plain text):
+  - If invalid or empty username, returns an error with the message: `Enter a valid username`
+  - If confirmation code is not found under user's transaction history or empty, returns error message: `No transaction {confirmation} found for user {username}`
+  - If empty or rating outside of 1-5 range, returns error message: `Please enter a rating between 1 and 5`
+  - If comments are more than 200 characters, returns error with message: `comments must be less that 200 characters`
+- Possible 500 errors (all plain text):
+  - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
