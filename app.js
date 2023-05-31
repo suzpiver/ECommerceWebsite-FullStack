@@ -95,11 +95,16 @@ app.post('/user/history', async (req, res) => {
       let query = 'SELECT username FROM users WHERE username = ? AND password = ?';
       let result = await db.get(query, [username, password]);
       if (result) { // valid username & email. so get the info now
-        query = 'SELECT * FROM transactions t, users u WHERE t.user = ? AND u.username = ?';
+        query = 'SELECT name, webname, size, date, confirmation, email FROM transactions t, users u, items WHERE t.user = ? AND ' +
+        'u.username = ? AND t.itemID = items.itemID';
         result = await db.all(query, [username, username]);
         console.log(result);
         await db.close();
-        res.type('text').send('success');
+        let jsontxt = '{ "user" : "' + username + '", "email" : "' + result[0]['email'] + '", ' +
+                      '"transaction-history" : [';
+        jsontxt += processHistoryResults(result);
+        let obj = JSON.parse(jsontxt);
+        res.json(obj);
       } else {
         res.type('text');
         res.status(INVALID_PARAM_ERROR).send('Username/password is incorrect.');
@@ -224,6 +229,27 @@ async function getDBConnection() {
     driver: sqlite3.Database
   });
   return db;
+}
+
+/**
+ * Parses through data from the database to make a json object that endpoint 3 returns
+ * @param {JSONObject} result - array of data from api endpoint 3
+ * @returns {string} jsontxt - a string version of the json object to be returned from endpoint 3
+ */
+function processHistoryResults(result) {
+  let jsontxt = '';
+  for (let i = 0; i < result.length; i++) {
+    if (i > 0) {
+      jsontxt += ', ';
+    }
+    jsontxt += '{ "shortname" : "' + result[i]['name'] + '", ' +
+                  '"name" : "' + result[i]['webname'] + '", ' +
+                  '"size" : "' + result[i]['size'] + '", ' +
+                  '"date-purchased" : "' + result[i]['date'] + '", ' +
+                  '"confirmation" : "' + result[i]['confirmation'] + '" }';
+  }
+  jsontxt += ']}';
+  return jsontxt;
 }
 
 /**

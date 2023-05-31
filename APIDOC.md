@@ -117,13 +117,13 @@ Welcome suzpiver
   "email":suzpiver@uw.edu,
   "transaction-history":[
     {
-      "shortname":"fp-one-lumi-maxi-dress",
+      "name":"fp-one-lumi-maxi-dress",
       "size":"small",
       "date_purchased":"May-15-2023",
       "confirmation": AG678RDJF8P2B
     }
     {
-      "shortname":"love-letter-cami",
+      "name":"love-letter-cami",
       "size":"medium",
       "date_purchased":"April-3-2023",
       "confirmation": JHGB87KH453GH
