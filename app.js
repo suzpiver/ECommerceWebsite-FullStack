@@ -27,11 +27,7 @@ app.use(multer().none()); // requires the "multer" module
 
 /**
  * ENDPOINT 1: GET
- *Returns a plain text response of all the items in the API with their full name
- *and shortname seperated by a ":".eq. Full name:shortname
- *The shortname is used as the base string to access further details about the
- *item such as its image and color whereas the Full name is the official company
- *assigned name
+ *descrip
  *
  */
 app.get("/clothes", async (req, res) => {
