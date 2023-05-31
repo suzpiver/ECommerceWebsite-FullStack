@@ -50,10 +50,8 @@
    * No paramaters, returns nothing
    */
   function loadProfilePage() {
-    clearPage();
-    let profileMsg = gen('p');
-    profileMsg.textContent = "We're still building your profile, check back later";
-    id("temp-msgs").appendChild(profileMsg);
+    id("home-page").classList.add("hidden");
+    id("profile-page").classList.remove("hidden");
 
     // need to add profile page details
   }
@@ -63,10 +61,37 @@
    * No paramaters, returns nothing
    */
   function loadMainPage() {
-    id("temp-msgs").classList.add("hidden");
-    id("everything-but-header").classList.remove("hidden");
+    id("home-page").classList.remove("hidden");
+    id("profile-page").classList.add("hidden");
+  }
 
-    // need to add dynamically added products
+  /**
+   * descrip
+   * @param {response} resp - response json object from backend
+   * No paramaters, returns nothing
+   */
+  function initializeHomePage(resp) {
+    let item = null;
+    for (let i = 0; i < (resp.length() / 4); i++) {
+      let div = gen('div');
+      for (let j = i; j < i+4; j++ ) {
+        item = makeImg(resp[0]["shortname"] + '.png', 'image of ' + resp[0]["shortname"]);
+      }
+      div.appendChild(item);
+    }
+    loadMainPage();
+  }
+
+  /**
+   *
+   * No paramaters, returns nothing
+   */
+  function fetchAllItems() {
+    fetch("/clothes")
+      .then(statusCheck)
+      .then(resp => resp.json())
+      .then(initializeHomePage)
+      .catch(handleError);
   }
 
   /**
@@ -96,6 +121,20 @@
   }
 
   // -------------------------HELPER FUNCTIONS---------------------------
+
+  /**
+   * Creates a new image object and sets it's src and alt text
+   * @param {string} src - string of the src location of an image
+   * @param {string} alt - string of the alt text for an image
+   * @returns {object} - DOM img object .
+   */
+  function makeImg(src, alt) {
+    let img = gen('img');
+    img.src = 'img/clothes/' + src;
+    img.alt = alt;
+    return img;
+  }
+
   /**
    * Error handler function takes whatever error message occured and pastes it on the webpage.
    */
