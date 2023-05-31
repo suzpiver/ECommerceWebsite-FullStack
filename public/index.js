@@ -97,6 +97,27 @@
 
   // -------------------------HELPER FUNCTIONS---------------------------
   /**
+   * Error handler function takes whatever error message occured and pastes it on the webpage.
+   */
+  function handleError(err) {
+    let error = gen('p');
+    error.textContent = err;
+    qs('body').prepend(error);
+  }
+
+  /**
+   * Checks to ensure no errors occured in fetching data from the API.
+   * @param {*} res - the Promise object from the fetch call
+   * @return {String} the error text or the Promise object
+   */
+  async function statusCheck(res) {
+    if (!res.ok) {
+      throw new Error(await res.text());
+    }
+    return res;
+  }
+
+  /**
    * Returns the element that has the ID attribute with the specified value.
    * @param {string} id - element ID.
    * @returns {object} - DOM object associated with id.
