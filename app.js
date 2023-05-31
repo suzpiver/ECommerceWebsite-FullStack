@@ -14,7 +14,7 @@ const app = express();
 const sqlite3 = require('sqlite3');
 const sqlite = require('sqlite');
 
-// const INVALID_PARAM_ERROR = 400;
+const INVALID_PARAM_ERROR = 400;
 const SERVER_ERROR = 500;
 const SERVER_ERROR_MSG = 'Something went wrong on the server.';
 
@@ -50,6 +50,39 @@ app.get("/clothes", async (req, res) => {
   } catch (err) {
     res.type('text');
     res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
+  }
+});
+
+/**
+ * ENDPOINT 6
+ *description
+ */
+app.post("/review", async (req, res) => {
+  if (req.body.username && req.body.confirmation && req.body.rating) {
+    try {
+      res.type("text");
+      let query = null;
+      let db = await getDBConnection();
+      let id = await db.get(`SELECT itemID FROM transactions WHERE user=? AND
+                              confirmation=?`, req.body.username, req.body.confirmation);
+      if (!id) {
+        res.status(INVALID_PARAM_ERROR).send('This user or transaction does not exist.');
+      } else {
+        if (req.body.comment) {
+          query = "INSERT INTO reviews (itemID, user, stars, comments) VALUES (?, ?, ?, ?)";
+          await db.run(query, [id["itemID"], req.body.username, req.body.rating, req.body.comment]);
+        } else {
+          query = "INSERT INTO reviews (itemID, user, stars) VALUES (?, ?, ?)";
+          await db.run(query, [id["itemID"], req.body.username, req.body.rating]);
+        }
+        res.type("text").send("Added a " + req.body.rating + " star review");
+      }
+      await db.close();
+    } catch (err) {
+      res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
+    }
+  } else {
+    res.status(INVALID_PARAM_ERROR).send("Missing one or more of the required params.");
   }
 });
 
