@@ -54,6 +54,40 @@ app.get("/clothes", async (req, res) => {
 });
 
 /**
+ * ENDPOINT 4
+ *description
+ */
+app.post("/checkout", async (req, res) => {
+  if (req.body.username && req.body.shortname && req.body.size) {
+    try {
+      res.type("text");
+      let query = null;
+      let db = await getDBConnection();
+      let user = await db.get(`SELECT username FROM users WHERE username=?`, req.body.username);
+      let id = await db.get('SELECT itemID from items WHERE name=?', req.body.shortname);
+      if (!user || !id) {
+        res.status(INVALID_PARAM_ERROR).send('This user or transaction does not exist.');
+      } else {
+        let code = confirmationCode(8);
+        let date = new Date().toJSON();
+        query = `INSERT INTO transactions (confirmation, user, date, itemID, size),
+                VALUES (?, ?, ?, ?, ?)`;
+        await db.run(query, [code, req.body.username, date.slice(0, 10),
+              id["itemID"], req.body.size]);
+        let size = req.body.size;
+        // await db.run(`UPDATE inventory SET ??=? - 1 WHERE ?? > 0`, size, size, size);
+        res.send("Added a " + req.body.rating + " star review");
+      }
+      await db.close();
+    } catch (err) {
+      res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
+    }
+  } else {
+    res.status(INVALID_PARAM_ERROR).send("Missing one or more of the required params.");
+  }
+});
+
+/**
  * ENDPOINT 6
  *description
  */
@@ -98,6 +132,23 @@ async function getDBConnection() {
     driver: sqlite3.Database
   });
   return db;
+}
+
+/**
+ * Establishes a database connection to a database and returns the database object.
+ * Any errors that occur during connection should be caught in the function
+ * that calls this one.
+ * @param {string} size - length of code returned
+ * @returns {string} - The database object for the connection.
+ */
+function confirmationCode(size) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let code = ' ';
+  const charsize = chars.length;
+  for (let i = 0; i < size; i++) {
+    code += chars.charAt(Math.floor(Math.random() * charsize));
+  }
+  return code;
 }
 
 app.use(express.static('public'));
