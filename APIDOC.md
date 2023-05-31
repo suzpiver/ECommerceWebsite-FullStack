@@ -94,21 +94,21 @@ Welcome suzpiver
 
 **Error Handling:**
 - Possible 400 (invalid request) errors (all plain text):
-  - If either a username or password is not given, returns error with message: `Please enter a valid username and password`
-  - If passed an invalid username or password combination, returns error with message: `The username or password is incorrect`
+  - If either a username or password is not given, returns error with message: `Please enter a valid username and password.`
+  - If passed an invalid username or password combination, returns error with message: `Username/password is incorrect.`
 - Possible 500 errors (all plain text):
-  - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
+  - If something else goes wrong on the server, returns an error with the message: `Something went wrong on the server.`
 
 ## Endpoint 3: Returns the user's account information and transaction history
-**Request Format:** /user/:username/:password
+**Request Format:** /user/history with POST parameters of `username` and `password`
 
-**Request Type:** GET
+**Request Type:** POST
 
 **Returned Data Format**: JSON
 
 **Description:** given a valid username and password, a JSON is returned containing the users information including their email and all transaction history details.
 
-**Example Request:** /user/suzpiver/sh0pp1ng!
+**Example Request:** /user/history with POST parameters of `username=suzpiver` and `password=sh0pp1ng!`
 
 **Example Response:**
 ```json
@@ -137,7 +137,7 @@ Welcome suzpiver
   - If passed an invalid username or password, an error is returned with the message: `Username/password incorrect`
   - If passed an empty username or password, an error is returned with the message: `Please enter a valid username and password to access account details`
 - Possible 500 errors (all plain text):
-  - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
+  - If something else goes wrong on the server, returns an error with the message: `Something went wrong on the server.`
 
 ## Endpoint 4: Make a transaction
 **Request Format:** /checkout endpoint with POST parameters of `username`, `shortname`, and `size`
@@ -178,7 +178,7 @@ AG678RDJF8P2B
 ```json
 {
   "username":"miyan",
-  "message":"New user created. Welcome miyan!"
+  "message":"New user created. Welcome miyan"
 }
 ```
 
@@ -188,6 +188,7 @@ AG678RDJF8P2B
   - If email does not contain an "@" symbol, returns an error with the message: `Please enter a valid email address`
   - If email is already associated with a user: `Account already exists under this email address. Please contact helpdesk at freePeopleAPI@help.com for assistance logging in`
   - If password is less than 6 characters, returns an error with the message: `Password must be longer than 6 characters`
+  - If missing a body parameter, returns an error with the message: `Missing one or more of the required params.`
 - Possible 500 errors (all plain text):
   - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
 

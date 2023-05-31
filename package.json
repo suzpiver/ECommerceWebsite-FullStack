@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "core-js": "^3.30.2",
+    "express": "^4.18.2",
     "multer": "^1.4.5-lts.1",
     "sqlite": "^4.2.1",
     "sqlite3": "^5.1.6"
