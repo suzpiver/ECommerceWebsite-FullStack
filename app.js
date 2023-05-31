@@ -94,13 +94,14 @@ app.post("/checkout", async (req, res) => {
 app.post("/review", async (req, res) => {
   if (req.body.username && req.body.confirmation && req.body.rating) {
     try {
-      res.type("text");
       let query = null;
       let db = await getDBConnection();
       let id = await db.get(`SELECT itemID FROM transactions WHERE user=? AND
                               confirmation=?`, req.body.username, req.body.confirmation);
       if (!id) {
         res.status(INVALID_PARAM_ERROR).send('This user or transaction does not exist.');
+      } else if (!([0, 1, 2, 3, 4, 5].includes(Number(req.body.rating)))) {
+        res.status(INVALID_PARAM_ERROR).send('Please enter a value between 0 and 5');
       } else {
         if (req.body.comment) {
           query = "INSERT INTO reviews (itemID, user, stars, comments) VALUES (?, ?, ?, ?)";
