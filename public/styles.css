@@ -18,6 +18,7 @@ header {
   align-items: center;
   padding: 15px 2%;
   background-color: #4F4646;
+  margin-bottom: 30px;
 }
 
 header a {
@@ -62,28 +63,20 @@ header a {
 
 /* End: Header Nav Bar */
 
-#justAdded {
-  margin-right: 15px;
-  margin-left: 10px;
-  width: 900px;
-  display: flex;
-  overflow-x: scroll;
-  scroll-behavior: smooth;
-}
-/* .nav-links li a:hover {
-   add an underline underneath the icon
-} */
-
-/* End: Header Nav Bar */
-
 .hidden {
   display: none;
 }
 
-h2 {
+#home-page, #item-page {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Home Page Development */
+#home-page h2 {
   font-size: 3vw;
   margin-top: 20px;
   margin-left: 30px;
+  margin-bottom: 15px;
 }
 
 .scroller {
@@ -92,36 +85,48 @@ h2 {
   justify-content: center;
   margin: 10% auto;
   margin-top: 0px;
+  margin-bottom: 60px;
 }
 
 .scroller-content {
   margin: 0px;
-  width: 1000px;
+  width: 3000px;
   display: flex;
   overflow-x: scroll;
   scroll-behavior: smooth;
   align-items: center;
 }
 
-.scroller-content div {
+.scroller-content .imageDiv {
   width: 95%;
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-gap: 20px;
   padding-left: 10px;
   padding-right: 10px;
   flex: none;
 }
 
-.scroller-content div img {
+.scrollImage img {
   width: 100%;
   transition: transform 0.5s;
   border-radius: 10%;
 }
 
-.scroller-content div img:hover {
+.scrollImage p {
+  text-align: left;
+  font-size: 2vw;
+  margin-top: auto;
+}
+
+.scrollImage img:hover {
   box-shadow: 0px 0px 10px #4F4646;
   transform: scale(1.1);
+}
+
+.scrollImage p:hover {
+  color: rgb(141, 141, 240);
+  cursor: pointer;
 }
 
 .scroller-content::-webkit-scrollbar {
@@ -136,7 +141,7 @@ h2 {
   margin: 5px;
 }
 
-.scroll-button:hover {
+.scroll-button:hover, #add-to-cart:hover {
   box-shadow: 0px 0px 5px #4F4646;
 }
 
@@ -180,3 +185,35 @@ h2 {
   width: 50%;
 }
 
+
+#item-page {
+  margin: auto;
+  text-align: center;
+}
+
+#item-name {
+  font-size: 30px;
+  margin-bottom: 12px;
+}
+
+#item-price {
+  font-size: 20px;
+}
+
+#item-page img {
+  width: 30%;
+  margin: auto;
+}
+
+#add-to-cart {
+  width: 60%;
+  padding: 10px;
+  margin: 15px;
+  background-color: rgb(231, 153, 166);
+  border: 0;
+  color: white;
+}
+
+#add-to-cart:active {
+  background-color: rgb(190, 113, 126);
+}

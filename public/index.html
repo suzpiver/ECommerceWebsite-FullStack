@@ -9,7 +9,7 @@ Section: CSE154 AA
   <head>
     <meta charset="utf-8">
     <title>Final Project</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bruno+Ace&family=Caveat&family=Dongle:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bruno+Ace&family=Caveat&family=Dongle:wght@300&family=Inter:wght@300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="index.js"></script>
   </head>
@@ -25,62 +25,33 @@ Section: CSE154 AA
       </nav>
     </header>
     <section id="home-page">
-      <section id="temp-msgs"></section>
-      <section id="everything-but-header">
-        <h2>Just Added</h2>
-        <section id="just-added-scroll" class="scroller">
-          <img class="scroll-button left-scroll" src="imgs/lButton.png" alt="left scroll button">
-          <section id="just-added" class="scroller-content">
-            <div>
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-            </div>
-            <div>
-              <img src="imgs/sampleimg2.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-            </div>
-            <div>
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg2.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-            </div>
-          </section>
-          <img class="scroll-button right-scroll" src="imgs/rButton.PNG" alt="right scroll button">
-        </section>
-        <h2>Suggested For You</h2>
-        <section id="suggested-scroll" class="scroller">
-          <img class="scroll-button left-scroll" src="imgs/lButton.png" alt="left scroll button">
-          <section id="suggested" class="scroller-content">
-            <div>
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-            </div>
-            <div>
-              <img src="imgs/sampleimg2.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-            </div>
-            <div>
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg2.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-              <img src="imgs/sampleimg1.png" alt="blank placeholder for product imges">
-            </div>
-          </section>
-          <img class="scroll-button right-scroll" src="imgs/rButton.PNG" alt="right scroll button">
-        </section>
+      <h2>Tops</h2>
+      <section id="tops-scroll" class="scroller">
+        <img class="scroll-button left-scroll" src="imgs/lButton.png" alt="left scroll button">
+        <section id="top" class="scroller-content"></section>
+        <img class="scroll-button right-scroll" src="imgs/rButton.PNG" alt="right scroll button">
+      </section>
+      <h2>Bottoms</h2>
+      <section id="bottoms-scroll" class="scroller">
+        <img class="scroll-button left-scroll" src="imgs/lButton.png" alt="left scroll button">
+        <section id="bottom" class="scroller-content"> </section>
+        <img class="scroll-button right-scroll" src="imgs/rButton.PNG" alt="right scroll button">
+      </section>
+      <h2>Dresses</h2>
+      <section id="dresses-scroll" class="scroller">
+        <img class="scroll-button left-scroll" src="imgs/lButton.png" alt="left scroll button">
+        <section id="dress" class="scroller-content"> </section>
+        <img class="scroll-button right-scroll" src="imgs/rButton.PNG" alt="right scroll button">
       </section>
     </section>
-    <section id="item-page" class="hidden"></section>
+    <section id="item-page" class="hidden">
+      <p id="item-name"></p>
+      <img src="imgs/sampleimg1.png" alt="sample image">
+      <p id="item-price"></p>
+      <button id="add-to-cart">Add to Cart</button>
+    </section>
     <section id="checkout-page" class="hidden"></section>
+<<<<<<< HEAD
     <section id="profile-page" class="hidden">
       <article id="login-signup">
         <form id="login-view">
@@ -105,6 +76,10 @@ Section: CSE154 AA
       </article>
     </section>
     <section id="review-page" class="hidden"></section>
+=======
+    <section id="profile-page" class="hidden"></section>
+    <section id="review-page" ></section>
+>>>>>>> 1759ecfaf3dc03349674facdcbd81e69a9a10e30
     <footer></footer>
   </body>
 </html>

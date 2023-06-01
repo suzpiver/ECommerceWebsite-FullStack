@@ -1,26 +1,49 @@
-itemID,name,webname,type,color
-91251,saltwater-shirt,Saltwater Shirt,top,white
-99162,amelia-corset,Amelia Corset,top,"pink, red"
-41900,float-away-shirt,Float Away Shirt,top,"brown, red"
-21554,fp-one-raya-bandana-top,FP One Raya Bandana Top,top,"blue, white"
-84354,iris-sweater-open-back-halter,Iris Sweater Open-Back Halter,top,"red, brown"
-73376,baja-pullover,Baja Pullover,top,"yellow, green, brown"
-10352,my-party-top-short-sleeve-top,My Party Top Short Sleeve Top,top,purple
-73513,cya-later-skate-trouser,Cya Later Skate Trouser,bottom,blue
-45725,,,,
-80342,,,,
-30452,,,,
-15522,,,,
-71622,,,,
-22247,,,,
-92931,,,,
-18224,,,,
-15850,,,,
-46721,,,,
-84230,,,,
-61910,,,,
-97217,,,,
-64322,,,,
-71524,,,,
-96351,,,,
-93941,,,,
+itemID,name,webname,type,color,price
+10314,saltwater-shirt,Saltwater Shirt,top,white,55
+51658,amelia-corset,Amelia Corset,top,pink red,84
+55339,float-away-shirt,Float Away Shirt,top,brown red,90
+79550,fp-one-raya-bandana-top,FP One Raya Bandana Top,top,blue white,67
+41829,iris-sweater-open-back-halter,Iris Sweater Open-Back Halter,top,red brown,90
+34801,baja-pullover,Baja Pullover,top,yellow green brown,81
+89157,my-party-top-short-sleeve-top,My Party Top Short Sleeve Top,top,purple,75
+88972,kerry-tank,Kerry Tank,top,white,85
+34014,gabby-tube-top,Gabby Tube Top,top,white,63
+67658,cp-shades-yoko-tunic,CP Shades Yoko Tunic,top,green,58
+26559,we-the-free-float-away-stripe-shirt,We The Free Float Away Stripe Shirt,top,yellow white,75
+54277,nina-tee,Nina Tee,top,black,55
+52273,florence-top,Florence Top,top,black red yellow,84
+40371,we-the-free-chill-vibes-tee,We The Free Chill Vibes Tee,top,blue white,77
+12345,share-good-vibes-buttondown,Share Good Vibes Buttondown,top,red orange,45
+96774,over-the-moon-sweater-top,Over The Moon Sweater Top,top,black,67
+93619,cya-later-skate-trouser,Cya Later Skate Trouser,bottom,blue,85
+73736,rock-and-frill-pants,Rock And Frill Pants,bottom,pink,146
+72439,sophie-chino-pants,Sophie Chino Pants,bottom,yellow,89
+39642,light-as-spring-trousers,Light As Spring Trousers,bottom,white,83
+35628,neptunes-net-crochet-flare-pants,Neptune's Net Crochet Flare Pants,bottom,red brown,116
+63742,equinox-denim-trousers,Equinox Denim Trousers,bottom,blue denim,121
+21830,just-float-on-flare-jeans,Just Float On Flare Jeans,bottom ,black denim,115
+22780,driftwood-charlee-wide-leg-jeans,Driftwood Charlee Wide Leg Jeans,bottom,blue denim,129
+93535,rollas-sailor-jeans,Rolla's Sailor Jeans,bottom,yellow,140
+56060,wrangler-cowboy-jeans,Wrangler Cowboy Jeans,bottom,blue denim,96
+79504,hazel-pull-on-drop-waist-jeans,Hazel Pull On Drop Waist Jeans,bottom,blue denim,89
+98242,youthquake-printed-crop-flare-jeans,Youthquake Printed Crop Flare Jeans,bottom,white blue red yellow,130
+19365,extreme-measures-barrel-shorts,Extreme Measures Barrel Shorts,bottom,denim blue,114
+73207,billie-clothes-shorts,Billie Clothes Shorts,bottom,brown,93
+99067,thrills-koko-chino-shorts,THRILLS Koko Chino Shorts,bottom,green,109
+76202,agolde-broken-waistband-shorts,AGOLDE Broken Waistband Shorts,bottom,black denim,92
+53283,sundrenched-printed-maxi-dress,Sundrenched Printed Maxi Dress,dress,white red,170
+60413,east-side-lace-up-mini-dress,East Side Lace Up Mini Dress,dress,red,176
+13042,jainsons-jewel-margaux-beaded-set,Jainsons Jewel Margaux Beaded Set,dress,green,199
+63868,for-love-&-lemons-carson-midi-dress,For Love & Lemons Carson Midi Dress,dress,yellow white green,181
+95729,on-the-rise-mini-slip,On The Rise Mini Slip,dress,green purple,191
+76352,jainsons-pierre-set,Jainsons Pierre Set,dress,blue white,153
+20466,love-of-my-life-midi-dress,Love Of My Life Midi Dress,dress,pink,147
+58187,johanna-mini,Johanna Mini,dress,yellow,120
+18825,santos-sweater-midi,Santos Sweater Midi,dress,black,162
+59266,for-love-&-lemons-prato-mini-dress,For Love & Lemons Prato Mini Dress,dress,orange yellow pink,200
+66560,jens-pirate-booty-odyssey-mini-dress,Jen's Pirate Booty Odyssey Mini Dress,dress,black,175
+70375,cross-my-heart-maxi,Cross My Heart Maxi,dress,blue,187
+10357,shayla-lace-mini-dress,Shayla Lace Mini Dress,dress,blue,159
+87329,shona-joy-irena-set,Shona Joy Irena Set,dress,green,122
+61655,cote-d-azur-maxi-dress,Cote D Azur Maxi Dress,dress,red orange blue,183
+15751,audrey-dress,Audrey Dress,dress,purple,194

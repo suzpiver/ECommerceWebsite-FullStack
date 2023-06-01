@@ -18,18 +18,11 @@
    * runs once the window has loaded and DOM is ready to access
    */
   function init() {
-    /*
-     *when you type in search and hit enter do something
-     *when you click product do something
-     *when you click logo do something
-     *when you click scroll arrow scroll to next images
-     *when you click on cart image do something
-     *when you click on a profile drop down item, do something X drop down items
-     */
+    initializeHomePage();
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
     id("profile").addEventListener("click", loadProfilePage);
     id("logo").addEventListener("click", loadMainPage);
-    // id("cart").addEventListener("click", loadCartPage);
+    id("add-to-cart").addEventListener("click", () => console.log("cart"));
   }
 
   /**
@@ -141,35 +134,75 @@
   function loadMainPage() {
     id("home-page").classList.remove("hidden");
     id("profile-page").classList.add("hidden");
+    id("item-page").classList.add("hidden");
   }
 
   /**
-   * descrip
-   * @param {response} resp - response json object from backend
+   * fetches 12 of each top, bottom, and dress, and adds it to the home page for viewing
    * No paramaters, returns nothing
    */
-  function initializeHomePage(resp) {
+  function initializeHomePage() {
     let item = null;
-    for (let i = 0; i < (resp.length() / 4); i++) {
-      let div = gen('div');
-      for (let j = i; j < i+4; j++ ) {
-        item = makeImg(resp[0]["shortname"] + '.png', 'image of ' + resp[0]["shortname"]);
+    let div = null;
+    let div2 = null;
+    let ptag = null;
+    let categories = ["top", "bottom", "dress"];
+    categories.forEach(async cat => {
+      let resp = await fetchItems(cat);
+      for (let i = 0; i < 3; i++) { // three scrolls
+        div = gen('div');
+        div.classList.add("imageDiv");
+        for (let j = i * 4; j < i * 4 + 4; j++) { // four images in each scroll
+          div2 = gen('div');
+          div2.classList.add('scrollImage');
+          item = makeImg(resp[j]["name"] + '.png', 'image of ' + resp[j]["webname"]);
+          div2.addEventListener('click', () => itemView(resp[j]));
+          ptag = gen('p');
+          ptag.textContent = resp[j]["webname"];
+          div2.append(item, ptag);
+          div.appendChild(div2);
+        }
+        id(cat).appendChild(div);
       }
-      div.appendChild(item);
-    }
+    });
     loadMainPage();
   }
 
   /**
-   *
+   * descrip
+   * @param {string} search - filter for search
+   * @returns {response} items - json of items
    * No paramaters, returns nothing
    */
-  function fetchAllItems() {
-    fetch("/clothes")
-      .then(statusCheck)
-      .then(resp => resp.json())
-      .then(initializeHomePage)
-      .catch(handleError);
+  async function fetchItems(search) {
+    try {
+      let resp = null;
+      if (search) {
+        resp = await fetch("/clothes?item=" + search);
+      } else {
+        resp = await fetch("/clothes");
+      }
+      await statusCheck(resp);
+      let items = await resp.json();
+      return items;
+    } catch (err) {
+      handleError(err);
+    }
+  }
+
+  /**
+   * descrip
+   * @param {Response} resp - sdf
+   * No paramaters, returns nothing
+   */
+  function itemView(resp) {
+    id("item-page").classList.remove("hidden");
+    id("home-page").classList.add("hidden");
+    id("profile-page").classList.add("hidden");
+    id("item-name").textContent = resp["webname"];
+    qs("#item-page img").src = "/imgs/clothes/" + resp["name"] + '.png';
+    qs("#item-page img").alt = 'image of ' + resp["webname"];
+    id("item-price").textContent = "$" + resp["price"] + ".00";
   }
 
   /**
@@ -208,13 +241,14 @@
    */
   function makeImg(src, alt) {
     let img = gen('img');
-    img.src = 'img/clothes/' + src;
+    img.src = 'imgs/clothes/' + src;
     img.alt = alt;
     return img;
   }
 
   /**
    * Error handler function takes whatever error message occured and pastes it on the webpage.
+   * @param {Error} err - error from catch statment
    */
   function handleError(err) {
     let error = gen('p');
