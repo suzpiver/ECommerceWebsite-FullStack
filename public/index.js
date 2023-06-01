@@ -22,6 +22,7 @@
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
     id("profile").addEventListener("click", loadProfilePage);
     id("logo").addEventListener("click", loadMainPage);
+    id("add-to-cart").addEventListener("click", () => console.log("cart"));
   }
 
   /**
@@ -55,6 +56,7 @@
   function loadMainPage() {
     id("home-page").classList.remove("hidden");
     id("profile-page").classList.add("hidden");
+    id("item-page").classList.add("hidden");
   }
 
   /**
