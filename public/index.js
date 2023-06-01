@@ -18,18 +18,10 @@
    * runs once the window has loaded and DOM is ready to access
    */
   function init() {
-    /*
-     *when you type in search and hit enter do something
-     *when you click product do something
-     *when you click logo do something
-     *when you click scroll arrow scroll to next images
-     *when you click on cart image do something
-     *when you click on a profile drop down item, do something X drop down items
-     */
+    initializeHomePage();
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
     id("profile").addEventListener("click", loadProfilePage);
     id("logo").addEventListener("click", loadMainPage);
-    // id("cart").addEventListener("click", loadCartPage);
   }
 
   /**
@@ -66,32 +58,48 @@
   }
 
   /**
-   * descrip
-   * @param {response} resp - response json object from backend
+   * fetches 12 of each top, bottom, and dress, and adds it to the home page for viewing
    * No paramaters, returns nothing
    */
-  function initializeHomePage(resp) {
+  function initializeHomePage() {
     let item = null;
-    for (let i = 0; i < (resp.length() / 4); i++) {
-      let div = gen('div');
-      for (let j = i; j < i+4; j++ ) {
-        item = makeImg(resp[0]["shortname"] + '.png', 'image of ' + resp[0]["shortname"]);
+    let div = null;
+    let categories = ["top", "bottom", "dress"];
+    categories.forEach(async cat => {
+      let resp = await fetchItems(cat);
+      for (let i = 0; i < 3; i++) {
+        div = gen('div');
+        for (let j = i * 4; j < i * 4 + 4; j++) {
+          item = makeImg(resp[j]["name"] + '.png', 'image of ' + resp[j]["webname"]);
+          item.addEventListener('click', () => console.log("clicked"));
+          div.appendChild(item);
+        }
+        id(cat).appendChild(div);
       }
-      div.appendChild(item);
-    }
+    });
     loadMainPage();
   }
 
   /**
-   *
+   * descrip
+   * @param {string} search - filter for search
+   * @returns {response} items - json of items
    * No paramaters, returns nothing
    */
-  function fetchAllItems() {
-    fetch("/clothes")
-      .then(statusCheck)
-      .then(resp => resp.json())
-      .then(initializeHomePage)
-      .catch(handleError);
+  async function fetchItems(search) {
+    try {
+      let resp = null;
+      if (search) {
+        resp = await fetch("/clothes?item=" + search);
+      } else {
+        resp = await fetch("/clothes");
+      }
+      await statusCheck(resp);
+      let items = await resp.json();
+      return items;
+    } catch (err) {
+      handleError(err);
+    }
   }
 
   /**
@@ -130,13 +138,14 @@
    */
   function makeImg(src, alt) {
     let img = gen('img');
-    img.src = 'img/clothes/' + src;
+    img.src = 'imgs/clothes/' + src;
     img.alt = alt;
     return img;
   }
 
   /**
    * Error handler function takes whatever error message occured and pastes it on the webpage.
+   * @param {Error} err - error from catch statment
    */
   function handleError(err) {
     let error = gen('p');
