@@ -22,7 +22,7 @@
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
     id("profile").addEventListener("click", loadProfilePage);
     id("logo").addEventListener("click", loadMainPage);
-    id("add-to-cart").addEventListener("click", () => console.log("cart"));
+    id("add-to-cart").addEventListener("click", addToCart);
   }
 
   /**
@@ -40,19 +40,6 @@
         id(pages[i]).classList.add('hidden');
       }
     }
-  }
-
-  /**
-   * takes the user to their current cart of items
-   * No paramaters, returns nothing
-   */
-  function loadCartPage() {
-    clearPage();
-    let cartMsg = gen('p');
-    cartMsg.textContent = "There are no items in your cart :(";
-    id("temp-msgs").appendChild(cartMsg);
-
-    // need to add cart page details
   }
 
   /**
@@ -76,6 +63,11 @@
     }
     // need to add profile page details
   }
+
+  /**
+   * description
+   * No paramaters, returns nothing
+   */
   function getLoginInfo() {
     let username = id('log-name').value;
     let password = id('log-password').value;
@@ -84,6 +76,12 @@
     performLogin(username, password);
   }
 
+  /**
+   * description
+   * @param {string} username - descrip
+   * @param {string} password -descrip
+   * No paramaters, returns nothing
+   */
   async function performLogin(username, password) {
     try {
       let data = new FormData();
@@ -93,18 +91,29 @@
       await statusCheck(res);
       res = await res.text();
       updateProfilePage(res);
-    } catch {
+    } catch(err) {
       console.log(err);
       handleError(err);
     }
   }
 
+  /**
+   * description
+   * No paramaters, returns nothing
+   */
   function getSignInInfo() {
     let username = id('sign-name').value;
     let email = id('sign-email').value;
     let password = id('sign-password').value;
   }
 
+  /**
+   * description
+   * @param {string} username - descrip
+   * @param {string} email -descrip
+   * @param {string} password -descrip
+   * No paramaters, returns nothing
+   */
   async function performSignUp(username, email, password) {
     try {
       let data = new FormData();
@@ -120,15 +129,18 @@
     }
   }
 
+  /**
+   * description
+   * @param {Response} res - descrip
+   * No paramaters, returns nothing
+   */
   function updateProfilePage(res) {
     id('profile').textContent = res;
     loadProfilePage();
   }
 
-
-
   /**
-   * returns user to the main page of the website
+   * description
    * No paramaters, returns nothing
    */
   function loadMainPage() {
