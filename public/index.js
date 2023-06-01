@@ -21,8 +21,10 @@
     initializeHomePage();
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
     id("profile").addEventListener("click", loadProfilePage);
-    id("logo").addEventListener("click", loadMainPage);
+    id("logo").addEventListener("click", () => hideOtherPages("home-page"));
     id("add-to-cart").addEventListener("click", addToCart);
+    id("cart").addEventListener("click", () => hideOtherPages("checkout-page"));
+    id("checkout-button").addEventListener("click", checkout);
   }
 
   /**
@@ -30,7 +32,8 @@
    * @param {string} displayPage - id of the page that will be displayed
    */
   function hideOtherPages(displayPage) {
-    let pages = ["home-page", "item-page", "checkout-page", "profile-page", "review-page"];
+    let pages = ["home-page", "item-page", "checkout-page",
+                  "profile-page", "review-page", "search-page"];
     for (let i = 0; i < pages.length; i++) {
       if (pages[i] === displayPage) {
         // unhide
@@ -140,20 +143,11 @@
   }
 
   /**
-   * description
-   * No paramaters, returns nothing
-   */
-  function loadMainPage() {
-    id("home-page").classList.remove("hidden");
-    id("profile-page").classList.add("hidden");
-    id("item-page").classList.add("hidden");
-  }
-
-  /**
    * fetches 12 of each top, bottom, and dress, and adds it to the home page for viewing
    * No paramaters, returns nothing
    */
   function initializeHomePage() {
+    hideOtherPages("home-page");
     let item = null;
     let div = null;
     let div2 = null;
@@ -167,7 +161,7 @@
         for (let j = i * 4; j < i * 4 + 4; j++) { // four images in each scroll
           div2 = gen('div');
           div2.classList.add('scrollImage');
-          item = makeImg(resp[j]["name"] + '.png', 'image of ' + resp[j]["webname"]);
+          item = makeImg("imgs/clothes/" + resp[j]["name"] + '.png','image ' + resp[j]["webname"]);
           div2.addEventListener('click', () => itemView(resp[j]));
           ptag = gen('p');
           ptag.textContent = resp[j]["webname"];
@@ -177,7 +171,6 @@
         id(cat).appendChild(div);
       }
     });
-    loadMainPage();
   }
 
   /**
@@ -203,33 +196,6 @@
   }
 
   /**
-   * descrip
-   * @param {Response} resp - sdf
-   * No paramaters, returns nothing
-   */
-  function itemView(resp) {
-    id("item-page").classList.remove("hidden");
-    id("home-page").classList.add("hidden");
-    id("profile-page").classList.add("hidden");
-    id("item-name").textContent = resp["webname"];
-    qs("#item-page img").src = "/imgs/clothes/" + resp["name"] + '.png';
-    qs("#item-page img").alt = 'image of ' + resp["webname"];
-    id("item-price").textContent = "$" + resp["price"] + ".00";
-  }
-
-  /**
-   * clears all content on webpage except the website header
-   * No paramaters, returns nothing
-   */
-  function clearPage() {
-    id("everything-but-header").classList.add("hidden");
-    id("temp-msgs").innerHTML = "";
-    id("temp-msgs").classList.remove("hidden");
-
-    // id("everything-but-header").innerHTML = ""; may need later when dynamically adding content
-  }
-
-  /**
    * scrolls the images within a container to the next set of images
    * No paramaters, returns nothing
    */
@@ -243,6 +209,41 @@
     }
   }
 
+  /**
+   * descrip
+   * @param {Response} resp - sdf
+   * No paramaters, returns nothing
+   */
+  function itemView(resp) {
+    hideOtherPages("item-page");
+    id("item-name").textContent = resp["webname"];
+    qs("#item-page img").src = "/imgs/clothes/" + resp["name"] + '.png';
+    qs("#item-page img").alt = 'image of ' + resp["webname"];
+    id("item-price").textContent = "$" + resp["price"] + ".00";
+  }
+
+  /**
+   * descrip
+   * No paramaters, returns nothing
+   */
+  function addToCart() {
+    // Don't need to hide pages since we aren't actually switching to the cart
+    let div = gen('div');
+    let div2 = gen('div');
+    let img = qs("#item-page img").cloneNode(true);
+    let name = id("item-name").cloneNode(true);
+    name.id = '';
+    let price = id("item-price").cloneNode(true);
+    price.id = '';
+    let remove = gen('button');
+    remove.textContent = "Remove Item";
+    remove.classList.add("remove-button");
+    div2.append(name, price, remove);
+    div.append(img, div2);
+    id("checkout-page").prepend(div);
+    remove.addEventListener("click", () => remove.parentNode.parentNode.remove()); // remove item
+  }
+
   // -------------------------HELPER FUNCTIONS---------------------------
 
   /**
@@ -253,7 +254,7 @@
    */
   function makeImg(src, alt) {
     let img = gen('img');
-    img.src = 'imgs/clothes/' + src;
+    img.src = src;
     img.alt = alt;
     return img;
   }
