@@ -185,7 +185,6 @@ header a {
   width: 50%;
 }
 
-
 #item-page {
   margin: auto;
   text-align: center;
@@ -216,4 +215,44 @@ header a {
 
 #add-to-cart:active {
   background-color: rgb(190, 113, 126);
+}
+
+/* LOGIN & SIGN UP STYLING */
+#login-signup {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 90%;
+  padding: 15px;
+  margin: auto;
+  margin-top: 40px;
+}
+
+#login-signup p {
+  margin: 20px;
+}
+
+#login-signup h2 {
+  margin: auto;
+}
+
+#login-view, #signup-view {
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+}
+
+#login-view input, #signup-view input {
+  padding: 5px;
+  margin: 5px;
+}
+
+#login-signup button {
+  background-color: #4F4646;
+  color: #FCF9EF;
+  border: 2px solid #4F4646;
+  border-radius: 30px;
+  padding: 5px;
+  margin: auto;
+  width: 50%;
 }
