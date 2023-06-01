@@ -19,10 +19,8 @@ Section: CSE154 AA
       <input type="text" class="search-bar" placeholder="Search...">
       <nav>
         <ul class="nav-links">
-          <li><a href="#"><div id="profile">Log in/Sign up</div></a></li>
-          <!-- <li><a href="#"><img id="cart" src="imgs/cart-icon.png" alt="shopping card icon" class="nav-icon"></a></li>
-          <li><a href="#"><img id="profile" src="imgs/profile-icon.png" alt="profile icon" class="nav-icon"></a></li>
-          <li><div class="toggle-box">Log in/Sign up</div></li> -->
+          <li><div id="cart">Cart</div></li>
+          <li><div id="profile">Log in/Sign up</div></li>
         </ul>
       </nav>
     </header>
@@ -83,7 +81,29 @@ Section: CSE154 AA
     </section>
     <section id="item-page" class="hidden"></section>
     <section id="checkout-page" class="hidden"></section>
-    <section id="profile-page" class="hidden"></section>
+    <section id="profile-page" class="hidden">
+      <article id="login-signup">
+        <form id="login-view">
+          <h2>Login</h2>
+          <input type="text" name="name" id="log-name" placeholder="Username">
+          <input type="text" name="password" id="log-password" placeholder="Password">
+          <button id="login-btn">Login</button>
+        </form>
+        <br>
+        <p>OR</p>
+        <br>
+        <form id="signup-view">
+          <h2>Sign up</h2>
+          <input type="text" name="name" id="sign-name" placeholder="Username">
+          <input type="text" name="email" id="sign-email" placeholder="Email">
+          <input type="text" name="password" id="sign-password" placeholder="Password">
+          <button id="sign-btn">Sign Up</button>
+        </form>
+      </article>
+      <article id="user-view" class="hidden">
+        <div>hehehehehh</div>
+      </article>
+    </section>
     <section id="review-page" class="hidden"></section>
     <footer></footer>
   </body>

@@ -33,6 +33,23 @@
   }
 
   /**
+   * Hides all other pages besides the one that will be displayed
+   * @param {string} displayPage - id of the page that will be displayed
+   */
+  function hideOtherPages(displayPage) {
+    let pages = ["home-page", "item-page", "checkout-page", "profile-page", "review-page"];
+    for (let i = 0; i < pages.length; i++) {
+      if (pages[i] === displayPage) {
+        // unhide
+        id(displayPage).classList.remove('hidden');
+      } else {
+        // hide
+        id(pages[i]).classList.add('hidden');
+      }
+    }
+  }
+
+  /**
    * takes the user to their current cart of items
    * No paramaters, returns nothing
    */
@@ -50,11 +67,72 @@
    * No paramaters, returns nothing
    */
   function loadProfilePage() {
-    id("home-page").classList.add("hidden");
-    id("profile-page").classList.remove("hidden");
-
+    hideOtherPages("profile-page");
+    let name = this.textContent;
+    // check the div button content that was clicked
+    if (name === 'Log in/Sign up') {
+      // show log in page
+      id('user-view').classList.add('hidden');
+      id('login-signup').classList.remove('hidden');
+      id('login-btn').addEventListener(getLoginInfo);
+      id('sign-btn').addEventListener(performSignUp);
+    } else {
+      id('user-view').classList.remove('hidden');
+      id('login-signup').classList.add('hidden');
+      // show profile page
+    }
     // need to add profile page details
   }
+  function getLoginInfo() {
+    let username = id('log-name').value;
+    let password = id('log-password').value;
+    id('log-name').value = '';
+    id('log-password').value = '';
+    performLogin(username, password);
+  }
+
+  async function performLogin(username, password) {
+    try {
+      let data = new FormData();
+      data.append('username', username);
+      data.append('password', password);
+      let res = await fetch('/login', {method: 'POST', body: data});
+      await statusCheck(res);
+      res = await res.text();
+      updateProfilePage(res);
+    } catch {
+      console.log(err);
+      handleError(err);
+    }
+  }
+
+  function getSignInInfo() {
+    let username = id('sign-name').value;
+    let email = id('sign-email').value;
+    let password = id('sign-password').value;
+  }
+
+  async function performSignUp(username, email, password) {
+    try {
+      let data = new FormData();
+      data.append('username', username);
+      data.append('email', email);
+      data.append('password', password);
+      let res = await fetch('/newuser', {method: 'POST', body: data});
+      await statusCheck(res);
+      res = await res.text();
+      updateProfilePage(res);
+    } catch (err) {
+      handleError(err);
+    }
+  }
+
+  function updateProfilePage(res) {
+    id('profile').textContent = res;
+    loadProfilePage();
+  }
+
+
 
   /**
    * returns user to the main page of the website

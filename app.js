@@ -65,7 +65,8 @@ app.post("/login", async (req, res) => {
       let result = await db.get(query, [username, password]);
       await db.close();
       if (result) {
-        res.type('text').send('Welcome ' + result['username']);
+        // res.type('text').send('Welcome ' + result['username']);
+        res.type('text').send(result['username']);
       } else {
         res.type('text');
         res.status(INVALID_PARAM_ERROR).send('Username/password is incorrect.')
@@ -159,19 +160,20 @@ app.post("/checkout", async (req, res) => {
 app.post('/newuser', async (req, res) => {
   try {
     let username = req.body.username;
-    let password = req.body.password;
     let email = req.body.email;
-    if (username && password && email) {
+    let password = req.body.password;
+    if (username && email && password) {
       let validNewUser = newUserChecks(res, username, password, email);
       if (validNewUser) {
         let query = 'INSERT INTO users (username, password, email) VALUES (?, ?, ?)';
         let db = await getDBConnection();
         await db.run(query, [username, password, email]);
         await db.close();
-        let jsontxt = '{ "username" : "' + username + '", "message" : "New user created. ' +
-        'Welcome ' + username + '"}';
-        let obj = JSON.parse(jsontxt);
-        res.json(obj);
+        res.type('text').send(username);
+        // let jsontxt = '{ "username" : "' + username + '", "message" : "New user created. ' +
+        // 'Welcome ' + username + '"}';
+        // let obj = JSON.parse(jsontxt);
+        // res.json(obj);
       }
     } else {
       res.status(INVALID_PARAM_ERROR).send('Missing one or more of the required params.');
