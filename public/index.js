@@ -62,19 +62,17 @@
   function loadProfilePage() {
     hideOtherPages("profile-page");
     let name = this.textContent;
+    console.log(name);
     // check the div button content that was clicked
-    if (name === 'Log in/Sign up') {
-      // show log in page
+    if (name === 'Log in/Sign up') { // show log in page
       id('user-view').classList.add('hidden');
       id('login-signup').classList.remove('hidden');
       id('login-btn').addEventListener(getLoginInfo);
       id('sign-btn').addEventListener(performSignUp);
-    } else {
+    } else { // show profile page
       id('user-view').classList.remove('hidden');
       id('login-signup').classList.add('hidden');
-      // show profile page
     }
-    // need to add profile page details
   }
   function getLoginInfo() {
     let username = id('log-name').value;
@@ -121,7 +119,7 @@
   }
 
   function updateProfilePage(res) {
-    id('profile').textContent = res;
+    id('profile').textContent = '' + res;
     loadProfilePage();
   }
 
