@@ -64,15 +64,23 @@
   function initializeHomePage() {
     let item = null;
     let div = null;
+    let div2 = null;
+    let ptag = null;
     let categories = ["top", "bottom", "dress"];
     categories.forEach(async cat => {
       let resp = await fetchItems(cat);
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 3; i++) { // three scrolls
         div = gen('div');
-        for (let j = i * 4; j < i * 4 + 4; j++) {
+        div.classList.add("imageDiv");
+        for (let j = i * 4; j < i * 4 + 4; j++) { // four images in each scroll
+          div2 = gen('div');
+          div2.classList.add('scrollImage');
           item = makeImg(resp[j]["name"] + '.png', 'image of ' + resp[j]["webname"]);
-          item.addEventListener('click', () => console.log("clicked"));
-          div.appendChild(item);
+          div2.addEventListener('click', () => itemView(resp[j]));
+          ptag = gen('p');
+          ptag.textContent = resp[j]["webname"];
+          div2.append(item, ptag);
+          div.appendChild(div2);
         }
         id(cat).appendChild(div);
       }
@@ -100,6 +108,21 @@
     } catch (err) {
       handleError(err);
     }
+  }
+
+  /**
+   * descrip
+   * @param {Response} resp - sdf
+   * No paramaters, returns nothing
+   */
+  function itemView(resp) {
+    id("item-page").classList.remove("hidden");
+    id("home-page").classList.add("hidden");
+    id("profile-page").classList.add("hidden");
+    id("item-name").textContent = resp["webname"];
+    qs("#item-page img").src = "/imgs/clothes/" + resp["name"] + '.png';
+    qs("#item-page img").alt = 'image of ' + resp["webname"];
+    id("item-price").textContent = "$" + resp["price"] + ".00";
   }
 
   /**
