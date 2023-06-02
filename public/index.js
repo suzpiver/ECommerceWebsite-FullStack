@@ -214,6 +214,7 @@
     if (history['transaction-history'].length === 0) {
       // user hasn't purchased anything
     } else {
+      console.log('in else block of displayHistory()')
       // for (let i = 0; i < history['transaction-history'].length; i++) {
       //   genPurchaseItem(history['transaction-history'][i]);
       // }
