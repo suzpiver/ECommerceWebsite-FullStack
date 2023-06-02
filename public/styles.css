@@ -11,6 +11,31 @@ Section: CSE154 AA
   background-color: #FCF9EF;
 }
 
+/* ---------------------------- button styling ----------------------------
+----add your own rules for the button size, border, and orientation------ */
+
+/* color of button when not clicked
+  ------also the font ----------- */
+button:not([disabled]) {
+  background-color: rgb(231, 153, 166);
+  font-family: 'Inter', sans-serif;
+}
+
+/* when you hover over the button add a shadow */
+button:hover:not([disabled]) {
+  box-shadow: 0px 0px 5px #4F4646;
+}
+
+/* Color when button is being clicked */
+button:active {
+  background-color: rgb(190, 113, 126);
+}
+
+/* color when button is disabled */
+button[disabled] {
+  background-color: rgb(117, 100, 102);
+}
+
 /* Start: Header Nav Bar */
 header {
   display: flex;
@@ -172,10 +197,6 @@ header a {
   box-shadow: 0px 0px 5px #4F4646;
 }
 
-button:hover:not([disabled]) {
-  box-shadow: 0px 0px 5px #4F4646;
-}
-
 /* ------------------------------------------------------------------------- */
 /* ------------------ LOGIN & SIGN UP STYLING ------------------------------ */
 /* ------------------------------------------------------------------------- */
@@ -244,35 +265,33 @@ button:hover:not([disabled]) {
   width: 60%;
   padding: 10px;
   margin: 15px;
-  background-color: rgb(231, 153, 166);
+  /* background-color: rgb(231, 153, 166); */
   border: 0;
   color: white;
 }
 
-button:active {
+/* #add-to-cart:active {
   background-color: rgb(190, 113, 126);
-}
+} */
 
-#add-to-cart:active {
-  background-color: rgb(190, 113, 126);
-}
-
-#add-to-cart[disabled] {
+/* #add-to-cart[disabled] {
   background-color: rgb(144, 125, 128);
-}
+} */
 
 /* ------------------------------------------------------------------------- */
 /* ------------------ CHECKOUT PAGE STYLING -------------------------------- */
 /* ------------------------------------------------------------------------- */
+/* center cards on page */
 #checkout-page {
   margin: auto;
   text-align: center;
 }
 
-#checkout-page div, #checkout-page p, #checkout-button {
+#checkout-page div, #checkout-page p {
   background-color: #e3e0d7;
 }
 
+/* outer div aka one card with it's image and text */
 #checkout-page > div {
   display: flex;
   width: 80%;
@@ -283,12 +302,14 @@ button:active {
   margin-bottom: 15px;
 }
 
-#checkout-page img:nth-child(1) {
+/* sizing the image */
+#checkout-page img {
   width: 25%;
   margin: 8px;
   margin-left: 15px;
 }
 
+/* sizing and stacking the ptags(name, price, size) */
 #checkout-page div div {
   font-size: 2vw;
   display: flex;
@@ -296,6 +317,7 @@ button:active {
   justify-content: center;
 }
 
+/* spacing between text */
 #checkout-page p {
   margin: 5px;
 }
@@ -328,7 +350,7 @@ button:active {
   margin: 10px;
 }
 
-.checked {
+#size-buttons .checked {
   background-color: rgb(128, 59, 70);
 }
 
