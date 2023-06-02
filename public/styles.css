@@ -67,7 +67,7 @@ header a {
   display: none;
 }
 
-#home-page, #item-page {
+#home-page, #item-page, #checkout-page {
   font-family: 'Inter', sans-serif;
 }
 
@@ -141,7 +141,7 @@ header a {
   margin: 5px;
 }
 
-.scroll-button:hover, #add-to-cart:hover {
+.scroll-button:hover, #add-to-cart:hover, .remove-button:hover, #checkout-button:hover {
   box-shadow: 0px 0px 5px #4F4646;
 }
 
@@ -185,6 +185,7 @@ header a {
   width: 50%;
 }
 
+/* Single Item Page Styling */
 #item-page {
   margin: auto;
   text-align: center;
@@ -213,46 +214,60 @@ header a {
   color: white;
 }
 
-#add-to-cart:active {
+#add-to-cart:active, #checkout-button:active, .remove-button:active {
   background-color: rgb(190, 113, 126);
 }
 
-/* LOGIN & SIGN UP STYLING */
-#login-signup {
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  width: 90%;
-  padding: 15px;
+/* Checkout Page Styling */
+#checkout-page {
   margin: auto;
-  margin-top: 40px;
+  text-align: center;
 }
 
-#login-signup p {
-  margin: 20px;
+#checkout-page div, #checkout-page p, #checkout-button {
+  background-color: #e3e0d7;
 }
 
-#login-signup h2 {
-  margin: auto;
-}
-
-#login-view, #signup-view {
+#checkout-page > div {
   display: flex;
-  width: 50%;
-  flex-direction: column;
-}
-
-#login-view input, #signup-view input {
-  padding: 5px;
-  margin: 5px;
-}
-
-#login-signup button {
-  background-color: #4F4646;
-  color: #FCF9EF;
+  width: 80%;
+  height: 25vw;
   border: 2px solid #4F4646;
-  border-radius: 30px;
-  padding: 5px;
   margin: auto;
-  width: 50%;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+#checkout-page img:nth-child(1) {
+  width: 25%;
+  margin: 8px;
+  margin-left: 15px;
+}
+
+#checkout-page div div {
+  font-size: 2vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#checkout-page p {
+  margin: 12px;
+}
+
+.remove-button {
+  font-family: 'Inter', sans-serif;
+  width: 80%;
+  height: 10%;
+  font-size: 60%;
+  text-align: center;
+  border: 1px solid #4F4646;
+  margin-left: 13px;
+}
+
+#checkout-button {
+  width: 60%;
+  padding: 10px;
+  border: 0;
+  margin: auto;
 }
