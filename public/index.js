@@ -55,7 +55,7 @@
   ---------------------------------------------------------------------------------------------- */
 
   /**
-   * takes the user to their profile page
+   * Takes the user to their profile page
    * No paramaters, returns nothing
    */
   function loadProfilePage() {
@@ -77,6 +77,8 @@
     } else { // show profile/history page
       hideOtherPages("history-page");
       id('logout-btn').addEventListener('click', logout);
+      // await getPurchaseHistory();
+      getUserInfoForHistory();
     }
   }
 
@@ -110,8 +112,7 @@
   }
 
   /**
-   * description
-   * No paramaters, returns nothing
+   * Gets the log in info a user inputs in the webpage
    */
   function getLoginInfo() {
     let username = id('log-name').value;
@@ -122,8 +123,7 @@
   }
 
   /**
-   * description
-   * No paramaters, returns nothing
+   * Gets the sign in info a user inputs in the webpage
    */
   function getSignInInfo() {
     let username = id('sign-name').value;
@@ -133,7 +133,7 @@
   }
 
   /**
-   * description
+   * API post request to sign an existing user in
    * @param {string} username - descrip
    * @param {string} password -descrip
    * No paramaters, returns nothing
@@ -153,7 +153,7 @@
   }
 
   /**
-   * description
+   * API post request to create a new user
    * @param {string} username - descrip
    * @param {string} email -descrip
    * @param {string} password -descrip
@@ -175,7 +175,7 @@
   }
 
   /**
-   * description
+   * Updates the profile of the now logged-in or signed-up user.
    * @param {APIResponse} name - username of user
    * @param {string} password - password of user
    * No paramaters, returns nothing
@@ -187,6 +187,49 @@
     hideOtherPages('home-page');
   }
 
+  function getUserInfoForHistory() {
+    let username = window.localStorage.getItem('username');
+    let password = window.localStorage.getItem('password');
+    getPurchaseHistory(username, password);
+  }
+
+  async function getPurchaseHistory(username, password) {
+    try {
+      let data = new FormData();
+      data.append('username', username);
+      data.append('password', password);
+      let res = await fetch('/user/history', {method: 'POST', body: data});
+      await statusCheck(res);
+      let history = await res.json();
+      displayHistory(history);
+    } catch (err) {
+      console.log(err);
+      handleError(err);
+    }
+  }
+
+  function displayHistory(history) {
+    console.log(history);
+    console.log(history['transaction-history']);
+    if (history['transaction-history'].length === 0) {
+      // user hasn't purchased anything
+    } else {
+      // for (let i = 0; i < history['transaction-history'].length; i++) {
+      //   genPurchaseItem(history['transaction-history'][i]);
+      // }
+    }
+  }
+
+  function genPurchaseItem(itemInfo) {
+    // let img = itemInfo['name'];
+    // let size = itemInfo['size'];
+    // let date = itemInfo['date-purchased'];
+    // let code = itemInfo['confirmation'];
+  }
+
+  /**
+   * Logs the current user out of the webpage
+   */
   function logout() {
     window.localStorage.clear();
     hideOtherPages('home-page');

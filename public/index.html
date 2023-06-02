@@ -72,7 +72,7 @@ Section: CSE154 AA
           <h2>Login</h2>
           <input type="text" name="name" id="log-name" placeholder="Username">
           <input type="text" name="password" id="log-password" placeholder="Password">
-          <button id="login-btn">Login</button>
+          <button id="login-btn" disabled>Login</button>
         </form>
         <br>
         <p>OR</p>
@@ -82,12 +82,18 @@ Section: CSE154 AA
           <input type="text" name="name" id="sign-name" placeholder="Username">
           <input type="text" name="email" id="sign-email" placeholder="Email">
           <input type="text" name="password" id="sign-password" placeholder="Password">
-          <button id="sign-btn">Sign Up</button>
+          <button id="sign-btn" disabled>Sign Up</button>
         </form>
       </article>
     </section>
     <section id="history-page" class="hidden">
-      <div>hehehehehh</div>
+      <h2>Your Purchase History</h2>
+      <section id="history-box">
+        <article id="bought-item-box">
+          <!-- left: img of item -->
+          <!-- right: date purchase, size, confirmation code -->
+        </article>
+      </section>
       <button id="logout-btn">Log Out</button>
     </section>
     <section id="review-page" class="hidden">

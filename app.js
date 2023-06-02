@@ -93,13 +93,17 @@ app.post('/user/history', async (req, res) => {
   if (req.body.username && req.body.password) {
     try {
       let username = req.body.username;
+      console.log(username);
+      console.log(password);
       let password = req.body.password;
       // check if username & password are valid
       let db = await getDBConnection();
       let query = 'SELECT username FROM users WHERE username = ? AND password = ?';
       let result = await db.get(query, [username, password]);
+      console.log(result);
       if (result) { // valid username & email. so get the info now
-        query = 'SELECT name, webname, size, date, confirmation, email FROM transactions t, users u, items WHERE t.user = ? AND ' +
+        query = 'SELECT name, webname, size, date, confirmation, email FROM ' +
+        'transactions t, users u, items WHERE t.user = ? AND ' +
         'u.username = ? AND t.itemID = items.itemID';
         result = await db.all(query, [username, username]);
         console.log(result);
@@ -173,10 +177,6 @@ app.post('/newuser', async (req, res) => {
         await db.run(query, [username, password, email]);
         await db.close();
         res.type('text').send(username);
-        // let jsontxt = '{ "username" : "' + username + '", "message" : "New user created. ' +
-        // 'Welcome ' + username + '"}';
-        // let obj = JSON.parse(jsontxt);
-        // res.json(obj);
       }
     } else {
       res.status(INVALID_PARAM_ERROR).send('Missing one or more of the required params.');
