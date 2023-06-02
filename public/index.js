@@ -469,7 +469,7 @@
    */
   function hideOtherPages(displayPage) {
     let pages = ["home-page", "item-page", "checkout-page",
-                "login-page", "review-page", "search-page", "history-page"];
+                  "login-page", "review-page", "search-page", "history-page"];
     for (let i = 0; i < pages.length; i++) {
       if (pages[i] === displayPage) {
         // unhide
