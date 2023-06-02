@@ -19,6 +19,10 @@
    */
   function init() {
     initializeHomePage();
+    let currUser = window.localStorage.getItem('user');
+    if (currUser) {
+      id('profile').textContent = currUser;
+    }
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
     id("profile").addEventListener("click", loadProfilePage);
     id("logo").addEventListener("click", () => {
@@ -67,11 +71,42 @@
     if (name === 'Log in/Sign up') { // show log in page
       id('user-view').classList.add('hidden');
       id('login-signup').classList.remove('hidden');
-      id('login-btn').addEventListener(getLoginInfo);
-      id('sign-btn').addEventListener(performSignUp);
+      id('log-password').addEventListener('input', updateLoginBtn);
+      id('sign-password').addEventListener('input', updateSignupBtn);
+      id('login-btn').addEventListener('click', getLoginInfo);
+      id('sign-btn').addEventListener('click', getSignInInfo);
     } else { // show profile page
       id('user-view').classList.remove('hidden');
       id('login-signup').classList.add('hidden');
+    }
+  }
+
+  /**
+   * Checks if all required inputs in login are filled with characters besides white space.
+   * If so, the login button is enabled, otherwise it remains disabled.
+   */
+  function updateLoginBtn() {
+    let user = id('log-name').value.trim();
+    let password = id('log-password').value.trim();
+    if (user.length > 0 && password.length > 0) {
+      id('login-btn').disabled = false;
+    } else {
+      id('login-btn').disabled = true;
+    }
+  }
+
+  /**
+   * Checks if all required inputs in sign in are filled with characters besides white space.
+   * If so, the sign up button is enabled, otherwise it remains disabled.
+   */
+  function updateSignupBtn() {
+    let user = id('sign-name').value.trim();
+    let email = id('sign-email').value.trim();
+    let password = id('sign-password').value.trim();
+    if (user.length > 0 && email.length > 0 && password.length > 0) {
+      id('sign-btn').disabled = false;
+    } else {
+      id('sign-btn').disabled = true;
     }
   }
 
@@ -81,10 +116,23 @@
    */
   function getLoginInfo() {
     let username = id('log-name').value;
+    console.log(username);
     let password = id('log-password').value;
+    console.log(password);
     id('log-name').value = '';
     id('log-password').value = '';
     performLogin(username, password);
+  }
+
+  /**
+   * description
+   * No paramaters, returns nothing
+   */
+  function getSignInInfo() {
+    let username = id('sign-name').value;
+    let email = id('sign-email').value;
+    let password = id('sign-password').value;
+    performSignUp(username, email, password);
   }
 
   /**
@@ -100,22 +148,12 @@
       data.append('password', password);
       let res = await fetch('/login', {method: 'POST', body: data});
       await statusCheck(res);
-      res = await res.text();
-      updateProfilePage(res);
+      let name = await res.text();
+      updateProfilePage(name);
     } catch(err) {
       console.log(err);
       handleError(err);
     }
-  }
-
-  /**
-   * description
-   * No paramaters, returns nothing
-   */
-  function getSignInInfo() {
-    let username = id('sign-name').value;
-    let email = id('sign-email').value;
-    let password = id('sign-password').value;
   }
 
   /**
@@ -134,7 +172,8 @@
       let res = await fetch('/newuser', {method: 'POST', body: data});
       await statusCheck(res);
       res = await res.text();
-      updateProfilePage(res);
+      console.log(res);
+      // updateProfilePage(res);
     } catch (err) {
       handleError(err);
     }
@@ -142,12 +181,17 @@
 
   /**
    * description
-   * @param {Response} res - descrip
+   * @param {Response} name - descrip
    * No paramaters, returns nothing
    */
-  function updateProfilePage(res) {
-    id('profile').textContent = '' + res;
-    loadProfilePage();
+  function updateProfilePage(name) {
+    console.log('from api: ' + name);
+    let msg = gen('p');
+    msg.textContent = 'Welcome ' + name;
+    // remove local storage stuff
+    // post welcome message for like 5 seconds then remove it
+    id('login-signup').classList.add('hidden');
+    id('user-view').classList.remove('hidden');
   }
 
   /**

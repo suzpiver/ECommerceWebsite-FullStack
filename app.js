@@ -59,12 +59,15 @@ app.post("/login", async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
     if (username && password) {
+      console.log('username: ' + username + ' and password: ' + password);
       // check database for a match
       let db = await getDBConnection();
       let query = 'SELECT username FROM users WHERE username = ? AND password = ?';
       let result = await db.get(query, [username, password]);
       await db.close();
       if (result) {
+        console.log('here');
+        console.log(result['username']);
         // res.type('text').send('Welcome ' + result['username']);
         res.type('text').send(result['username']);
       } else {
