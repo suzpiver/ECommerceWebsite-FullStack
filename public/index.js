@@ -19,6 +19,7 @@
    */
   function init() {
     initializeHomePage();
+    setupPageChangeEventListeners();
     let signedIn = window.localStorage.getItem('username');
     if (signedIn) {
       id('profile').textContent = signedIn;
@@ -26,27 +27,10 @@
       id('profile').textContent = 'Log in/Sign up';
     }
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
-    id("profile").addEventListener("click", loadProfilePage);
-    id("logo").addEventListener("click", () => {
-      hideOtherPages("home-page");
-      uncheckSizes();
-    });
     id("add-to-cart").addEventListener("click", addToCart);
-    id("cart").addEventListener("click", () => {
-      hideOtherPages("checkout-page");
-      uncheckSizes();
-    });
-    //id("checkout-button").addEventListener("click", addReview);
+    id("checkout-button").addEventListener("click", checkout);
     qsa("#size-buttons button").forEach(button => {
       button.addEventListener("click", toggleChecked);
-    });
-    id("search-bar").addEventListener("keypress", (event) => {
-      if (event.key === "Enter") {
-        getSearchItems();
-      }
-    });
-    qsa(".homeSwitchButtons").forEach(button => {
-      button.addEventListener("click", toggleViews);
     });
   }
 
@@ -246,6 +230,28 @@
    ---------------------------------------------------------------------------------------------- */
 
   /**
+   * Adds event listeners and configuration to the icons that redirect pages
+   * runs only once at page startup
+   * no params, returns nothing
+   */
+  function setupPageChangeEventListeners() {
+    id("profile").addEventListener("click", loadProfilePage);
+    id("logo").addEventListener("click", () => {
+      hideOtherPages("home-page");
+      uncheckSizes();
+    });
+    id("cart").addEventListener("click", setupCartPage);
+    id("search-bar").addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        getSearchItems();
+      }
+    });
+    qsa(".homeSwitchButtons").forEach(button => {
+      button.addEventListener("click", toggleViews);
+    });
+  }
+
+  /**
    * descrip
    * @param {string} search - filter for search
    * @returns {response} items - json of items
@@ -384,12 +390,19 @@
    * No paramaters, returns nothing
    */
   function itemView(resp) {
-    console.log("showing Item");
     hideOtherPages("item-page");
     id("item-name").textContent = resp["webname"];
     qs("#item-page img").src = "/imgs/clothes/" + resp["name"] + '.png';
+    qs("#item-page img").id = resp["name"];
     qs("#item-page img").alt = 'image of ' + resp["webname"];
     id("item-price").textContent = "$" + resp["price"] + ".00";
+  }
+
+  /**
+   *
+   */
+  function checkInventory() {
+
   }
 
   /**
@@ -440,25 +453,62 @@
 // ------------ CHECKOUT PAGE SECTION START ----------------------------------------------------
 // --------------------------------------------------------------------------------------------
 
-  // /**
-  //  * description
-  //  * No paramaters, returns nothing
-  //  */
-  // async function checkout() {
-  //   try {
-  //     let items = id("checkout-page");
-  //     let data = new FormData();
-  //     data.append('username', username);
-  //     data.append('password', password);
-  //     let res = await fetch('/login', {method: 'POST', body: data});
-  //     await statusCheck(res);
-  //     res = await res.text();
-  //     updateProfilePage(res);
-  //   } catch(err) {
-  //     console.log(err);
-  //     handleError(err);
-  //   }
-  // }
+  /**
+   * configures cart when icon is clicked by switching pages and formatting
+   * the checkout button
+   */
+  function setupCartPage() {
+    if (qs("#checkout-page > p")) {
+      qs("#checkout-page > p").remove();
+    }
+    hideOtherPages("checkout-page");
+    if (!window.localStorage.getItem('username')) {
+      id("checkout-button").disabled = true;
+      id("checkout-button").textContent = "Please sign in to checkout";
+    } else if (!qs("#checkout-page div")) {
+      id("checkout-button").disabled = true;
+      id("checkout-button").textContent = "Cart is Empty";
+    } else {
+      id("checkout-button").disabled = false;
+      id("checkout-button").textContent = "Checkout";
+    }
+    uncheckSizes();
+  }
+
+  /**
+   * Called when the user selects the checkout button
+   * checkout button is only enabled if a user is logged in
+   * formats cart items into a json string and request transaction from server
+   * No paramaters, returns nothing
+   */
+  async function checkout() {
+    try {
+      let data = new FormData();
+      let username = window.localStorage.getItem('username');
+      data.append('username', username);
+      let cart = [];
+      let items = qsa("#checkout-page > div");
+      for (let i = 0; i < items.length; i++) {
+        let shortname = items[i].id.split('_')[1];
+        let size = items[i].childNodes[1].childNodes[2].textContent;
+        cart.push({"shortname": shortname, "size": size});
+      }
+      data.append("items", JSON.stringify(cart));
+      let res = await fetch('/checkout', {method: 'POST', body: data});
+      await statusCheck(res);
+      res = await res.text();
+      id("checkout-button").disabled = true;
+      id("checkout-button").textContent = "Cart is Empty";
+      let ptag = gen('p');
+      ptag.textContent = "Items purchased! Your Confirmation code is: " + res;
+      qsa("#checkout-page > div").forEach(el => {
+        el.remove();
+      });
+      id("checkout-page").prepend(ptag);
+    } catch (err) {
+      handleError(err);
+    }
+  }
 
   /**
    * descrip
@@ -468,6 +518,7 @@
     let div = gen('div');
     let div2 = gen('div');
     let img = qs("#item-page img").cloneNode(true);
+    div.id = "sn_" + qs("#item-page img").id;
     let name = id("item-name").cloneNode(true);
     name.id = '';
     let price = id("item-price").cloneNode(true);
@@ -492,8 +543,7 @@
 // --------------------------------------------------------------------------------------------
 
   // /**
-  //  * If no size is selected, add to cart is disabled
-  //  * No paramaters, returns nothing
+  //  *
   //  */
   // function addReview() {
   //   hideOtherPages("review-page");

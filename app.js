@@ -72,7 +72,7 @@ app.post("/login", async (req, res) => {
         res.type('text').send(result['username']);
       } else {
         res.type('text');
-        res.status(INVALID_PARAM_ERROR).send('Username/password is incorrect.')
+        res.status(INVALID_PARAM_ERROR).send('Username/password is incorrect.');
       }
     } else {
       res.type('text');
@@ -132,32 +132,33 @@ app.post('/user/history', async (req, res) => {
  *description
  */
 app.post("/checkout", async (req, res) => {
-  if (req.body.username && req.body.shortname && req.body.size) {
-    try {
+  try {
+    if (req.body.username && req.body.items) {
+      let items = (JSON.parse(req.body.items));
       let db = await getDBConnection();
+      let code = null;
+      let failed = '';
       let user = await db.get(`SELECT username FROM users WHERE username=?`, req.body.username);
-      let id = await db.get('SELECT itemID from items WHERE name=?', req.body.shortname);
-      if (!id["itemID"]) {
-        res.status(INVALID_PARAM_ERROR).send('This item does not exist');
-      }
-      let inv = await db.get("SELECT * FROM inventory WHERE itemID = ?", id["itemID"]);
-      if (validateTransactionRequest(user, id, inv, res, req)) {
-        let date = new Date().toJSON();
-        let codes = await db.all('SELECT confirmation FROM transactions');
-        let code = confirmationCode(8, true, codes);
-        let query = `INSERT INTO transactions (confirmation, user, date, itemID, size)
-                VALUES (?, ?, ?, ?, ?)`;
-        await db.run(query, [code, req.body.username, date.slice(0, 10),
-              id["itemID"], req.body.size]);
-        await db.run(`UPDATE inventory SET ` + req.body.size + ' = ' + req.body.size + ` - 1
-              WHERE ` + req.body.size + ` > 0 AND itemID = ?`, id["itemID"]);
-        res.type('text').send(code);
-      }
+      if (user) {
+        code = confirmationCode(8, true, await db.all('SELECT confirmation FROM transactions'));
+        for (let i = 0; i < items.length; i++) {
+          let size = items[i]["size"];
+          let id = await db.get('SELECT itemID from items WHERE name=?', items[i]["shortname"]);
+          let inv = await validateTransactionRequest(id, db, res, items[i]["size"]);
+          if (inv) {
+            let date = new Date().toJSON();
+            let query = `INSERT INTO transactions (confirmation, user, date, itemID, size)
+                    VALUES (?, ?, ?, ?, ?)`;
+            await db.run(query, [code, req.body.username, date.slice(0, 10), id["itemID"], size]);
+            await db.run(`UPDATE inventory SET ` + size + ' = ' + size + ` - 1
+                  WHERE ` + size + ` > 0 AND itemID = ?`, id["itemID"]); // dec. inventory
+          } else {failed = "Failed to checkout " + items[i]["shortname"];}
+        }
+        res.type('text').send(code + " " + failed);
+      } else {res.status(INVALID_PARAM_ERROR).send("Invalid User, Not found in user list");}
       await db.close();
-    } catch (err) {
-      res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
-    }
-  } else {res.status(INVALID_PARAM_ERROR).send("Missing one or more of the required params.");}
+    } else {res.status(INVALID_PARAM_ERROR).send("Missing one or more of the required params.");}
+  } catch (err) {res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);}
 });
 
 /**
@@ -219,6 +220,30 @@ app.post("/review", async (req, res) => {
     }
   } else {
     res.status(INVALID_PARAM_ERROR).send("Missing one or more of the required params.");
+  }
+});
+
+/**
+ * ENDPOINT 7
+ *description
+ */
+app.get("/inventory", async (req, res) => {
+  try {
+    let db = await getDBConnection();
+    let result = null;
+    if (req.query.shortname) {
+      result = await db.get(`SELECT i.XS, i.S, i.M, i.L, i.XL, i.XXL  FROM inventory i,
+              items p WHERE p.name=? AND p.itemID=i.itemID`, req.query.shortname);
+    } else {result = await db.all('SELECT * FROM inventory');}
+    if (!result) {
+      res.status(INVALID_PARAM_ERROR).send("No inventory information for this item");
+    } else {
+      res.json(result);
+    }
+    await db.close();
+  } catch (err) {
+    res.type('text');
+    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
   }
 });
 
@@ -287,29 +312,30 @@ function confirmationCode(size, type, currentCodes) {
 }
 
 /**
- * descrip
- * @param {json} user - json containing database response
+ * Checks that item transaction will be valid
  * @param {json} id - json containing database response
- * @param {json} inv - json containing database response
+ * @param {Database} db - json containing database response
  * @param {Response} res - response for the endpoint
- * @param {Request} req - response for the endpoint
- * @returns {boolean} - The database object for the connection.
+ * @param {Request} size - string containing size of item
+ * @returns {json} - json containing inventory for item
  */
-function validateTransactionRequest(user, id, inv, res, req) {
-  if (!user) {
-    res.status(INVALID_PARAM_ERROR).send('This user does not exist');
-    return false;
-  } else if (!id) {
+async function validateTransactionRequest(id, db, res, size) {
+  if (!id) {
     res.status(INVALID_PARAM_ERROR).send('This item does not exist');
-    return false;
-  } else if (!sizes.includes(req.body.size)) {
-    res.status(INVALID_PARAM_ERROR).send('Invalid item size');
-    return false;
-  } else if (inv[req.body.size] === 0) {
-    res.status(INVALID_PARAM_ERROR).send('We are out of this item. Please select another size');
-    return false;
+  } else {
+    let inv = await db.get("SELECT * FROM inventory WHERE itemID=?", id["itemID"]);
+    if (!inv) {
+      res.status(SERVER_ERROR).send(SERVER_ERROR_MSG); // if id passes this isn't client's err
+    } else {
+      if (!sizes.includes(size)) {
+        res.status(INVALID_PARAM_ERROR).send('Invalid item size');
+      } else if (inv[size] === 0) {
+        res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + 'Item out of stock: select another size');
+      }
+      return inv;
+    }
   }
-  return true;
+  return false;
 }
 
 /**
