@@ -94,23 +94,23 @@ app.post('/user/history', async (req, res) => {
     try {
       let username = req.body.username;
       console.log(username);
-      console.log(password);
       let password = req.body.password;
+      console.log(password);
       // check if username & password are valid
       let db = await getDBConnection();
-      let query = 'SELECT username FROM users WHERE username = ? AND password = ?';
+      let query = 'SELECT username, email FROM users WHERE username = ? AND password = ?';
       let result = await db.get(query, [username, password]);
       console.log(result);
       if (result) { // valid username & email. so get the info now
-        query = 'SELECT name, webname, size, date, confirmation, email FROM ' +
-        'transactions t, users u, items WHERE t.user = ? AND ' +
+        query = 'SELECT * FROM transactions t, users u, items WHERE t.user = ? AND ' +
         'u.username = ? AND t.itemID = items.itemID';
-        result = await db.all(query, [username, username]);
-        console.log(result);
+        let transactions = await db.all(query, [username, username]);
+        console.log('result from database');
+        console.log(transactions);
         await db.close();
-        let jsontxt = '{ "user" : "' + username + '", "email" : "' + result[0]['email'] + '", ' +
+        let jsontxt = '{ "user" : "' + username + '", "email" : "' + result['email'] + '", ' +
                       '"transaction-history" : [';
-        jsontxt += processHistoryResults(result);
+        jsontxt += processHistoryResults(transactions);
         let obj = JSON.parse(jsontxt);
         res.json(obj);
       } else {
@@ -267,6 +267,7 @@ async function getDBConnection() {
  * @returns {string} jsontxt - a string version of the json object to be returned from endpoint 3
  */
 function processHistoryResults(result) {
+  console.log(result);
   let jsontxt = '';
   for (let i = 0; i < result.length; i++) {
     if (i > 0) {
