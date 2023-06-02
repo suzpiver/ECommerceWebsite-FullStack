@@ -25,10 +25,19 @@
     }
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
     id("profile").addEventListener("click", loadProfilePage);
-    id("logo").addEventListener("click", () => hideOtherPages("home-page"));
+    id("logo").addEventListener("click", () => {
+      hideOtherPages("home-page");
+      uncheckSizes();
+    });
     id("add-to-cart").addEventListener("click", addToCart);
-    id("cart").addEventListener("click", () => hideOtherPages("checkout-page"));
-    id("checkout-button").addEventListener("click", checkout);
+    id("cart").addEventListener("click", () => {
+      hideOtherPages("checkout-page");
+      uncheckSizes();
+    });
+    //id("checkout-button").addEventListener("click", checkout);
+    qsa("#size-buttons button").forEach(button => {
+      button.addEventListener("click", toggleChecked);
+    });
   }
 
   /**
@@ -55,6 +64,7 @@
    */
   function loadProfilePage() {
     hideOtherPages("profile-page");
+    uncheckSizes();
     let name = this.textContent;
     console.log(name);
     // check the div button content that was clicked
@@ -269,7 +279,6 @@
    * No paramaters, returns nothing
    */
   function addToCart() {
-    // Don't need to hide pages since we aren't actually switching to the cart
     let div = gen('div');
     let div2 = gen('div');
     let img = qs("#item-page img").cloneNode(true);
@@ -277,14 +286,90 @@
     name.id = '';
     let price = id("item-price").cloneNode(true);
     price.id = '';
+    let size = gen('p');
+    size.textContent = qs(".checked").textContent;
     let remove = gen('button');
     remove.textContent = "Remove Item";
     remove.classList.add("remove-button");
-    div2.append(name, price, remove);
+    div2.append(name, price, size, remove);
     div.append(img, div2);
     id("checkout-page").prepend(div);
     remove.addEventListener("click", () => remove.parentNode.parentNode.remove()); // remove item
+    uncheckSizes();
   }
+
+  /**
+   * descrip
+   * @param {object} button - button that is toggled.
+   * No paramaters, returns nothing
+   */
+  function toggleButton(button) {
+    if (this.disabled) {
+      this.disabled = false;
+    } else {
+      this.disabled = true;
+    }
+  }
+
+  /**
+   * descrip
+   * No paramaters, returns nothing
+   */
+  function toggleChecked() {
+    if (this.classList.contains("checked")) {
+      this.classList.remove("checked");
+    } else {
+      if (qs(".checked")) {
+        qs(".checked").classList.remove("checked");
+      }
+      this.classList.add("checked");
+      id("add-to-cart").disabled = true;
+    }
+    isSizeSelected();
+  }
+
+  /**
+   * If no size is selected, add to cart is disabled
+   * No paramaters, returns nothing
+   */
+  function isSizeSelected() {
+    if (qsa(".checked").length < 1) {
+      id("add-to-cart").disabled = true;
+    } else {
+      id("add-to-cart").disabled = false;
+    }
+  }
+
+  /**
+   * If no size is selected, add to cart is disabled
+   * No paramaters, returns nothing
+   */
+  function uncheckSizes() {
+    if (qs(".checked")) {
+      qs(".checked").classList.remove("checked");
+    }
+    isSizeSelected();
+  }
+
+  // /**
+  //  * description
+  //  * No paramaters, returns nothing
+  //  */
+  // async function checkout() {
+  //   try {
+  //     let items = id("checkout-page");
+  //     let data = new FormData();
+  //     data.append('username', username);
+  //     data.append('password', password);
+  //     let res = await fetch('/login', {method: 'POST', body: data});
+  //     await statusCheck(res);
+  //     res = await res.text();
+  //     updateProfilePage(res);
+  //   } catch(err) {
+  //     console.log(err);
+  //     handleError(err);
+  //   }
+  // }
 
   // -------------------------HELPER FUNCTIONS---------------------------
 
