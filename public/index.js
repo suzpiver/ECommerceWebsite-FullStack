@@ -38,6 +38,11 @@
     qsa("#size-buttons button").forEach(button => {
       button.addEventListener("click", toggleChecked);
     });
+    id("search-bar").addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        getSearchItems();
+      }
+    });
   }
 
   /**
@@ -245,6 +250,30 @@
     } catch (err) {
       handleError(err);
     }
+  }
+
+  /**
+   * descrip
+   * No paramaters, returns nothing
+   */
+  function getSearchItems() {
+    hideOtherPages("search-page");
+    let resp = fetchItems(id("search-bar").value);
+    if (resp && resp.length > 0) {
+      let item = null;
+      let div = null;
+      let ptag = null;
+      for (let i =0; i < resp.length; i++) {
+        div = gen("div");
+        item = makeImg("imgs/clothes/" + resp[i]["name"] + '.png','image ' + resp[i]["webname"]);
+        div.addEventListener('click', () => itemView(resp[i]));
+        ptag = gen('p');
+        ptag.textContent = resp[j]["webname"];
+        div2.append(item, ptag);
+        div.appendChild(div2);
+      }
+    }
+
   }
 
   /**

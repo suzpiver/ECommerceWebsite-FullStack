@@ -25,12 +25,12 @@ header a {
   background-color: #4F4646;
 }
 
-#logo, .search-bar {
+#logo, #search-bar {
   margin-right: auto;
   margin-left: 20px;
 }
 
-.search-bar {
+#search-bar {
   border: 0;
   padding: 6px;
   width: 25vw;
@@ -286,7 +286,7 @@ button:active {
 
 #size-buttons {
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
 
 #size-buttons button {
