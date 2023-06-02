@@ -36,7 +36,7 @@
       hideOtherPages("checkout-page");
       uncheckSizes();
     });
-    id("checkout-button").addEventListener("click", addReview);
+    //id("checkout-button").addEventListener("click", addReview);
     qsa("#size-buttons button").forEach(button => {
       button.addEventListener("click", toggleChecked);
     });
@@ -247,7 +247,6 @@
       }
     });
     resp = await fetchItems(null);
-    console.log(resp);
     fillGridView(resp, "grid-home-page");
   }
 
@@ -257,14 +256,20 @@
    * @param {string} section - id of section being appended too
    */
   function fillGridView(resp, section) {
-    console.log("filling grid");
-    for (let i = 0; i < resp.length; i++) {
-      let div = gen('div');
+    if (!(resp.length === 0)) {
+      for (let i = 0; i < resp.length; i++) {
+        let div = gen('div');
+        div.addEventListener('click', () => itemView(resp[i]));
+        let ptag = gen('p');
+        ptag.textContent = resp[i]["webname"];
+        let item = makeImg("imgs/clothes/" + resp[i]["name"] + '.png', resp[i]["webname"]);
+        div.append(item, ptag);
+        id(section).append(div);
+      }
+    } else {
       let ptag = gen('p');
-      ptag.textContent = resp[i]["webname"];
-      let item = makeImg("imgs/clothes/" + resp[i]["name"] + '.png', resp[i]["webname"]);
-      div.append(item, ptag);
-      id(section).append(div);
+      ptag.textContent = "No Items Match this Search";
+      id(section).append(ptag);
     }
   }
 
@@ -273,15 +278,13 @@
    */
   function toggleViews() {
     if (id('compact-home-page').classList.contains("hidden")) {
-      console.log('hiding grid');
-      id("grid-button").classList.add("hidden");
-      id("compact-button").classList.remove("hidden");
+      id("grid-button").classList.remove("hidden");
+      id("compact-button").classList.add("hidden");
       id('grid-home-page').classList.add("hidden");
       id('compact-home-page').classList.remove("hidden");
     } else {
-      console.log('hiding scroll');
-      id("grid-button").classList.remove("hidden");
-      id("compact-button").classList.add("hidden");
+      id("grid-button").classList.add("hidden");
+      id("compact-button").classList.remove("hidden");
       id('grid-home-page').classList.remove("hidden");
       id('compact-home-page').classList.add("hidden");
     }
@@ -291,15 +294,15 @@
    * scrolls the images within a container to the next set of images
    * No paramaters, returns nothing
    */
-    function scrollBehavior() {
-      // let parentID = this.parentNode.firstElementChild.nextElementSibling.id;
-      let scroller = qs("#" + this.parentNode.id + " .scroller-content");
-      if (this.classList.contains("left-scroll")) {
-        scroller.scrollLeft -= qs("#" + scroller.id + " div").offsetWidth;
-      } else {
-        scroller.scrollLeft += qs("#" + scroller.id + " div").offsetWidth;
-      }
+  function scrollBehavior() {
+    // let parentID = this.parentNode.firstElementChild.nextElementSibling.id;
+    let scroller = qs("#" + this.parentNode.id + " .scroller-content");
+    if (this.classList.contains("left-scroll")) {
+      scroller.scrollLeft -= qs("#" + scroller.id + " div").offsetWidth;
+    } else {
+      scroller.scrollLeft += qs("#" + scroller.id + " div").offsetWidth;
     }
+  }
 
   //----------------------------------------------------------------------------------------------
   // ------------ HOME PAGE SECTION END --------------------------------------------------------
@@ -313,23 +316,12 @@
    * descrip
    * No paramaters, returns nothing
    */
-  function getSearchItems() {
+  async function getSearchItems() {
+    id("search-page").innerHTML = '';
     hideOtherPages("search-page");
-    let resp = fetchItems(id("search-bar").value);
-    if (resp && resp.length > 0) {
-      let item = null;
-      let div = null;
-      let ptag = null;
-      for (let i =0; i < resp.length; i++) {
-        div = gen("div");
-        item = makeImg("imgs/clothes/" + resp[i]["name"] + '.png','image ' + resp[i]["webname"]);
-        div.addEventListener('click', () => itemView(resp[i]));
-        ptag = gen('p');
-        ptag.textContent = resp[j]["webname"];
-        div2.append(item, ptag);
-        div.appendChild(div2);
-      }
-    }
+    let resp = await fetchItems(id("search-bar").value);
+    fillGridView(resp, "search-page");
+    id("search-bar").value = '';
   }
 
   //----------------------------------------------------------------------------------------------
@@ -344,6 +336,7 @@
    * No paramaters, returns nothing
    */
   function itemView(resp) {
+    console.log("showing Item");
     hideOtherPages("item-page");
     id("item-name").textContent = resp["webname"];
     qs("#item-page img").src = "/imgs/clothes/" + resp["name"] + '.png';
@@ -450,13 +443,13 @@
 // ------------ REVIEW PAGE SECTION START ------------------------------------------------------
 // --------------------------------------------------------------------------------------------
 
-  /**
-   * If no size is selected, add to cart is disabled
-   * No paramaters, returns nothing
-   */
-  function addReview() {
-    hideOtherPages("review-page");
-  }
+  // /**
+  //  * If no size is selected, add to cart is disabled
+  //  * No paramaters, returns nothing
+  //  */
+  // function addReview() {
+  //   hideOtherPages("review-page");
+  // }
 
 //--------------------------------------------------------------------------------------------
 // ------------ CHECKOUT PAGE SECTION START ----------------------------------------------------
@@ -464,23 +457,23 @@
 
   // -------------------------HELPER FUNCTIONS-------------------------------------------------
 
-    /**
+  /**
    * Hides all other pages besides the one that will be displayed
    * @param {string} displayPage - id of the page that will be displayed
    */
-    function hideOtherPages(displayPage) {
-      let pages = ["home-page", "item-page", "checkout-page",
-                    "profile-page", "review-page", "search-page"];
-      for (let i = 0; i < pages.length; i++) {
-        if (pages[i] === displayPage) {
-          // unhide
-          id(displayPage).classList.remove('hidden');
-        } else {
-          // hide
-          id(pages[i]).classList.add('hidden');
-        }
+  function hideOtherPages(displayPage) {
+    let pages = ["home-page", "item-page", "checkout-page",
+                  "profile-page", "review-page", "search-page"];
+    for (let i = 0; i < pages.length; i++) {
+      if (pages[i] === displayPage) {
+        // unhide
+        id(displayPage).classList.remove('hidden');
+      } else {
+        // hide
+        id(pages[i]).classList.add('hidden');
       }
     }
+  }
 
   /**
    * Creates a new image object and sets it's src and alt text
