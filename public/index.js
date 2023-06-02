@@ -59,21 +59,24 @@
    * No paramaters, returns nothing
    */
   function loadProfilePage() {
-    hideOtherPages("profile-page");
     uncheckSizes();
     let name = this.textContent;
-    console.log(name);
     // check the div button content that was clicked
     if (name === 'Log in/Sign up') { // show log in page
-      id('user-view').classList.add('hidden');
-      id('login-signup').classList.remove('hidden');
-      id('log-password').addEventListener('input', updateLoginBtn);
-      id('sign-password').addEventListener('input', updateSignupBtn);
+      hideOtherPages("login-page");
+      let logFields = ['log-name', 'log-password'];
+      let signFields = ['sign-name', 'sign-email', 'sign-password'];
+      for (let i = 0; i < logFields.length; i++) {
+        id(logFields[i]).addEventListener('input', updateLoginBtn);
+      }
+      for (let i = 0; i < signFields.length; i++) {
+        id(signFields[i]).addEventListener('input', updateSignupBtn);
+      }
       id('login-btn').addEventListener('click', getLoginInfo);
       id('sign-btn').addEventListener('click', getSignInInfo);
-    } else { // show profile page
-      id('user-view').classList.remove('hidden');
-      id('login-signup').classList.add('hidden');
+    } else { // show profile/history page
+      hideOtherPages("history-page");
+      id('logout-btn').addEventListener('click', logout);
     }
   }
 
@@ -112,9 +115,7 @@
    */
   function getLoginInfo() {
     let username = id('log-name').value;
-    console.log(username);
     let password = id('log-password').value;
-    console.log(password);
     id('log-name').value = '';
     id('log-password').value = '';
     performLogin(username, password);
@@ -147,7 +148,6 @@
       let name = await res.text();
       updateProfilePage(name, password);
     } catch(err) {
-      console.log(err);
       handleError(err);
     }
   }
@@ -168,7 +168,6 @@
       let res = await fetch('/newuser', {method: 'POST', body: data});
       await statusCheck(res);
       res = await res.text();
-      console.log(res);
       // updateProfilePage(res);
     } catch (err) {
       handleError(err);
@@ -185,10 +184,13 @@
     window.localStorage.setItem('username', name);
     window.localStorage.setItem('password', password);
     id('profile').textContent = name;
-    // remove local storage stuff
-    // post welcome message for like 5 seconds then remove it
-    id('login-signup').classList.add('hidden');
-    id('history-page').classList.remove('hidden');
+    hideOtherPages('home-page');
+  }
+
+  function logout() {
+    window.localStorage.clear();
+    hideOtherPages('home-page');
+    id('profile').textContent = 'Log in/Sign up';
   }
 
   /**----------------------------------------------------------------------------------------------
@@ -474,7 +476,7 @@
    */
   function hideOtherPages(displayPage) {
     let pages = ["home-page", "item-page", "checkout-page",
-                  "profile-page", "review-page", "search-page"];
+                  "login-page", "review-page", "search-page", "history-page"];
     for (let i = 0; i < pages.length; i++) {
       if (pages[i] === displayPage) {
         // unhide
