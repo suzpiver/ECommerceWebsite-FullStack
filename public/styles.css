@@ -141,7 +141,11 @@ header a {
   margin: 5px;
 }
 
-.scroll-button:hover, #add-to-cart:hover, .remove-button:hover, #checkout-button:hover {
+.scroll-button:hover { /*# add-to-cart:hover, .remove-button:hover, #checkout-button:hover { */
+  box-shadow: 0px 0px 5px #4F4646;
+}
+
+button:hover:not([disabled]) {
   box-shadow: 0px 0px 5px #4F4646;
 }
 
@@ -214,8 +218,16 @@ header a {
   color: white;
 }
 
-#add-to-cart:active, #checkout-button:active, .remove-button:active {
+button:active {
   background-color: rgb(190, 113, 126);
+}
+
+#add-to-cart:active {
+  background-color: rgb(190, 113, 126);
+}
+
+#add-to-cart[disabled] {
+  background-color: rgb(144, 125, 128);
 }
 
 /* Checkout Page Styling */
@@ -252,7 +264,7 @@ header a {
 }
 
 #checkout-page p {
-  margin: 12px;
+  margin: 5px;
 }
 
 .remove-button {
@@ -270,4 +282,19 @@ header a {
   padding: 10px;
   border: 0;
   margin: auto;
+}
+
+#size-buttons {
+  display: flex;
+  align-items: center;
+}
+
+#size-buttons button {
+  width: 30px;
+  height: 30px;
+  margin: 10px;
+}
+
+.checked {
+  background-color: rgb(128, 59, 70);
 }
