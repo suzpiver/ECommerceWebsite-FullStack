@@ -19,9 +19,9 @@
    */
   function init() {
     initializeHomePage();
-    let currUser = window.localStorage.getItem('user');
-    if (currUser) {
-      id('profile').textContent = currUser;
+    let signedIn = window.localStorage.getItem('username');
+    if (signedIn) {
+      id('profile').textContent = signedIn;
     } else {
       id('profile').textContent = 'Log in/Sign up';
     }
@@ -48,24 +48,6 @@
     qsa(".homeSwitchButtons").forEach(button => {
       button.addEventListener("click", toggleViews);
     });
-  }
-
-  /**
-   * Hides all other pages besides the one that will be displayed
-   * @param {string} displayPage - id of the page that will be displayed
-   */
-  function hideOtherPages(displayPage) {
-    let pages = ["home-page", "item-page", "checkout-page",
-                  "profile-page", "review-page", "search-page"];
-    for (let i = 0; i < pages.length; i++) {
-      if (pages[i] === displayPage) {
-        // unhide
-        id(displayPage).classList.remove('hidden');
-      } else {
-        // hide
-        id(pages[i]).classList.add('hidden');
-      }
-    }
   }
 
   // ----------------------------------------------------------------------------------------------
@@ -163,7 +145,7 @@
       let res = await fetch('/login', {method: 'POST', body: data});
       await statusCheck(res);
       let name = await res.text();
-      updateProfilePage(name);
+      updateProfilePage(name, password);
     } catch(err) {
       console.log(err);
       handleError(err);
@@ -195,17 +177,18 @@
 
   /**
    * description
-   * @param {Response} name - descrip
+   * @param {APIResponse} name - username of user
+   * @param {string} password - password of user
    * No paramaters, returns nothing
    */
-  function updateProfilePage(name) {
-    console.log('from api: ' + name);
-    let msg = gen('p');
-    msg.textContent = 'Welcome ' + name;
+  function updateProfilePage(name, password) {
+    window.localStorage.setItem('username', name);
+    window.localStorage.setItem('password', password);
+    id('profile').textContent = name;
     // remove local storage stuff
     // post welcome message for like 5 seconds then remove it
     id('login-signup').classList.add('hidden');
-    id('user-view').classList.remove('hidden');
+    id('history-page').classList.remove('hidden');
   }
 
   // ----------------------------------------------------------------------------------------------
@@ -456,7 +439,27 @@
     hideOtherPages("review-page");
   }
 
-  // -------------------------HELPER FUNCTIONS---------------------------
+  // ----------------------------------------------------------------------------------------------
+  // ------------ HELPER FUNCTIONS ----------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------
+
+  /**
+   * Hides all other pages besides the one that will be displayed
+   * @param {string} displayPage - id of the page that will be displayed
+   */
+  function hideOtherPages(displayPage) {
+    let pages = ["home-page", "item-page", "checkout-page",
+                  "profile-page", "review-page", "search-page"];
+    for (let i = 0; i < pages.length; i++) {
+      if (pages[i] === displayPage) {
+        // unhide
+        id(displayPage).classList.remove('hidden');
+      } else {
+        // hide
+        id(pages[i]).classList.add('hidden');
+      }
+    }
+  }
 
   /**
    * Creates a new image object and sets it's src and alt text
