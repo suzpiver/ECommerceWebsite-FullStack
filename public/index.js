@@ -401,9 +401,11 @@
   /**
    *
    */
-  function checkInventory() {
+  // function checkInventory(shortname) {
+  //   if (shortname)
 
-  }
+
+  // }
 
   /**
    * descrip
