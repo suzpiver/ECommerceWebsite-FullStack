@@ -16,7 +16,7 @@ Section: CSE154 AA
   <body>
     <header>
       <a href="#"><img id="logo" src="imgs/logo.jpeg" alt="logo"></a>
-      <input type="text" class="search-bar" placeholder="Search...">
+      <input type="text" id="search-bar" placeholder="Search...">
       <nav>
         <ul class="nav-links">
           <li><div id="cart">Cart</div></li>
@@ -85,7 +85,14 @@ Section: CSE154 AA
         <button id="logout-btn">Log Out</button>
       </article>
     </section>
-    <section id="review-page" class="hidden"></section>
+    <section id="review-page" class="hidden">
+      <form id="login-view">
+        <h2>Rating</h2>
+        <input type="text" name="rating" id="rating" placeholder="Rating(1-5)">
+        <input type="text" name="comments" id="comments" placeholder="Comments">
+        <button id="submit-review">Submit Review</button>
+      </form>
+    </section>
     <section id="search-page" class="hidden"></section>
     <footer></footer>
   </body>
