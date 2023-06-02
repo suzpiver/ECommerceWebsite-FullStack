@@ -79,6 +79,28 @@ header a {
   margin-bottom: 15px;
 }
 
+.homeSwitchButtons {
+  width: 20%;
+  height: 30%;
+  margin: 10px;
+  border-radius: 10px;
+}
+
+#grid-home-page {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#grid-home-page div {
+  width: 30%;
+  margin: 10px;
+}
+
+#grid-home-page img {
+  width: 810%;
+}
+
 .scroller {
   display: flex;
   align-items: center;

@@ -43,6 +43,9 @@
         getSearchItems();
       }
     });
+    qsa(".homeSwitchButtons").forEach(button => {
+      button.addEventListener("click", toggleViews);
+    });
   }
 
   /**
@@ -203,24 +206,21 @@
    * fetches 12 of each top, bottom, and dress, and adds it to the home page for viewing
    * No paramaters, returns nothing
    */
-  function initializeHomePage() {
+  async function initializeHomePage() {
     hideOtherPages("home-page");
-    let item = null;
-    let div = null;
-    let div2 = null;
-    let ptag = null;
+    let resp = null;
     let categories = ["top", "bottom", "dress"];
     categories.forEach(async cat => {
-      let resp = await fetchItems(cat);
+      resp = await fetchItems(cat);
       for (let i = 0; i < 3; i++) { // three scrolls
-        div = gen('div');
+        let div = gen('div');
         div.classList.add("imageDiv");
         for (let j = i * 4; j < i * 4 + 4; j++) { // four images in each scroll
-          div2 = gen('div');
+          let div2 = gen('div');
           div2.classList.add('scrollImage');
-          item = makeImg("imgs/clothes/" + resp[j]["name"] + '.png','image ' + resp[j]["webname"]);
+          let item = makeImg("imgs/clothes/" + resp[j]["name"] + '.png', resp[j]["webname"]);
           div2.addEventListener('click', () => itemView(resp[j]));
-          ptag = gen('p');
+          let ptag = gen('p');
           ptag.textContent = resp[j]["webname"];
           div2.append(item, ptag);
           div.appendChild(div2);
@@ -228,6 +228,44 @@
         id(cat).appendChild(div);
       }
     });
+    resp = await fetchItems(null);
+    console.log(resp);
+    fillGridView(resp);
+  }
+
+  /**
+   * descrop
+   * @param {Response} resp - list of items from server as json
+   */
+  function fillGridView(resp) {
+    console.log("filling grid");
+    for (let i = 0; i < resp.length; i++) {
+      let div = gen('div');
+      let ptag = gen('p');
+      ptag.textContent = resp[i]["webname"];
+      let item = makeImg("imgs/clothes/" + resp[i]["name"] + '.png', resp[i]["webname"]);
+      div.append(item, ptag);
+      id("grid-home-page").append(div);
+    }
+  }
+
+  /**
+   * dscrip
+   */
+  function toggleViews() {
+    if (id('compact-home-page').classList.contains("hidden")) {
+      console.log('hiding grid');
+      id("grid-button").classList.add("hidden");
+      id("compact-button").classList.remove("hidden");
+      id('grid-home-page').classList.add("hidden");
+      id('compact-home-page').classList.remove("hidden");
+    } else {
+      console.log('hiding scroll');
+      id("grid-button").classList.remove("hidden");
+      id("compact-button").classList.add("hidden");
+      id('grid-home-page').classList.remove("hidden");
+      id('compact-home-page').classList.add("hidden");
+    }
   }
 
   /**
