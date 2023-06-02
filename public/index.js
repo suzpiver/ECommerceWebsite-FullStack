@@ -167,8 +167,8 @@
       data.append('password', password);
       let res = await fetch('/newuser', {method: 'POST', body: data});
       await statusCheck(res);
-      res = await res.text();
-      // updateProfilePage(res);
+      let newUser = await res.text();
+      updateProfilePage(newUser, password);
     } catch (err) {
       handleError(err);
     }
