@@ -191,9 +191,35 @@
     id('history-page').classList.remove('hidden');
   }
 
-  // ----------------------------------------------------------------------------------------------
-  // ------------ PROFILE PAGE SECTION END --------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------
+  /**----------------------------------------------------------------------------------------------
+   * ------------ PROFILE PAGE SECTION END --------------------------------------------------------
+   */ ----------------------------------------------------------------------------------------------
+
+  /**----------------------------------------------------------------------------------------------
+   * ------------ HOME PAGE SECTION START --------------------------------------------------------
+   */ ----------------------------------------------------------------------------------------------
+
+  /**
+   * descrip
+   * @param {string} search - filter for search
+   * @returns {response} items - json of items
+   * No paramaters, returns nothing
+   */
+  async function fetchItems(search) {
+    try {
+      let resp = null;
+      if (search) {
+        resp = await fetch("/clothes?item=" + search);
+      } else {
+        resp = await fetch("/clothes");
+      }
+      await statusCheck(resp);
+      let items = await resp.json();
+      return items;
+    } catch (err) {
+      handleError(err);
+    }
+  }
 
   /**
    * fetches 12 of each top, bottom, and dress, and adds it to the home page for viewing
@@ -262,26 +288,26 @@
   }
 
   /**
-   * descrip
-   * @param {string} search - filter for search
-   * @returns {response} items - json of items
+   * scrolls the images within a container to the next set of images
    * No paramaters, returns nothing
    */
-  async function fetchItems(search) {
-    try {
-      let resp = null;
-      if (search) {
-        resp = await fetch("/clothes?item=" + search);
+    function scrollBehavior() {
+      // let parentID = this.parentNode.firstElementChild.nextElementSibling.id;
+      let scroller = qs("#" + this.parentNode.id + " .scroller-content");
+      if (this.classList.contains("left-scroll")) {
+        scroller.scrollLeft -= qs("#" + scroller.id + " div").offsetWidth;
       } else {
-        resp = await fetch("/clothes");
+        scroller.scrollLeft += qs("#" + scroller.id + " div").offsetWidth;
       }
-      await statusCheck(resp);
-      let items = await resp.json();
-      return items;
-    } catch (err) {
-      handleError(err);
     }
-  }
+
+  /**----------------------------------------------------------------------------------------------
+   * ------------ HOME PAGE SECTION END --------------------------------------------------------
+   */ ----------------------------------------------------------------------------------------------
+
+  /**----------------------------------------------------------------------------------------------
+  * ------------ SEARCH PAGE SECTION START --------------------------------------------------------
+  */ ----------------------------------------------------------------------------------------------
 
   /**
    * descrip
@@ -304,23 +330,15 @@
         div.appendChild(div2);
       }
     }
-
   }
 
-  /**
-   * scrolls the images within a container to the next set of images
-   * No paramaters, returns nothing
-   */
-  function scrollBehavior() {
-    // let parentID = this.parentNode.firstElementChild.nextElementSibling.id;
-    let scroller = qs("#" + this.parentNode.id + " .scroller-content");
-    if (this.classList.contains("left-scroll")) {
-      scroller.scrollLeft -= qs("#" + scroller.id + " div").offsetWidth;
-    } else {
-      scroller.scrollLeft += qs("#" + scroller.id + " div").offsetWidth;
-    }
-  }
+/**----------------------------------------------------------------------------------------------
+  * ------------ SEARCH PAGE SECTION END --------------------------------------------------------
+  */ ----------------------------------------------------------------------------------------------
 
+/**----------------------------------------------------------------------------------------------
+  * ------------ ITEM PAGE SECTION START --------------------------------------------------------
+  */ ----------------------------------------------------------------------------------------------
   /**
    * descrip
    * @param {Response} resp - sdf
@@ -332,43 +350,6 @@
     qs("#item-page img").src = "/imgs/clothes/" + resp["name"] + '.png';
     qs("#item-page img").alt = 'image of ' + resp["webname"];
     id("item-price").textContent = "$" + resp["price"] + ".00";
-  }
-
-  /**
-   * descrip
-   * No paramaters, returns nothing
-   */
-  function addToCart() {
-    let div = gen('div');
-    let div2 = gen('div');
-    let img = qs("#item-page img").cloneNode(true);
-    let name = id("item-name").cloneNode(true);
-    name.id = '';
-    let price = id("item-price").cloneNode(true);
-    price.id = '';
-    let size = gen('p');
-    size.textContent = qs(".checked").textContent;
-    let remove = gen('button');
-    remove.textContent = "Remove Item";
-    remove.classList.add("remove-button");
-    div2.append(name, price, size, remove);
-    div.append(img, div2);
-    id("checkout-page").prepend(div);
-    remove.addEventListener("click", () => remove.parentNode.parentNode.remove()); // remove item
-    uncheckSizes();
-  }
-
-  /**
-   * descrip
-   * @param {object} button - button that is toggled.
-   * No paramaters, returns nothing
-   */
-  function toggleButton(button) {
-    if (this.disabled) {
-      this.disabled = false;
-    } else {
-      this.disabled = true;
-    }
   }
 
   /**
@@ -411,6 +392,14 @@
     isSizeSelected();
   }
 
+/**----------------------------------------------------------------------------------------------
+  * ------------ ITEM PAGE SECTION END ----------------------------------------------------------
+  */ --------------------------------------------------------------------------------------------
+
+/**----------------------------------------------------------------------------------------------
+  * ------------ CHECKOUT PAGE SECTION START ----------------------------------------------------
+  */ --------------------------------------------------------------------------------------------
+
   // /**
   //  * description
   //  * No paramaters, returns nothing
@@ -432,6 +421,37 @@
   // }
 
   /**
+   * descrip
+   * No paramaters, returns nothing
+   */
+  function addToCart() {
+    let div = gen('div');
+    let div2 = gen('div');
+    let img = qs("#item-page img").cloneNode(true);
+    let name = id("item-name").cloneNode(true);
+    name.id = '';
+    let price = id("item-price").cloneNode(true);
+    price.id = '';
+    let size = gen('p');
+    size.textContent = qs(".checked").textContent;
+    let remove = gen('button');
+    remove.textContent = "Remove Item";
+    remove.classList.add("remove-button");
+    div2.append(name, price, size, remove);
+    div.append(img, div2);
+    id("checkout-page").prepend(div);
+    remove.addEventListener("click", () => remove.parentNode.parentNode.remove()); // remove item
+    uncheckSizes();
+  }
+/**----------------------------------------------------------------------------------------------
+  * ------------ CHECKOUT PAGE SECTION END ----------------------------------------------------
+  */ --------------------------------------------------------------------------------------------
+
+/**----------------------------------------------------------------------------------------------
+  * ------------ REVIEW PAGE SECTION START ------------------------------------------------------
+  */ --------------------------------------------------------------------------------------------
+
+  /**
    * If no size is selected, add to cart is disabled
    * No paramaters, returns nothing
    */
@@ -439,8 +459,30 @@
     hideOtherPages("review-page");
   }
 
+/**--------------------------------------------------------------------------------------------
+  * ------------ CHECKOUT PAGE SECTION START ----------------------------------------------------
+  */ --------------------------------------------------------------------------------------------
+
   // ----------------------------------------------------------------------------------------------
-  // ------------ HELPER FUNCTIONS ----------------------------------------------------------------
+  // ------------ HELPER FUNCTIONS --------------------------------------------------------------------------------------
+
+    /**
+   * Hides all other pages besides the one that will be displayed
+   * @param {string} displayPage - id of the page that will be displayed
+   */
+    function hideOtherPages(displayPage) {
+      let pages = ["home-page", "item-page", "checkout-page",
+                    "profile-page", "review-page", "search-page"];
+      for (let i = 0; i < pages.length; i++) {
+        if (pages[i] === displayPage) {
+          // unhide
+          id(displayPage).classList.remove('hidden');
+        } else {
+          // hide
+          id(pages[i]).classList.add('hidden');
+        }
+      }
+    }
   // ----------------------------------------------------------------------------------------------
 
   /**
