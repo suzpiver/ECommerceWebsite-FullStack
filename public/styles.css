@@ -11,7 +11,17 @@ Section: CSE154 AA
   background-color: #FCF9EF;
 }
 
-/* Start: Header Nav Bar */
+.hidden {
+  display: none;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* ------------------------------------------------------------------------- */
+/* ------------------ NAV BAR STYLING -------------------------------------- */
+/* ------------------------------------------------------------------------- */
 header {
   display: flex;
   justify-content: flex-end;
@@ -61,17 +71,9 @@ header a {
   background-color: #4F4646;
 }
 
-/* End: Header Nav Bar */
-
-.hidden {
-  display: none;
-}
-
-#home-page, #item-page, #checkout-page {
-  font-family: 'Inter', sans-serif;
-}
-
-/* Home Page Development */
+/* ------------------------------------------------------------------------- */
+/* ------------------ HOMEPAGE STYLING ------------------------------------- */
+/* ------------------------------------------------------------------------- */
 #home-page h2 {
   font-size: 3vw;
   margin-top: 20px;
@@ -171,7 +173,9 @@ button:hover:not([disabled]) {
   box-shadow: 0px 0px 5px #4F4646;
 }
 
-/* LOGIN & SIGN UP STYLING */
+/* ------------------------------------------------------------------------- */
+/* ------------------ LOGIN & SIGN UP STYLING ------------------------------ */
+/* ------------------------------------------------------------------------- */
 #login-signup {
   display: flex;
   align-items: center;
@@ -211,7 +215,9 @@ button:hover:not([disabled]) {
   width: 50%;
 }
 
-/* Single Item Page Styling */
+/* ------------------------------------------------------------------------- */
+/* ------------------ SINGLE ITEM PAGE STYLING ----------------------------- */
+/* ------------------------------------------------------------------------- */
 #item-page {
   margin: auto;
   text-align: center;
@@ -252,7 +258,9 @@ button:active {
   background-color: rgb(144, 125, 128);
 }
 
-/* Checkout Page Styling */
+/* ------------------------------------------------------------------------- */
+/* ------------------ CHECKOUT PAGE STYLING -------------------------------- */
+/* ------------------------------------------------------------------------- */
 #checkout-page {
   margin: auto;
   text-align: center;
@@ -319,4 +327,11 @@ button:active {
 
 .checked {
   background-color: rgb(128, 59, 70);
+}
+
+/* ------------------------------------------------------------------------- */
+/* ------------------ PURCHASE HISTORY PAGE STYLING ------------------------ */
+/* ------------------------------------------------------------------------- */
+#history-page h2 {
+  text-align: center;
 }
