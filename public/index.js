@@ -30,7 +30,7 @@
       hideOtherPages("checkout-page");
       uncheckSizes();
     });
-    //id("checkout-button").addEventListener("click", checkout);
+    id("checkout-button").addEventListener("click", addReview);
     qsa("#size-buttons button").forEach(button => {
       button.addEventListener("click", toggleChecked);
     });
@@ -326,6 +326,14 @@
   //     handleError(err);
   //   }
   // }
+
+  /**
+   * If no size is selected, add to cart is disabled
+   * No paramaters, returns nothing
+   */
+  function addReview() {
+    hideOtherPages("review-page");
+  }
 
   // -------------------------HELPER FUNCTIONS---------------------------
 
