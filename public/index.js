@@ -470,7 +470,11 @@
   function hideOtherPages(displayPage) {
     let pages = ["home-page", "item-page", "checkout-page",
 <<<<<<< HEAD
+<<<<<<< HEAD
                   "profile-page", "review-page", "search-page"];
+=======
+                  "login-page", "review-page", "search-page", "history-page"];
+>>>>>>> 9f32c3faaab7c03e156638c00389ef4b4737dee4
 =======
                   "login-page", "review-page", "search-page", "history-page"];
 >>>>>>> 9f32c3faaab7c03e156638c00389ef4b4737dee4
