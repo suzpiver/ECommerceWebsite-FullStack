@@ -398,6 +398,13 @@
   }
 
   /**
+   *
+   */
+  function checkInventory() {
+
+  }
+
+  /**
    * descrip
    * No paramaters, returns nothing
    */
@@ -535,8 +542,7 @@
 // --------------------------------------------------------------------------------------------
 
   // /**
-  //  * If no size is selected, add to cart is disabled
-  //  * No paramaters, returns nothing
+  //  *
   //  */
   // function addReview() {
   //   hideOtherPages("review-page");

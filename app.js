@@ -72,7 +72,7 @@ app.post("/login", async (req, res) => {
         res.type('text').send(result['username']);
       } else {
         res.type('text');
-        res.status(INVALID_PARAM_ERROR).send('Username/password is incorrect.')
+        res.status(INVALID_PARAM_ERROR).send('Username/password is incorrect.');
       }
     } else {
       res.type('text');
@@ -220,6 +220,30 @@ app.post("/review", async (req, res) => {
     }
   } else {
     res.status(INVALID_PARAM_ERROR).send("Missing one or more of the required params.");
+  }
+});
+
+/**
+ * ENDPOINT 7
+ *description
+ */
+app.get("/inventory", async (req, res) => {
+  try {
+    let db = await getDBConnection();
+    let result = null;
+    if (req.query.shortname) {
+      result = await db.get(`SELECT i.XS, i.S, i.M, i.L, i.XL, i.XXL  FROM inventory i,
+              items p WHERE p.name=? AND p.itemID=i.itemID`, req.query.shortname);
+    } else {result = await db.all('SELECT * FROM inventory');}
+    if (!result) {
+      res.status(INVALID_PARAM_ERROR).send("No inventory information for this item");
+    } else {
+      res.json(result);
+    }
+    await db.close();
+  } catch (err) {
+    res.type('text');
+    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
   }
 });
 
