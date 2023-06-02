@@ -22,6 +22,8 @@
     let currUser = window.localStorage.getItem('user');
     if (currUser) {
       id('profile').textContent = currUser;
+    } else {
+      id('profile').textContent = 'Log in/Sign up';
     }
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
     id("profile").addEventListener("click", loadProfilePage);
