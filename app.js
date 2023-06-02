@@ -335,7 +335,7 @@ async function newUserChecks(res, username, password, email) {
         await db.close();
         res.status(INVALID_PARAM_ERROR);
         res.send('Account already exists under this email address.' +
-        'Please contact helpdesk at freePeopleAPI@help.com for assistance logging in');
+        ' Please contact helpdesk at freePeopleAPI@help.com for assistance logging in');
       } else {
         // check if username exists in database already
         query = 'SELECT username FROM users WHERE username = ?';

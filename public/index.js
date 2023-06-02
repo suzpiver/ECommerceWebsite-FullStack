@@ -19,9 +19,9 @@
    */
   function init() {
     initializeHomePage();
-    let currUser = window.localStorage.getItem('user');
-    if (currUser) {
-      id('profile').textContent = currUser;
+    let signedIn = window.localStorage.getItem('username');
+    if (signedIn) {
+      id('profile').textContent = signedIn;
     } else {
       id('profile').textContent = 'Log in/Sign up';
     }
@@ -50,30 +50,33 @@
     });
   }
 
- //----------------------------------------------------------------------------------------------
- // ------------ PROFILE PAGE SECTION START --------------------------------------------------------
- // ----------------------------------------------------------------------------------------------
+ /**----------------------------------------------------------------------------------------------
+  * ------------ PROFILE PAGE SECTION START --------------------------------------------------------
+  ---------------------------------------------------------------------------------------------- */
 
   /**
    * takes the user to their profile page
    * No paramaters, returns nothing
    */
   function loadProfilePage() {
-    hideOtherPages("profile-page");
     uncheckSizes();
     let name = this.textContent;
-    console.log(name);
     // check the div button content that was clicked
     if (name === 'Log in/Sign up') { // show log in page
-      id('user-view').classList.add('hidden');
-      id('login-signup').classList.remove('hidden');
-      id('log-password').addEventListener('input', updateLoginBtn);
-      id('sign-password').addEventListener('input', updateSignupBtn);
+      hideOtherPages("login-page");
+      let logFields = ['log-name', 'log-password'];
+      let signFields = ['sign-name', 'sign-email', 'sign-password'];
+      for (let i = 0; i < logFields.length; i++) {
+        id(logFields[i]).addEventListener('input', updateLoginBtn);
+      }
+      for (let i = 0; i < signFields.length; i++) {
+        id(signFields[i]).addEventListener('input', updateSignupBtn);
+      }
       id('login-btn').addEventListener('click', getLoginInfo);
       id('sign-btn').addEventListener('click', getSignInInfo);
-    } else { // show profile page
-      id('user-view').classList.remove('hidden');
-      id('login-signup').classList.add('hidden');
+    } else { // show profile/history page
+      hideOtherPages("history-page");
+      id('logout-btn').addEventListener('click', logout);
     }
   }
 
@@ -112,9 +115,7 @@
    */
   function getLoginInfo() {
     let username = id('log-name').value;
-    console.log(username);
     let password = id('log-password').value;
-    console.log(password);
     id('log-name').value = '';
     id('log-password').value = '';
     performLogin(username, password);
@@ -145,9 +146,8 @@
       let res = await fetch('/login', {method: 'POST', body: data});
       await statusCheck(res);
       let name = await res.text();
-      updateProfilePage(name);
+      updateProfilePage(name, password);
     } catch(err) {
-      console.log(err);
       handleError(err);
     }
   }
@@ -167,9 +167,8 @@
       data.append('password', password);
       let res = await fetch('/newuser', {method: 'POST', body: data});
       await statusCheck(res);
-      res = await res.text();
-      console.log(res);
-      // updateProfilePage(res);
+      let newUser = await res.text();
+      updateProfilePage(newUser, password);
     } catch (err) {
       handleError(err);
     }
@@ -177,26 +176,30 @@
 
   /**
    * description
-   * @param {Response} name - descrip
+   * @param {APIResponse} name - username of user
+   * @param {string} password - password of user
    * No paramaters, returns nothing
    */
-  function updateProfilePage(name) {
-    console.log('from api: ' + name);
-    let msg = gen('p');
-    msg.textContent = 'Welcome ' + name;
-    // remove local storage stuff
-    // post welcome message for like 5 seconds then remove it
-    id('login-signup').classList.add('hidden');
-    id('user-view').classList.remove('hidden');
+  function updateProfilePage(name, password) {
+    window.localStorage.setItem('username', name);
+    window.localStorage.setItem('password', password);
+    id('profile').textContent = name;
+    hideOtherPages('home-page');
   }
 
-  //----------------------------------------------------------------------------------------------
-  //  ------------ PROFILE PAGE SECTION END --------------------------------------------------------
-  //  ----------------------------------------------------------------------------------------------
+  function logout() {
+    window.localStorage.clear();
+    hideOtherPages('home-page');
+    id('profile').textContent = 'Log in/Sign up';
+  }
 
-  //----------------------------------------------------------------------------------------------
-  //------------ HOME PAGE SECTION START --------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------
+  /**----------------------------------------------------------------------------------------------
+   * ------------ PROFILE PAGE SECTION END --------------------------------------------------------
+   ---------------------------------------------------------------------------------------------- */
+
+  /**----------------------------------------------------------------------------------------------
+   * ------------ HOME PAGE SECTION START --------------------------------------------------------
+   ---------------------------------------------------------------------------------------------- */
 
   /**
    * descrip
@@ -324,12 +327,13 @@
     id("search-bar").value = '';
   }
 
-  //----------------------------------------------------------------------------------------------
-  // ------------ SEARCH PAGE SECTION END --------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------
-  //----------------------------------------------------------------------------------------------
-  //------------ ITEM PAGE SECTION START --------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------
+/**----------------------------------------------------------------------------------------------
+  * ------------ SEARCH PAGE SECTION END --------------------------------------------------------
+  ---------------------------------------------------------------------------------------------- */
+
+/**----------------------------------------------------------------------------------------------
+  * ------------ ITEM PAGE SECTION START --------------------------------------------------------
+  ---------------------------------------------------------------------------------------------- */
   /**
    * descrip
    * @param {Response} resp - sdf
@@ -455,7 +459,9 @@
 // ------------ CHECKOUT PAGE SECTION START ----------------------------------------------------
 // --------------------------------------------------------------------------------------------
 
-  // -------------------------HELPER FUNCTIONS-------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// ------------ HELPER FUNCTIONS -------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
   /**
    * Hides all other pages besides the one that will be displayed
@@ -463,7 +469,11 @@
    */
   function hideOtherPages(displayPage) {
     let pages = ["home-page", "item-page", "checkout-page",
+<<<<<<< HEAD
                   "profile-page", "review-page", "search-page"];
+=======
+                  "login-page", "review-page", "search-page", "history-page"];
+>>>>>>> 9f32c3faaab7c03e156638c00389ef4b4737dee4
     for (let i = 0; i < pages.length; i++) {
       if (pages[i] === displayPage) {
         // unhide
