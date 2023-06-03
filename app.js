@@ -276,6 +276,7 @@ function processHistoryResults(result) {
     jsontxt += '{ "shortname" : "' + result[i]['name'] + '", ' +
                   '"name" : "' + result[i]['webname'] + '", ' +
                   '"size" : "' + result[i]['size'] + '", ' +
+                  '"price" : "$' + result[i]['price'] + '", ' +
                   '"date-purchased" : "' + result[i]['date'] + '", ' +
                   '"confirmation" : "' + result[i]['confirmation'] + '" }';
   }

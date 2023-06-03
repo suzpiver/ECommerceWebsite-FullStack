@@ -217,6 +217,54 @@ button:hover:not([disabled]) {
   margin: auto;
   width: 50%;
 }
+/* USER PURCHASE HISTORY STYLING */
+#logout-btn-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#history-page h2, #history-page h3 {
+  margin-bottom: 10px;
+}
+
+#history-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.single-item-box {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 10px;
+  background-color: #e3e0d7;
+  width: 80%;
+}
+
+.single-item-box img {
+  width: 10vw;
+  margin: 2vw;
+  margin-left: 5vw;
+  background-color: #e3e0d7;
+}
+
+.single-item-info-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: right;
+  flex-direction: column;
+  margin-left: 40vw;
+  background-color: #e3e0d7;
+}
+
+.single-item-info-box p {
+  background-color: #e3e0d7;
+  margin: 12px;
+}
+
 
 /* ------------------------------------------------------------------------- */
 /* ------------------ SINGLE ITEM PAGE STYLING ----------------------------- */
