@@ -373,6 +373,7 @@
   async function getSearchItems() {
     id("search-page").innerHTML = '';
     hideOtherPages("search-page");
+    console.log(id("search-bar").value);
     let resp = await fetchItems(id("search-bar").value);
     fillGridView(resp, "search-page");
     id("search-bar").value = '';
@@ -397,16 +398,30 @@
     qs("#item-page img").id = resp["name"];
     qs("#item-page img").alt = 'image of ' + resp["webname"];
     id("item-price").textContent = "$" + resp["price"] + ".00";
+    checkInventory();
   }
 
   /**
-   *
+   * fetches inventory from the server
+   * if shortname is set to null instead of an item, all items are returned
+   * @param {string} shortname - name of item you want inventory for
+   * @returns {response} stock - json of inventory for selected items
    */
-  // function checkInventory(shortname) {
-  //   if (shortname)
-
-
-  // }
+  async function fetchInventory(shortname) {
+    try {
+      let resp = null;
+      if (shortname) {
+        resp = await fetch("/inventory?shortname=" + shortname);
+      } else {
+        resp = await fetch("/inventory");
+      }
+      await statusCheck(resp);
+      let stock = await resp.json();
+      return stock;
+    } catch (err) {
+      handleError(err);
+    }
+  }
 
   /**
    * descrip
@@ -446,6 +461,22 @@
       qs(".checked").classList.remove("checked");
     }
     isSizeSelected();
+  }
+
+  /**
+   *
+   * No paramaters, returns nothing
+   */
+  async function checkInventory() {
+    let shortname = qs("#item-page img").id;
+    let inv = await fetchInventory(shortname);
+    let sizebuttons = qsa("#size-buttons button");
+    for (let i = 0; i < sizebuttons.length; i++) {
+      let size = sizebuttons[i].textContent;
+      if (inv[size] === 0) {
+        sizebuttons[i].disabled = true;
+      } else {sizebuttons[i].disabled = false;}
+    }
   }
 
 //----------------------------------------------------------------------------------------------
