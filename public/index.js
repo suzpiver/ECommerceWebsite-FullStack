@@ -3,7 +3,8 @@
  * Date: 5/4/2023
  * Section: CSE 154 AA
  *
- * {ADD DESCRIPTION}
+ * This is the index.js file for our e-commerce final project webpage. It is in charge of all the
+ * functionalities and user-interactions of the webpage.
  */
 
 "use strict";
@@ -68,6 +69,7 @@
       hideOtherPages("history-page");
       id('logout-btn').addEventListener('click', logout);
       // await getPurchaseHistory();
+      id('history-box').innerHTML = '';
       getUserInfoForHistory();
     }
   }
@@ -202,21 +204,52 @@
     console.log(history);
     console.log(history['transaction-history']);
     if (history['transaction-history'].length === 0) {
-      // user hasn't purchased anything
-      //
+      let noHistory = gen('h3');
+      noHistory.textContent = 'No purchases yet';
+      id('history-box').appendChild(noHistory);
     } else {
       console.log('in else block of displayHistory()')
+      let itemEl = genItemBox('history', history['transaction-history'][0]);
+      id('history-box').appendChild(itemEl);
       // for (let i = 0; i < history['transaction-history'].length; i++) {
       //   genPurchaseItem(history['transaction-history'][i]);
       // }
     }
   }
 
-  function genPurchaseItem(itemInfo) {
-    // let img = itemInfo['name'];
-    // let size = itemInfo['size'];
-    // let date = itemInfo['date-purchased'];
-    // let code = itemInfo['confirmation'];
+  function genItemBox(itemType, itemInfo) {
+    let pTags = [];
+
+    let itemBox = gen('article');
+    itemBox.classList.add('single-item-box');
+    let infoBox = gen('section');
+    infoBox.classList.add('single-item-info-box');
+    let name = itemInfo['name'];
+    let img = '/imgs/clothes/' + itemInfo['shortname'] + '.png';
+    let size = 'Size: ' + itemInfo['size'];
+    let price = itemInfo['price'];
+
+    if (itemType === 'history') {
+      let date = 'Date Purchased: ' + itemInfo['date-purchased'];
+      let code = 'Confirmation Code: ' + itemInfo['confirmation'];
+      pTags = [size, price, date, code];
+
+      let imgEl = gen('img');
+      imgEl.src = img;
+      imgEl.alt = name;
+
+      itemBox.appendChild(imgEl);
+
+      itemBox.appendChild(infoBox);
+      for (let i = 0; i < pTags.length; i++) {
+        let pTag = gen('p');
+        pTag.textContent = pTags[i];
+        infoBox.appendChild(pTag);
+      }
+    } else {
+
+    }
+    return itemBox;
   }
 
   /**
@@ -686,6 +719,10 @@
     let error = gen('p');
     error.textContent = err;
     qs('body').prepend(error);
+    setTimeout(() => {
+      let errEl = qs('body p');
+      errEl.parentElement.removeChild(errEl);
+    }, 5000);
   }
 
   /**

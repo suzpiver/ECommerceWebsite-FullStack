@@ -3,7 +3,8 @@
 Suzanne Piver and Miya Nakata
 5/7/2023
 Section: CSE154 AA
-{ADD DESCRIPTION}
+This is the index.html file for our e-commerce final project webpage. It's in charge of
+the structure/layout of our webpage.
 -->
 <html lang="en">
   <head>
@@ -89,13 +90,10 @@ Section: CSE154 AA
     </section>
     <section id="history-page" class="hidden">
       <h2>Your Purchase History</h2>
-      <section id="history-box">
-        <article id="bought-item-box">
-          <!-- left: img of item -->
-          <!-- right: date purchase, size, confirmation code -->
-        </article>
-      </section>
-      <button id="logout-btn">Log Out</button>
+      <div id="logout-btn-box">
+        <button id="logout-btn">Log Out</button>
+      </div>
+      <section id="history-box"></section>
     </section>
     <section id="review-page" class="hidden">
       <h2>New Review</h2>
@@ -108,6 +106,8 @@ Section: CSE154 AA
 
     </section>
     <section id="search-page" class="hidden grid"></section>
-    <footer></footer>
+    <footer>
+      <p>All clothing information courtesy of Free People</p>
+    </footer>
   </body>
 </html>

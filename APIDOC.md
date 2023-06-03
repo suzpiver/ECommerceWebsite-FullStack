@@ -119,14 +119,16 @@ Welcome suzpiver
     {
       "shortname":"fp-one-lumi-maxi-dress",
       "name":"FP One Lumi Maxi Dress",
-      "size":"small",
+      "size":"S",
+      "price": "$70",
       "date-purchased":"May-15-2023",
       "confirmation": AG678RDJF8P2B
     }
     {
       "shortname":"love-letter-cami",
       "name":"Love Letter Cami",
-      "size":"medium",
+      "size":"M",
+      "price":"$50",
       "date-purchased":"April-3-2023",
       "confirmation": JHGB87KH453GH
     }
