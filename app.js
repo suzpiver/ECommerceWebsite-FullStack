@@ -205,9 +205,9 @@ app.post("/review", async (req, res) => {
       } else if (!([0, 1, 2, 3, 4, 5].includes(Number(req.body.rating)))) {
         res.status(INVALID_PARAM_ERROR).send('Please enter a value between 0 and 5');
       } else {
-        if (req.body.comment) {
+        if (req.query.comment) {
           query = "INSERT INTO reviews (itemID, user, stars, comments) VALUES (?, ?, ?, ?)";
-          await db.run(query, [id["itemID"], req.body.username, req.body.rating, req.body.comment]);
+          await db.run(query, [id["itemID"], req.body.username, req.body.rating, req.query.comment]);
         } else {
           query = "INSERT INTO reviews (itemID, user, stars) VALUES (?, ?, ?)";
           await db.run(query, [id["itemID"], req.body.username, req.body.rating]);

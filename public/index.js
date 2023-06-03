@@ -32,6 +32,12 @@
     qsa("#size-buttons button").forEach(button => {
       button.addEventListener("click", toggleChecked);
     });
+    id("tmp-review-button").addEventListener("click", writeReview);
+    id("rating").addEventListener("submit", (evt) => {
+      evt.preventDefault();
+      console.log(id("rating").textContent);
+    });
+    id("post-review").addEventListener("click", addReview);
   }
 
  /**----------------------------------------------------------------------------------------------
@@ -433,7 +439,8 @@
   }
 
   /**
-   * descrip
+   * Toggles the size buttons within the item-page so that only
+   * one is checked at any time
    * No paramaters, returns nothing
    */
   function toggleChecked() {
@@ -505,6 +512,14 @@
       qs("#checkout-page > p").remove();
     }
     hideOtherPages("checkout-page");
+    updateCheckoutStatus();
+    uncheckSizes();
+  }
+
+  /**
+   * dsf
+   */
+  function updateCheckoutStatus() {
     if (!window.localStorage.getItem('username')) {
       id("checkout-button").disabled = true;
       id("checkout-button").textContent = "Please sign in to checkout";
@@ -515,7 +530,6 @@
       id("checkout-button").disabled = false;
       id("checkout-button").textContent = "Checkout";
     }
-    uncheckSizes();
   }
 
   /**
@@ -574,7 +588,10 @@
     div2.append(name, price, size, remove);
     div.append(img, div2);
     id("checkout-page").prepend(div);
-    remove.addEventListener("click", () => remove.parentNode.parentNode.remove()); // remove item
+    remove.addEventListener("click", () => {
+      remove.parentNode.parentNode.remove(); // remove item
+      updateCheckoutStatus(); // check if the cart is empty
+    });
     uncheckSizes();
   }
 //----------------------------------------------------------------------------------------------
@@ -585,12 +602,41 @@
 // ------------ REVIEW PAGE SECTION START ------------------------------------------------------
 // --------------------------------------------------------------------------------------------
 
-  // /**
-  //  *
-  //  */
-  // function addReview() {
-  //   hideOtherPages("review-page");
-  // }
+  /**
+   *asdf
+   */
+  function writeReview() {
+    hideOtherPages("review-page");
+  }
+
+  /**
+   * adf
+   */
+  async function addReview() {
+    try {
+      let url = '/review';
+      if (parseInt(id("rating").value) > 5) {
+        handleError("Please enter a value between 1 and 5");
+      } else {
+        if (!(id("comments").value === '')) {
+          url = '/review?comment=' + id("comments").value;
+        }
+        let data = new FormData();
+        data.append('username', window.localStorage.getItem('username'));
+        data.append('confirmation', "K2F6AF7J");
+        data.append('rating', id("rating").value);
+        let res = await fetch(url, {method: 'POST', body: data});
+        await statusCheck(res);
+        let review = await res.text();
+        handleError(review);
+        id("comments").value = '';
+        id("rating").value = '';
+        hideOtherPages("home-page");
+      }
+    } catch(err) {
+      handleError(err);
+    }
+  }
 
 //--------------------------------------------------------------------------------------------
 // ------------ CHECKOUT PAGE SECTION START ----------------------------------------------------

@@ -27,6 +27,7 @@ Section: CSE154 AA
     <section id="home-page">
       <button id="compact-button" class="homeSwitchButtons hidden">Switch to Compact View</button>
       <button id="grid-button"class="homeSwitchButtons">Switch to Grid View</button>
+      <button id="tmp-review-button">Add-Review</button>
       <section id="compact-home-page">
         <h2>Tops</h2>
         <section id="tops-scroll" class="scroller">
@@ -97,12 +98,14 @@ Section: CSE154 AA
       <button id="logout-btn">Log Out</button>
     </section>
     <section id="review-page" class="hidden">
-      <form id="login-view">
-        <h2>Rating</h2>
-        <input type="text" name="rating" id="rating" placeholder="Rating(1-5)">
-        <input type="text" name="comments" id="comments" placeholder="Comments">
-        <button id="submit-review">Submit Review</button>
+      <h2>New Review</h2>
+      <form id="new-review">
+        <textarea rows="1" name = 'rating' cols="10" required id="rating" placeholder="Rate: 0-5"
+            required minlength="1" maxlength="1"></textarea>
+        <textarea rows="5" cols="30"  id="comments" placeholder="Comments"></textarea>
       </form>
+      <button id="post-review">Post Review</button>
+
     </section>
     <section id="search-page" class="hidden grid"></section>
     <footer></footer>
