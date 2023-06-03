@@ -321,9 +321,12 @@
           let div2 = gen('div');
           div2.classList.add('scrollImage');
           let item = makeImg("imgs/clothes/" + resp[j]["name"] + '.png', resp[j]["webname"]);
-          div2.addEventListener('click', () => itemView(resp[j]));
           let ptag = gen('p');
+          let name = resp[j]["name"];
+          let price = resp[j]["price"];
+          let webname = resp[j]["webname"];
           ptag.textContent = resp[j]["webname"];
+          div2.addEventListener("click", () => itemView(name, price, webname));
           div2.append(item, ptag);
           div.appendChild(div2);
         }
@@ -343,11 +346,14 @@
     if (!(resp.length === 0)) {
       for (let i = 0; i < resp.length; i++) {
         let div = gen('div');
-        div.addEventListener('click', () => itemView(resp[i]));
         let ptag = gen('p');
         ptag.textContent = resp[i]["webname"];
         let item = makeImg("imgs/clothes/" + resp[i]["name"] + '.png', resp[i]["webname"]);
         div.append(item, ptag);
+        let name = resp[i]["name"];
+        let price = resp[i]["price"];
+        let webname = resp[i]["webname"];
+        div.addEventListener("click", () => itemView(name, price, webname));
         id(section).append(div);
       }
     } else {
@@ -403,6 +409,7 @@
   async function getSearchItems() {
     id("search-page").innerHTML = '';
     hideOtherPages("search-page");
+    console.log(id("search-bar").value);
     let resp = await fetchItems(id("search-bar").value);
     fillGridView(resp, "search-page");
     id("search-bar").value = '';
@@ -416,27 +423,44 @@
   * ------------ ITEM PAGE SECTION START --------------------------------------------------------
   ---------------------------------------------------------------------------------------------- */
   /**
-   * descrip
-   * @param {Response} resp - sdf
+   * fills in the item page with the item information the user clicked on
+   * then checks the inventory to disable any sizes that are out of stock
+   * @param {string} name - db name of the item
+   * @param {string} price - price of the item
+   * @param {string} webname - the web offical name of an item
    * No paramaters, returns nothing
    */
-  function itemView(resp) {
+  function itemView(name, price, webname) {
     hideOtherPages("item-page");
-    id("item-name").textContent = resp["webname"];
-    qs("#item-page img").src = "/imgs/clothes/" + resp["name"] + '.png';
-    qs("#item-page img").id = resp["name"];
-    qs("#item-page img").alt = 'image of ' + resp["webname"];
-    id("item-price").textContent = "$" + resp["price"] + ".00";
+    id("item-name").textContent = webname;
+    qs("#item-page img").src = "/imgs/clothes/" + name + '.png';
+    qs("#item-page img").id = name;
+    qs("#item-page img").alt = 'image of ' + webname;
+    id("item-price").textContent = "$" + price + ".00";
+    checkInventory();
   }
 
   /**
-   *
+   * fetches inventory from the server
+   * if shortname is set to null instead of an item, all items are returned
+   * @param {string} shortname - name of item you want inventory for
+   * @returns {response} stock - json of inventory for selected items
    */
-  // function checkInventory(shortname) {
-  //   if (shortname)
-
-
-  // }
+  async function fetchInventory(shortname) {
+    try {
+      let resp = null;
+      if (shortname) {
+        resp = await fetch("/inventory?shortname=" + shortname);
+      } else {
+        resp = await fetch("/inventory");
+      }
+      await statusCheck(resp);
+      let stock = await resp.json();
+      return stock;
+    } catch (err) {
+      handleError(err);
+    }
+  }
 
   /**
    * descrip
@@ -476,6 +500,22 @@
       qs(".checked").classList.remove("checked");
     }
     isSizeSelected();
+  }
+
+  /**
+   *
+   * No paramaters, returns nothing
+   */
+  async function checkInventory() {
+    let shortname = qs("#item-page img").id;
+    let inv = await fetchInventory(shortname);
+    let sizebuttons = qsa("#size-buttons button");
+    for (let i = 0; i < sizebuttons.length; i++) {
+      let size = sizebuttons[i].textContent;
+      if (inv[size] === 0) {
+        sizebuttons[i].disabled = true;
+      } else {sizebuttons[i].disabled = false;}
+    }
   }
 
 //----------------------------------------------------------------------------------------------
@@ -626,6 +666,7 @@
    * @param {Error} err - error from catch statment
    */
   function handleError(err) {
+    console.log(err);
     let error = gen('p');
     error.textContent = err;
     qs('body').prepend(error);

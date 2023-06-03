@@ -19,7 +19,7 @@ const SERVER_ERROR = 500;
 const SERVER_ERROR_MSG = 'Something went wrong on the server.';
 
 const multer = require("multer");
-const sizes = ["XS", "S", "M", "L", "XL", "2XL"];
+const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
@@ -232,9 +232,14 @@ app.get("/inventory", async (req, res) => {
     let db = await getDBConnection();
     let result = null;
     if (req.query.shortname) {
-      result = await db.get(`SELECT i.XS, i.S, i.M, i.L, i.XL, i.XXL  FROM inventory i,
-              items p WHERE p.name=? AND p.itemID=i.itemID`, req.query.shortname);
-    } else {result = await db.all('SELECT * FROM inventory');}
+      if (await db.get('SELECT name FROM items WHERE name=?', req.query.shortname)) {
+        result = await db.get(`SELECT p.name, i.XS, i.S, i.M, i.L, i.XL, i.XXL  FROM inventory i,
+                items p WHERE p.name=? AND p.itemID=i.itemID`, req.query.shortname);
+      } else {res.status(INVALID_PARAM_ERROR).send("Invalid item name" + req.query.shortname);}
+    } else {
+      result = await db.all(`SELECT p.name, i.XS, i.S, i.M, i.L, i.XL, i.XXL  FROM inventory i,
+                      items p WHERE i.itemID=p.itemID`);
+    }
     if (!result) {
       res.status(INVALID_PARAM_ERROR).send("No inventory information for this item");
     } else {
