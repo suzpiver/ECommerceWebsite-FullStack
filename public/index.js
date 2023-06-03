@@ -33,7 +33,7 @@
     qsa("#size-buttons button").forEach(button => {
       button.addEventListener("click", toggleChecked);
     });
-    id("tmp-review-button").addEventListener("click", writeReview);
+    id("tmp-review-button").addEventListener("click", () => hideOtherPages("review-page"));
     id("rating").addEventListener("submit", (evt) => {
       evt.preventDefault();
       console.log(id("rating").textContent);
@@ -292,7 +292,9 @@
   }
 
   /**
-   * descrip
+   * requests items and their details from teh server
+   * if search is the shortname of an item, a specific item is returned. Otherwise
+   * all items are returned
    * @param {string} search - filter for search
    * @returns {response} items - json of items
    * No paramaters, returns nothing
@@ -315,6 +317,7 @@
 
   /**
    * fetches 12 of each top, bottom, and dress, and adds it to the home page for viewing
+   * in a compact scroll format. Also adds clock events to access each items image-page
    * No paramaters, returns nothing
    */
   async function initializeHomePage() {
@@ -347,7 +350,8 @@
   }
 
   /**
-   * descrop
+   * inserts items in rows by formatting the image and name and
+   * adding click behaciro to access the items item-page
    * @param {Response} resp - list of items from server as json
    * @param {string} section - id of section being appended too
    */
@@ -373,7 +377,8 @@
   }
 
   /**
-   * dscrip
+   * Toggles between a compact view with scroll bars or a grid view
+   * by switch pages and toggle buttons
    */
   function toggleViews() {
     if (id('compact-home-page').classList.contains("hidden")) {
@@ -412,7 +417,8 @@
   // ----------------------------------------------------------------------------------------------
 
   /**
-   * descrip
+   * When a user inputs a value into the search bar, a request to the server for
+   * matching item is made and displayed
    * No paramaters, returns nothing
    */
   async function getSearchItems() {
@@ -428,9 +434,10 @@
   * ------------ SEARCH PAGE SECTION END --------------------------------------------------------
   ---------------------------------------------------------------------------------------------- */
 
-/**----------------------------------------------------------------------------------------------
-  * ------------ ITEM PAGE SECTION START --------------------------------------------------------
-  ---------------------------------------------------------------------------------------------- */
+  /** ----------------------------------------------------------------------------------------------
+   * ------------ ITEM PAGE SECTION START --------------------------------------------------------
+   * ----------------------------------------------------------------------------------------------
+   */
   /**
    * fills in the item page with the item information the user clicked on
    * then checks the inventory to disable any sizes that are out of stock
@@ -450,7 +457,7 @@
   }
 
   /**
-   * fetches inventory from the server
+   * fetches inventory from the server with an option query of an item
    * if shortname is set to null instead of an item, all items are returned
    * @param {string} shortname - name of item you want inventory for
    * @returns {response} stock - json of inventory for selected items
@@ -502,7 +509,7 @@
   }
 
   /**
-   * If no size is selected, add to cart is disabled
+   * Clears any checked sizes to reset buttons
    * No paramaters, returns nothing
    */
   function uncheckSizes() {
@@ -513,7 +520,8 @@
   }
 
   /**
-   *
+   * enables or disables size selection for an item based
+   * on what is available in the inventory
    * No paramaters, returns nothing
    */
   async function checkInventory() {
@@ -537,8 +545,8 @@
 // --------------------------------------------------------------------------------------------
 
   /**
-   * configures cart when icon is clicked by switching pages and formatting
-   * the checkout button
+   * configures cart whenever the cart icon is clicked by switching pages
+   * and updating the checkout button status
    */
   function setupCartPage() {
     if (qs("#checkout-page > p")) {
@@ -550,7 +558,8 @@
   }
 
   /**
-   * dsf
+   * The checkout button is only enabled if a user is logged in
+   * and there are items in the cart
    */
   function updateCheckoutStatus() {
     if (!window.localStorage.getItem('username')) {
@@ -601,7 +610,9 @@
   }
 
   /**
-   * descrip
+   * Takes information about a users selection and inserts a formated
+   * layout into the checkout page. Creates a remove button for each
+   * item in the cart
    * No paramaters, returns nothing
    */
   function addToCart() {
@@ -636,14 +647,9 @@
 // --------------------------------------------------------------------------------------------
 
   /**
-   *asdf
-   */
-  function writeReview() {
-    hideOtherPages("review-page");
-  }
-
-  /**
-   * adf
+   * Adds a review to the server using the current logged in user and their
+   * entry into the text boxes. Ensures the rating is between 0 and 5.
+   * no parameters returns nothing
    */
   async function addReview() {
     try {
@@ -666,13 +672,13 @@
         id("rating").value = '';
         hideOtherPages("home-page");
       }
-    } catch(err) {
+    } catch (err) {
       handleError(err);
     }
   }
 
 //--------------------------------------------------------------------------------------------
-// ------------ CHECKOUT PAGE SECTION START ----------------------------------------------------
+// ------------ REVIEW PAGE SECTION END ----------------------------------------------------
 // --------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------
