@@ -2,7 +2,8 @@
  * Name: Suzanne and Miya
  * Date:
  * Section: CSE 154 AA
- *
+ * This is the app.js file for our e-commerce final project webpage. It's in charge of all the
+ * api endpoints our website gets its data from to display to the user.
  *
  */
 

@@ -3,7 +3,8 @@
  * Date: 5/4/2023
  * Section: CSE 154 AA
  *
- * {ADD DESCRIPTION}
+ * This is the index.js file for our e-commerce final project webpage. It is in charge of all the
+ * functionalities and user-interactions of the webpage.
  */
 
 "use strict";
@@ -62,6 +63,7 @@
       hideOtherPages("history-page");
       id('logout-btn').addEventListener('click', logout);
       // await getPurchaseHistory();
+      id('history-box').innerHTML = '';
       getUserInfoForHistory();
     }
   }
@@ -216,7 +218,6 @@
     itemBox.classList.add('single-item-box');
     let infoBox = gen('section');
     infoBox.classList.add('single-item-info-box');
-    itemBox.appendChild(infoBox);
     let name = itemInfo['name'];
     let img = '/imgs/clothes/' + itemInfo['shortname'] + '.png';
     let size = 'Size: ' + itemInfo['size'];
@@ -230,8 +231,10 @@
       let imgEl = gen('img');
       imgEl.src = img;
       imgEl.alt = name;
+
       itemBox.appendChild(imgEl);
 
+      itemBox.appendChild(infoBox);
       for (let i = 0; i < pTags.length; i++) {
         let pTag = gen('p');
         pTag.textContent = pTags[i];
@@ -670,6 +673,10 @@
     let error = gen('p');
     error.textContent = err;
     qs('body').prepend(error);
+    setTimeout(() => {
+      let errEl = qs('body p');
+      errEl.parentElement.removeChild(errEl);
+    }, 5000);
   }
 
   /**
