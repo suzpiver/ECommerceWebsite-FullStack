@@ -608,7 +608,7 @@
       let cart = [];
       let items = qsa("#checkout-page > div");
       for (let i = 0; i < items.length; i++) {
-        let shortname = items[i].id.split('_')[1];
+        let shortname = items[i].classList[0];
         let size = items[i].childNodes[1].childNodes[2].textContent;
         cart.push({"shortname": shortname, "size": size});
       }
@@ -636,26 +636,20 @@
    * No paramaters, returns nothing
    */
   function addToCart() {
-    let div = gen('div');
-    let div2 = gen('div');
-    let img = qs("#item-page img").cloneNode(true);
-    div.id = "sn_" + qs("#item-page img").id;
-    let name = id("item-name").cloneNode(true);
-    name.id = '';
-    let price = id("item-price").cloneNode(true);
-    price.id = '';
-    let size = gen('p');
-    size.textContent = qs(".checked").textContent;
-    let remove = gen('button');
-    remove.textContent = "Remove Item";
-    remove.classList.add("remove-button");
-    div2.append(name, price, size, remove);
-    div.append(img, div2);
-    id("checkout-page").prepend(div);
-    remove.addEventListener("click", () => {
-      remove.parentNode.parentNode.remove(); // remove item
+    let src = qs("#item-page img").src;
+    let alt = qs("#item-page img").alt;
+    let webname = id("item-name").textContent;
+    let shortname = qs("#item-page img").id;
+    let price = id("item-price").textContent;
+    let size = qs(".checked").textContent;
+    let params = [src, alt, webname, shortname, price, size];
+    let card = makeCard(params, "remove-button", "Remove Item");
+    let removebutton = card.childNodes[1].lastChild;
+    removebutton.addEventListener("click", () => {
+      removebutton.parentNode.parentNode.remove(); // remove item
       updateCheckoutStatus(); // check if the cart is empty
     });
+    id("checkout-page").prepend(card);
     uncheckSizes();
   }
 
@@ -713,6 +707,44 @@
    * ------------ HELPER FUNCTIONS ----------------------------------------------------------------
    * ----------------------------------------------------------------------------------------------
    */
+
+  /**
+   * Creates a card containing a specific item's information
+   * @param {Array} itemArray -array containg item img.src, img.alt, webname, shortname, price, size
+   * @param {string} buttonClass -  class of button to add
+   * @param {string} buttonLabel - containing button text
+   * @returns {object} card - a formated card with item information
+   */
+  function makeCard(itemArray, buttonClass, buttonLabel) {
+    let card = gen('div');
+    card.classList.add(itemArray[3]);
+    let img = makeImg(itemArray[0], itemArray[1]);
+    let text = gen('div');
+    let nameText = gen('p');
+    nameText.textContent = itemArray[2];
+    let priceText = gen('p');
+    priceText.textContent = itemArray[4];
+    let sizeText = gen('p');
+    sizeText.textContent = itemArray[5];
+    let cardButton = gen('button');
+    cardButton.textContent = buttonLabel;
+    cardButton.classList.add(buttonClass);
+    if (buttonClass === "remove-button") {
+      cardButton.addEventListener("click", () => {
+        cardButton.parentNode.parentNode.remove(); // remove item
+        updateCheckoutStatus(); // check if the cart is empty
+      });
+    } else {
+      console.log("Miya button");
+      console.log("Miya button");
+      console.log("Miya button");
+      console.log("Miya button");
+      console.log("Miya button");
+    }
+    text.append(nameText, priceText, sizeText, cardButton);
+    card.append(img, text);
+    return card;
+  }
 
   /**
    * Hides all other pages besides the one that will be displayed
