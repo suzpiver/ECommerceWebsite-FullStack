@@ -279,7 +279,7 @@ header a {
   justify-content: center;
 }
 
-.single-item-box {
+/* .single-item-box {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -308,7 +308,7 @@ header a {
 .single-item-info-box p {
   background-color: #e3e0d7;
   margin: 12px;
-}
+} */
 
 /* ------------------------------------------------------------------------- */
 /* ------------------ SINGLE ITEM PAGE STYLING ----------------------------- */
@@ -373,12 +373,12 @@ header a {
   text-align: center;
 }
 
-#checkout-page div, #checkout-page p {
+#checkout-page div, #checkout-page p, #history-box div, #history-box p {
   background-color: #e3e0d7;
 }
 
 /* outer div aka one card with it's image and text */
-#checkout-page > div {
+#checkout-page > div, #history-box > div {
   display: flex;
   width: 80%;
   /* height: 30vw; */
@@ -389,14 +389,14 @@ header a {
 }
 
 /* sizing the image */
-#checkout-page img {
+#checkout-page img, #history-box img {
   width: 25%;
   margin: 8px;
   margin-left: 15px;
 }
 
 /* sizing and stacking the ptags(name, price, size) */
-#checkout-page div div {
+#checkout-page div div, #history-box div div {
   font-size: 2vw;
   display: flex;
   flex-direction: column;
@@ -404,7 +404,7 @@ header a {
 }
 
 /* spacing between text */
-#checkout-page p {
+#checkout-page p, #history-box p {
   margin: 5px;
 }
 
