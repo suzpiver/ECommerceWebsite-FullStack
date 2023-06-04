@@ -59,16 +59,11 @@ app.post("/login", async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
     if (username && password) {
-      console.log('username: ' + username + ' and password: ' + password);
-      // check database for a match
       let db = await getDBConnection();
       let query = 'SELECT username FROM users WHERE username = ? AND password = ?';
       let result = await db.get(query, [username, password]);
       await db.close();
       if (result) {
-        console.log('here');
-        console.log(result['username']);
-        // res.type('text').send('Welcome ' + result['username']);
         res.type('text').send(result['username']);
       } else {
         res.type('text');
@@ -79,7 +74,6 @@ app.post("/login", async (req, res) => {
       res.status(INVALID_PARAM_ERROR).send('Please enter a valid username and password.');
     }
   } catch (err) {
-    console.log(err);
     res.type('text');
     res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + ' ' + err);
   }
@@ -175,11 +169,9 @@ app.post('/newuser', async (req, res) => {
       res.status(INVALID_PARAM_ERROR).send('Missing one or more of the required params.');
     }
   } catch (err) {
-    console.log(err);
     res.status(SERVER_ERROR).send(SERVER_ERROR_MSG);
   }
 });
-
 
 /**
  * ENDPOINT 6
@@ -199,7 +191,8 @@ app.post("/review", async (req, res) => {
       } else {
         if (req.query.comment) {
           query = "INSERT INTO reviews (itemID, user, stars, comments) VALUES (?, ?, ?, ?)";
-          await db.run(query, [id["itemID"], req.body.username, req.body.rating, req.query.comment]);
+          await db.run(query, [id["itemID"], req.body.username, req.body.rating,
+          req.query.comment]);
         } else {
           query = "INSERT INTO reviews (itemID, user, stars) VALUES (?, ?, ?)";
           await db.run(query, [id["itemID"], req.body.username, req.body.rating]);
@@ -279,6 +272,7 @@ function makeSearchQuery(search) {
 
 /**
  * Parses through data from the database to make a json object that endpoint 3 returns
+ * @param {string} username - username of user
  * @param {JSONObject} result - array of data from api endpoint 3
  * @returns {string} jsontxt - a string version of the json object to be returned from endpoint 3
  */
@@ -364,36 +358,123 @@ async function validateTransactionRequest(id, db, res, size) {
  * @returns {boolean} newUser - returns true if the user's inputs passes all the checks.
  * False if not.
  */
+// async function newUserChecks(res, username, password, email) {
+//   let newUser = false;
+//   if (!email.includes('@')) { //check for vaild email
+//     res.status(INVALID_PARAM_ERROR).send('Please enter a valid email address.');
+//   } else {
+//     if (password.length < 6) { // check for valid password
+//       res.status(INVALID_PARAM_ERROR).send('Password must be longer than 6 characters.');
+//     } else {
+//       let db = await getDBConnection();
+//       let query = 'SELECT email FROM users WHERE email = ?';
+//       let result = await db.get(query, email);
+//       if (result) {
+//         await db.close();
+//         res.status(INVALID_PARAM_ERROR);
+//         res.send('Account already exists under this email address.' +
+//         ' Please contact helpdesk at freePeopleAPI@help.com for assistance logging in');
+//       } else {
+//         // check if username exists in database already
+//         query = 'SELECT username FROM users WHERE username = ?';
+//         result = await db.get(query, username);
+//         await db.close();
+//         if (result) {
+//           res.status(INVALID_PARAM_ERROR).send('Username already exists.');
+//         } else {
+//           newUser = true;
+//         }
+//       }
+//     }
+//   }
+//   return newUser;
+// }
+
+/**
+ * Checks if the username, password, and email provided by the user are all valid
+ * @param {object} res - the response object of the post request
+ * @param {string} username - the intended username of the user
+ * @param {string} password - the intended password of the user
+ * @param {string} email - the intended email of the user
+ * @returns {boolean} newUser - returns true if the user's inputs passes all the checks.
+ * False if not.
+ */
 async function newUserChecks(res, username, password, email) {
-  let newUser = false;
-  if (!email.includes('@')) { //check for vaild email
-    res.status(INVALID_PARAM_ERROR).send('Please enter a valid email address.');
+  let emailCheck = false;
+  let passwordCheck = false;
+  let usernameCheck = false;
+  emailCheck = userEmailCheck(email);
+  if (emailCheck) {
+    passwordCheck = userPasswordCheck(password);
   } else {
-    if (password.length < 6) { // check for valid password
-      res.status(INVALID_PARAM_ERROR).send('Password must be longer than 6 characters.');
-    } else {
-      let db = await getDBConnection();
-      let query = 'SELECT email FROM users WHERE email = ?';
-      let result = await db.get(query, email);
-      if (result) {
-        await db.close();
-        res.status(INVALID_PARAM_ERROR);
-        res.send('Account already exists under this email address.' +
-        ' Please contact helpdesk at freePeopleAPI@help.com for assistance logging in');
-      } else {
-        // check if username exists in database already
-        query = 'SELECT username FROM users WHERE username = ?';
-        result = await db.get(query, username);
-        await db.close();
-        if (result) {
-          res.status(INVALID_PARAM_ERROR).send('Username already exists.');
-        } else {
-          newUser = true;
-        }
-      }
-    }
+    res.status(INVALID_PARAM_ERROR).send('Please enter a valid email address.');
   }
-  return newUser;
+
+  if (passwordCheck) {
+    usernameCheck = await userUsernameCheck(res, email, username);
+  } else {
+    res.status(INVALID_PARAM_ERROR).send('Password must be longer than 6 characters.');
+  }
+
+  if (usernameCheck) {
+    // create new user
+  }
+}
+
+/**
+ * Checks if the new user's email
+ * @param {string} email - the intended email of the user
+ * @returns {boolean} boolean - returns true if email doesn't exist in database yet, false if not.
+ */
+function userEmailCheck(email) {
+  let boolean = false;
+  if (email.includes('@')) {
+    boolean = true;
+  }
+  return boolean;
+}
+
+/**
+ * Checks if new user's password is valid
+ * @param {string} password - the intended password of the user
+ * @returns {boolean} boolean - returns true if the password is valid, false if not.
+ */
+function userPasswordCheck(password) {
+  let boolean = false;
+  if (password.length > 6) {
+    boolean = true;
+  }
+  return boolean;
+}
+
+/**
+ * Checks if the new user's username is valid
+ * @param {object} res - the response object of the post request
+ * @param {string} email - the intended email of the user
+ * @param {string} username - the intended username of the user
+ * @returns {boolean} boolean - returns true if the username doesn't exist in the database yet.
+ * Returns false otherwise.
+ */
+async function userUsernameCheck(res, email, username) {
+  try {
+    let db = await getDBConnection();
+    let query = 'SELECT email FROM users WHERE email = ?';
+    let result = await db.get(query, email);
+    if (result) {
+      await db.close();
+      res.status(INVALID_PARAM_ERROR);
+      res.send('Account already exists under this email address.' +
+      ' Please contact helpdesk at freePeopleAPI@help.com for assistance logging in');
+    } else {
+      // check if username exists in database already
+      query = 'SELECT username FROM users WHERE username = ?';
+      result = await db.get(query, username);
+      await db.close();
+    }
+  } catch (err) {
+    res.type('text');
+    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
+  }
 }
 
 app.use(express.static('public'));

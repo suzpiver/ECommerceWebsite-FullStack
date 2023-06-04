@@ -57,7 +57,7 @@ button:active {
 button[disabled] {
   background-color: rgb(117, 100, 102);
 }
-/*-------------------------- button styling end --------------------------*/
+/* ------------------------- button styling end ------------------------- */
 
 /* ------------------------ Header Nav Bar Start ------------------------ */
 header {
