@@ -93,24 +93,16 @@ app.post('/user/history', async (req, res) => {
   if (req.body.username && req.body.password) {
     try {
       let username = req.body.username;
-      console.log(username);
       let password = req.body.password;
-      console.log(password);
-      // check if username & password are valid
       let db = await getDBConnection();
       let query = 'SELECT username, email FROM users WHERE username = ? AND password = ?';
       let result = await db.get(query, [username, password]);
-      console.log(result);
-      if (result) { // valid username & email. so get the info now
+      if (result) {
         query = 'SELECT * FROM transactions t, users u, items WHERE t.user = ? AND ' +
-        'u.username = ? AND t.itemID = items.itemID';
+        'u.username = ? AND t.itemID = items.itemID ORDER BY datetime(date) DESC';
         let transactions = await db.all(query, [username, username]);
-        console.log('result from database');
-        console.log(transactions);
         await db.close();
-        let jsontxt = '{ "user" : "' + username + '", "email" : "' + result['email'] + '", ' +
-                      '"transaction-history" : [';
-        jsontxt += processHistoryResults(transactions);
+        let jsontxt = processHistoryResults(username, transactions);
         let obj = JSON.parse(jsontxt);
         res.json(obj);
       } else {
@@ -290,9 +282,9 @@ function makeSearchQuery(search) {
  * @param {JSONObject} result - array of data from api endpoint 3
  * @returns {string} jsontxt - a string version of the json object to be returned from endpoint 3
  */
-function processHistoryResults(result) {
-  console.log(result);
-  let jsontxt = '';
+function processHistoryResults(username, result) {
+  let jsontxt = '{ "user" : "' + username + '", "email" : "' + result['email'] + '", ' +
+  '"transaction-history" : [';
   for (let i = 0; i < result.length; i++) {
     if (i > 0) {
       jsontxt += ', ';
