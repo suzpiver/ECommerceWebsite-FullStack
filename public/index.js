@@ -181,12 +181,20 @@
     hideOtherPages('home-page');
   }
 
+  /**
+   * Gets the user information from local storage
+   */
   function getUserInfoForHistory() {
     let username = window.localStorage.getItem('username');
     let password = window.localStorage.getItem('password');
     getPurchaseHistory(username, password);
   }
 
+  /**
+   * Gets the purchase history of the current user from the API
+   * @param {string} username - username of current user on the webpage
+   * @param {string} password - password of current user on the webpage
+   */
   async function getPurchaseHistory(username, password) {
     try {
       let data = new FormData();
@@ -197,61 +205,44 @@
       let history = await res.json();
       displayHistory(history);
     } catch (err) {
-      console.log(err);
       handleError(err);
     }
   }
 
+  /**
+   * Displays a user's transaction history on the webpage
+   * @param {APIObject} history - all the data on all the items a user has previously purchased
+   */
   function displayHistory(history) {
-    console.log(history);
-    console.log(history['transaction-history']);
     if (history['transaction-history'].length === 0) {
       let noHistory = gen('h3');
       noHistory.textContent = 'No purchases yet';
       id('history-box').appendChild(noHistory);
     } else {
-      console.log('in else block of displayHistory()')
-      let itemEl = genItemBox('history', history['transaction-history'][0]);
-      id('history-box').appendChild(itemEl);
-      // for (let i = 0; i < history['transaction-history'].length; i++) {
-      //   genPurchaseItem(history['transaction-history'][i]);
-      // }
+      for (let i = 0; i < history['transaction-history'].length; i++) {
+        let arr = makeHistoryArr(history['transaction-history'][i]);
+        let card = makeCard(arr, 'remove-button', 'Leave Review');
+        id('history-box').appendChild(card);
+      }
     }
   }
 
-  function genItemBox(itemType, itemInfo) {
-    let pTags = [];
-
-    let itemBox = gen('article');
-    itemBox.classList.add('single-item-box');
-    let infoBox = gen('section');
-    infoBox.classList.add('single-item-info-box');
-    let name = itemInfo['name'];
-    let img = '/imgs/clothes/' + itemInfo['shortname'] + '.png';
-    let size = 'Size: ' + itemInfo['size'];
+  /**
+   * Generates the transaction history of a single item
+   * @param {JSONObject} itemInfo - the information of a single item provided by the API
+   * @returns {array} arr - array of a single item's information
+   */
+  function makeHistoryArr(itemInfo) {
+    let imgSrc = 'imgs/clothes/' + itemInfo['shortname'] + '.png';
+    let imgAlt = '' + itemInfo['shortname'];
+    let webname = '' + itemInfo['name'];
+    let shortname = itemInfo['shortname'];
     let price = itemInfo['price'];
-
-    if (itemType === 'history') {
-      let date = 'Date Purchased: ' + itemInfo['date-purchased'];
-      let code = 'Confirmation Code: ' + itemInfo['confirmation'];
-      pTags = [size, price, date, code];
-
-      let imgEl = gen('img');
-      imgEl.src = img;
-      imgEl.alt = name;
-
-      itemBox.appendChild(imgEl);
-
-      itemBox.appendChild(infoBox);
-      for (let i = 0; i < pTags.length; i++) {
-        let pTag = gen('p');
-        pTag.textContent = pTags[i];
-        infoBox.appendChild(pTag);
-      }
-    } else {
-
-    }
-    return itemBox;
+    let size = itemInfo['size'];
+    let date = itemInfo['date-purchased'];
+    let code = itemInfo['confirmation'];
+    let arr = [imgSrc, imgAlt, webname, shortname, price, size, date, code];
+    return arr;
   }
 
   /**
@@ -714,7 +705,8 @@
 
   /**
    * Creates a card containing a specific item's information
-   * @param {Array} itemArray -array containg item img.src, img.alt, webname, shortname, price, size
+   * @param {Array} itemArray - array containg item img.src, img.alt, webname, shortname, price,
+   * and size (and confirmation code if it is for displaying transaction history)
    * @param {string} buttonClass -  class of button to add
    * @param {string} buttonLabel - containing button text
    * @returns {object} card - a formated card with item information
@@ -733,21 +725,34 @@
     let cardButton = gen('button');
     cardButton.textContent = buttonLabel;
     cardButton.classList.add(buttonClass);
-    if (buttonClass === "remove-button") {
+    if (buttonLabel === "Remove Item") {
       cardButton.addEventListener("click", () => {
         cardButton.parentNode.parentNode.remove(); // remove item
         updateCheckoutStatus(); // check if the cart is empty
       });
+      text.append(nameText, priceText, sizeText, cardButton);
     } else {
-      console.log("Miya button");
-      console.log("Miya button");
-      console.log("Miya button");
-      console.log("Miya button");
-      console.log("Miya button");
+      cardButton.addEventListener('click', addReview);
+      let extra = historyCardExtra(itemArray);
+      text.append(nameText, priceText, sizeText, extra[0], extra[1], cardButton);
     }
-    text.append(nameText, priceText, sizeText, cardButton);
     card.append(img, text);
     return card;
+  }
+
+  /**
+   * Adds the extra p tags to the card of an item that has been previously purchased by a user
+   * @param {array} itemArray - array containg item img.src, img.alt, webname, shortname, price,
+   * and size (and confirmation code if it is for displaying transaction history)
+   * @returns {array} extra - array of the extra p tags
+   */
+  function historyCardExtra(itemArray) {
+    let dateText = gen('p');
+    dateText.textContent = 'Date purchased: ' + itemArray[6];
+    let codeText = gen('p');
+    codeText.textContent = 'Confirmation code: ' + itemArray[7];
+    let extra = [dateText, codeText];
+    return extra;
   }
 
   /**
