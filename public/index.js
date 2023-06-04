@@ -33,11 +33,19 @@
     qsa("#size-buttons button").forEach(button => {
       button.addEventListener("click", toggleChecked);
     });
+    id("tmp-review-button").addEventListener("click", () => hideOtherPages("review-page"));
+    id("rating").addEventListener("submit", (evt) => {
+      evt.preventDefault();
+      console.log(id("rating").textContent);
+    });
+    id("post-review").addEventListener("click", addReview);
   }
 
- /**----------------------------------------------------------------------------------------------
-  * ------------ PROFILE PAGE SECTION START --------------------------------------------------------
-  ---------------------------------------------------------------------------------------------- */
+  /**
+   * ----------------------------------------------------------------------------------------------
+   * ------------ PROFILE PAGE SECTION START ------------------------------------------------------
+   *  ---------------------------------------------------------------------------------------------
+   */
 
   /**
    * Takes the user to their profile page
@@ -255,13 +263,17 @@
     id('profile').textContent = 'Log in/Sign up';
   }
 
-  /**----------------------------------------------------------------------------------------------
-   * ------------ PROFILE PAGE SECTION END --------------------------------------------------------
-   ---------------------------------------------------------------------------------------------- */
+  /**
+   *---------------------------------------------------------------------------------------------
+   *------------ PROFILE PAGE SECTION END --------------------------------------------------------
+   *---------------------------------------------------------------------------------------------
+   */
 
-  /**----------------------------------------------------------------------------------------------
+  /**
+   * ----------------------------------------------------------------------------------------------
    * ------------ HOME PAGE SECTION START --------------------------------------------------------
-   ---------------------------------------------------------------------------------------------- */
+   *-----------------------------------------------------------------------------------------------
+   */
 
   /**
    * Adds event listeners and configuration to the icons that redirect pages
@@ -286,7 +298,9 @@
   }
 
   /**
-   * descrip
+   * requests items and their details from teh server
+   * if search is the shortname of an item, a specific item is returned. Otherwise
+   * all items are returned
    * @param {string} search - filter for search
    * @returns {response} items - json of items
    * No paramaters, returns nothing
@@ -309,6 +323,7 @@
 
   /**
    * fetches 12 of each top, bottom, and dress, and adds it to the home page for viewing
+   * in a compact scroll format. Also adds clock events to access each items image-page
    * No paramaters, returns nothing
    */
   async function initializeHomePage() {
@@ -341,7 +356,8 @@
   }
 
   /**
-   * descrop
+   * inserts items in rows by formatting the image and name and
+   * adding click behaciro to access the items item-page
    * @param {Response} resp - list of items from server as json
    * @param {string} section - id of section being appended too
    */
@@ -367,7 +383,8 @@
   }
 
   /**
-   * dscrip
+   * Toggles between a compact view with scroll bars or a grid view
+   * by switch pages and toggle buttons
    */
   function toggleViews() {
     if (id('compact-home-page').classList.contains("hidden")) {
@@ -397,34 +414,46 @@
     }
   }
 
-  //----------------------------------------------------------------------------------------------
-  // ------------ HOME PAGE SECTION END --------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------
-
-  //----------------------------------------------------------------------------------------------
-  //------------ SEARCH PAGE SECTION START --------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------
+  /**
+   *----------------------------------------------------------------------------------------------
+   * ------------ HOME PAGE SECTION END --------------------------------------------------------
+   * ----------------------------------------------------------------------------------------------
+   */
 
   /**
-   * descrip
+   * ----------------------------------------------------------------------------------------------
+   * ------------ SEARCH PAGE SECTION START -------------------------------------------------------
+   * ----------------------------------------------------------------------------------------------
+   */
+
+  /**
+   * When a user inputs a value into the search bar, a request to the server for
+   * matching item is made and displayed. The search trims trailing whitespace and
+   * seperates words with commas instead of spaces
    * No paramaters, returns nothing
    */
   async function getSearchItems() {
     id("search-page").innerHTML = '';
     hideOtherPages("search-page");
-    console.log(id("search-bar").value);
-    let resp = await fetchItems(id("search-bar").value);
+    let search = id("search-bar").value.trim();
+    search = search.split(' ').join(',');
+    let resp = await fetchItems(search);
     fillGridView(resp, "search-page");
     id("search-bar").value = '';
   }
 
-/**----------------------------------------------------------------------------------------------
-  * ------------ SEARCH PAGE SECTION END --------------------------------------------------------
-  ---------------------------------------------------------------------------------------------- */
+  /**
+   * ----------------------------------------------------------------------------------------------
+   * ------------ SEARCH PAGE SECTION END --------------------------------------------------------
+   * ----------------------------------------------------------------------------------------------
+   */
 
-/**----------------------------------------------------------------------------------------------
-  * ------------ ITEM PAGE SECTION START --------------------------------------------------------
-  ---------------------------------------------------------------------------------------------- */
+  /**
+   * ----------------------------------------------------------------------------------------------
+   * ------------ ITEM PAGE SECTION START --------------------------------------------------------
+   * ----------------------------------------------------------------------------------------------
+   */
+
   /**
    * fills in the item page with the item information the user clicked on
    * then checks the inventory to disable any sizes that are out of stock
@@ -444,7 +473,7 @@
   }
 
   /**
-   * fetches inventory from the server
+   * fetches inventory from the server with an option query of an item
    * if shortname is set to null instead of an item, all items are returned
    * @param {string} shortname - name of item you want inventory for
    * @returns {response} stock - json of inventory for selected items
@@ -466,7 +495,8 @@
   }
 
   /**
-   * descrip
+   * Toggles the size buttons within the item-page so that only
+   * one is checked at any time
    * No paramaters, returns nothing
    */
   function toggleChecked() {
@@ -495,7 +525,7 @@
   }
 
   /**
-   * If no size is selected, add to cart is disabled
+   * Clears any checked sizes to reset buttons
    * No paramaters, returns nothing
    */
   function uncheckSizes() {
@@ -506,7 +536,8 @@
   }
 
   /**
-   *
+   * enables or disables size selection for an item based
+   * on what is available in the inventory
    * No paramaters, returns nothing
    */
   async function checkInventory() {
@@ -521,23 +552,36 @@
     }
   }
 
-//----------------------------------------------------------------------------------------------
-// ------------ ITEM PAGE SECTION END ----------------------------------------------------------
-// --------------------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------------------------
-// ------------ CHECKOUT PAGE SECTION START ----------------------------------------------------
-// --------------------------------------------------------------------------------------------
+  /**
+   * ----------------------------------------------------------------------------------------------
+   * ------------ ITEM PAGE SECTION END ----------------------------------------------------------
+   * --------------------------------------------------------------------------------------------
+   */
 
   /**
-   * configures cart when icon is clicked by switching pages and formatting
-   * the checkout button
+   * ----------------------------------------------------------------------------------------------
+   *  ------------ CHECKOUT PAGE SECTION START ----------------------------------------------------
+   * --------------------------------------------------------------------------------------------
+   */
+
+  /**
+   * configures cart whenever the cart icon is clicked by switching pages
+   * and updating the checkout button status
    */
   function setupCartPage() {
     if (qs("#checkout-page > p")) {
       qs("#checkout-page > p").remove();
     }
     hideOtherPages("checkout-page");
+    updateCheckoutStatus();
+    uncheckSizes();
+  }
+
+  /**
+   * The checkout button is only enabled if a user is logged in
+   * and there are items in the cart
+   */
+  function updateCheckoutStatus() {
     if (!window.localStorage.getItem('username')) {
       id("checkout-button").disabled = true;
       id("checkout-button").textContent = "Please sign in to checkout";
@@ -548,7 +592,6 @@
       id("checkout-button").disabled = false;
       id("checkout-button").textContent = "Checkout";
     }
-    uncheckSizes();
   }
 
   /**
@@ -565,7 +608,7 @@
       let cart = [];
       let items = qsa("#checkout-page > div");
       for (let i = 0; i < items.length; i++) {
-        let shortname = items[i].id.split('_')[1];
+        let shortname = items[i].classList[0];
         let size = items[i].childNodes[1].childNodes[2].textContent;
         cart.push({"shortname": shortname, "size": size});
       }
@@ -587,51 +630,121 @@
   }
 
   /**
-   * descrip
+   * Takes information about a users selection and inserts a formated
+   * layout into the checkout page. Creates a remove button for each
+   * item in the cart
    * No paramaters, returns nothing
    */
   function addToCart() {
-    let div = gen('div');
-    let div2 = gen('div');
-    let img = qs("#item-page img").cloneNode(true);
-    div.id = "sn_" + qs("#item-page img").id;
-    let name = id("item-name").cloneNode(true);
-    name.id = '';
-    let price = id("item-price").cloneNode(true);
-    price.id = '';
-    let size = gen('p');
-    size.textContent = qs(".checked").textContent;
-    let remove = gen('button');
-    remove.textContent = "Remove Item";
-    remove.classList.add("remove-button");
-    div2.append(name, price, size, remove);
-    div.append(img, div2);
-    id("checkout-page").prepend(div);
-    remove.addEventListener("click", () => remove.parentNode.parentNode.remove()); // remove item
+    let src = qs("#item-page img").src;
+    let alt = qs("#item-page img").alt;
+    let webname = id("item-name").textContent;
+    let shortname = qs("#item-page img").id;
+    let price = id("item-price").textContent;
+    let size = qs(".checked").textContent;
+    let params = [src, alt, webname, shortname, price, size];
+    let card = makeCard(params, "remove-button", "Remove Item");
+    let removebutton = card.childNodes[1].lastChild;
+    removebutton.addEventListener("click", () => {
+      removebutton.parentNode.parentNode.remove(); // remove item
+      updateCheckoutStatus(); // check if the cart is empty
+    });
+    id("checkout-page").prepend(card);
     uncheckSizes();
   }
-//----------------------------------------------------------------------------------------------
-//------------ CHECKOUT PAGE SECTION END ----------------------------------------------------
-// --------------------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------------------------
-// ------------ REVIEW PAGE SECTION START ------------------------------------------------------
-// --------------------------------------------------------------------------------------------
+  /**
+   * ----------------------------------------------------------------------------------------------
+   * ------------ CHECKOUT PAGE SECTION END ----------------------------------------------------
+   * --------------------------------------------------------------------------------------------
+   */
 
-  // /**
-  //  *
-  //  */
-  // function addReview() {
-  //   hideOtherPages("review-page");
-  // }
+  /**
+   * ----------------------------------------------------------------------------------------------
+   * ------------ REVIEW PAGE SECTION START ------------------------------------------------------
+   * --------------------------------------------------------------------------------------------
+   */
 
-//--------------------------------------------------------------------------------------------
-// ------------ CHECKOUT PAGE SECTION START ----------------------------------------------------
-// --------------------------------------------------------------------------------------------
+  /**
+   * Adds a review to the server using the current logged in user and their
+   * entry into the text boxes. Ensures the rating is between 0 and 5.
+   * no parameters returns nothing
+   */
+  async function addReview() {
+    try {
+      let url = '/review';
+      if (parseInt(id("rating").value) > 5) {
+        handleError("Please enter a value between 1 and 5");
+      } else {
+        if (!(id("comments").value === '')) {
+          url = '/review?comment=' + id("comments").value;
+        }
+        let data = new FormData();
+        data.append('username', window.localStorage.getItem('username'));
+        data.append('confirmation', "K2F6AF7J");
+        data.append('rating', id("rating").value);
+        let res = await fetch(url, {method: 'POST', body: data});
+        await statusCheck(res);
+        let review = await res.text();
+        handleError(review);
+        id("comments").value = '';
+        id("rating").value = '';
+        hideOtherPages("home-page");
+      }
+    } catch (err) {
+      handleError(err);
+    }
+  }
 
-// -------------------------------------------------------------------------------------------------
-// ------------ HELPER FUNCTIONS -------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
+  /**
+   * --------------------------------------------------------------------------------------------
+   * ------------ REVIEW PAGE SECTION END ----------------------------------------------------
+   * --------------------------------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------------------------------
+   * ------------ HELPER FUNCTIONS ----------------------------------------------------------------
+   * ----------------------------------------------------------------------------------------------
+   */
+
+  /**
+   * Creates a card containing a specific item's information
+   * @param {Array} itemArray -array containg item img.src, img.alt, webname, shortname, price, size
+   * @param {string} buttonClass -  class of button to add
+   * @param {string} buttonLabel - containing button text
+   * @returns {object} card - a formated card with item information
+   */
+  function makeCard(itemArray, buttonClass, buttonLabel) {
+    let card = gen('div');
+    card.classList.add(itemArray[3]);
+    let img = makeImg(itemArray[0], itemArray[1]);
+    let text = gen('div');
+    let nameText = gen('p');
+    nameText.textContent = itemArray[2];
+    let priceText = gen('p');
+    priceText.textContent = itemArray[4];
+    let sizeText = gen('p');
+    sizeText.textContent = itemArray[5];
+    let cardButton = gen('button');
+    cardButton.textContent = buttonLabel;
+    cardButton.classList.add(buttonClass);
+    if (buttonClass === "remove-button") {
+      cardButton.addEventListener("click", () => {
+        cardButton.parentNode.parentNode.remove(); // remove item
+        updateCheckoutStatus(); // check if the cart is empty
+      });
+    } else {
+      console.log("Miya button");
+      console.log("Miya button");
+      console.log("Miya button");
+      console.log("Miya button");
+      console.log("Miya button");
+    }
+    text.append(nameText, priceText, sizeText, cardButton);
+    card.append(img, text);
+    return card;
+  }
 
   /**
    * Hides all other pages besides the one that will be displayed
@@ -669,7 +782,6 @@
    * @param {Error} err - error from catch statment
    */
   function handleError(err) {
-    console.log(err);
     let error = gen('p');
     error.textContent = err;
     qs('body').prepend(error);

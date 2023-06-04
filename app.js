@@ -28,7 +28,7 @@ app.use(multer().none()); // requires the "multer" module
 
 /**
  * ENDPOINT 1: GET
- *descrip
+ * items must be a comma seperated string of words
  *
  */
 app.get("/clothes", async (req, res) => {
@@ -36,9 +36,8 @@ app.get("/clothes", async (req, res) => {
     let db = await getDBConnection();
     let result = null;
     if (req.query.item) {
-      let item = "%" + req.query.item + "%";
-      let query = "SELECT * FROM items WHERE name LIKE ? OR color LIKE ? OR type LIKE ?";
-      result = await db.all(query, [item, item, item]);
+      let query = makeSearchQuery(Array.from(req.query.item.split(",")));
+      result = await db.all(query);
     } else {
       let query = "SELECT * FROM items";
       result = await db.all(query);
@@ -206,9 +205,9 @@ app.post("/review", async (req, res) => {
       } else if (!([0, 1, 2, 3, 4, 5].includes(Number(req.body.rating)))) {
         res.status(INVALID_PARAM_ERROR).send('Please enter a value between 0 and 5');
       } else {
-        if (req.body.comment) {
+        if (req.query.comment) {
           query = "INSERT INTO reviews (itemID, user, stars, comments) VALUES (?, ?, ?, ?)";
-          await db.run(query, [id["itemID"], req.body.username, req.body.rating, req.body.comment]);
+          await db.run(query, [id["itemID"], req.body.username, req.body.rating, req.query.comment]);
         } else {
           query = "INSERT INTO reviews (itemID, user, stars) VALUES (?, ?, ?)";
           await db.run(query, [id["itemID"], req.body.username, req.body.rating]);
@@ -265,6 +264,25 @@ async function getDBConnection() {
     driver: sqlite3.Database
   });
   return db;
+}
+
+/**
+ * creates a query out of the multiple strings passed in
+ * @param {array} search -array of search words
+ * @returns {string} query - a query string to search for each word
+ */
+function makeSearchQuery(search) {
+  let query = "SELECT * FROM items WHERE ";
+  let word = null;
+  for (let i = 0; i < search.length; i++) {
+    word = search[i];
+    query = query + '(name LIKE "%' + word + '%" OR color LIKE "%' + word +
+                      '%" OR type LIKE "%' + word + '%")';
+    if (!(i === search.length - 1)) {
+      query = query + ' AND ';
+    }
+  }
+  return query;
 }
 
 /**
