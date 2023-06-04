@@ -89,7 +89,7 @@ Nina Tee:nina-tee
 
 **Example Response:**
 ```
-Welcome suzpiver
+suzpiver
 ```
 
 **Error Handling:**
@@ -106,32 +106,32 @@ Welcome suzpiver
 
 **Returned Data Format**: JSON
 
-**Description:** given a valid username and password, a JSON is returned containing the users information including their email and all transaction history details.
+**Description:** given a valid username and password, a JSON is returned containing the users information including their email and all transaction history details. The returned transaction history information is ordered by descending date (most recent to least recent).
 
 **Example Request:** /user/history with POST parameters of `username=suzpiver` and `password=sh0pp1ng!`
 
 **Example Response:**
 ```json
 {
-  "user":suzpiver,
-  "email":suzpiver@uw.edu,
-  "transaction-history":[
+  "user": "suzpiver",
+  "email": "suzpiver@uw.edu",
+  "transaction-history": [
     {
-      "shortname":"fp-one-lumi-maxi-dress",
-      "name":"FP One Lumi Maxi Dress",
-      "size":"S",
-      "price": "$70",
-      "date-purchased":"May-15-2023",
-      "confirmation": AG678RDJF8P2B
-    }
+      "shortname": "float-away-shirt",
+      "name": "Float Away Shirt",
+      "size": "M",
+      "price": "$90",
+      "date-purchased": "2023-06-04",
+      "confirmation": "02A4YIL5"
+    },
     {
-      "shortname":"love-letter-cami",
-      "name":"Love Letter Cami",
-      "size":"M",
-      "price":"$50",
-      "date-purchased":"April-3-2023",
-      "confirmation": JHGB87KH453GH
-    }
+      "shortname": "amelia-corset",
+      "name": "Amelia Corset",
+      "size": "M",
+      "price": "$84",
+      "date-purchased": "2023-06-03",
+      "confirmation": "JDMMWW0G"
+    },...
   ]
 }
 ```
@@ -174,16 +174,13 @@ AG678RDJF8P2B
 
 **Returned Data Format**: JSON
 
-**Description:** Updates the user directory to add a new user if the username and email are unique. Returns a "welcome" message if a new user is created sucessfully.
+**Description:** Updates the user directory to add a new user if the username and email are unique. Returns the user's selected username.
 
-**Example Request:** /newUser with POST parameters of `username=miyan`, `password=hehehoho`, and `email=miyan@uw.edu`
+**Example Request:** /newUser with POST parameters of `username=miyan`, `password=B3stSt0r3`, and `email=miyan@uw.edu`
 
 **Example Response:**
-```json
-{
-  "username":"miyan",
-  "message":"New user created. Welcome miyan"
-}
+```
+miyan
 ```
 
 **Error Handling:**

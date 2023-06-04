@@ -33,6 +33,17 @@ footer p {
   color: #FCF9EF;
 }
 
+#error-msg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(231, 153, 166);
+}
+
+#error-content {
+  background-color: rgb(231, 153, 166);
+}
+
 /* ---------------------------- button styling ----------------------------
 ----add your own rules for the button size, border, and orientation------ */
 
