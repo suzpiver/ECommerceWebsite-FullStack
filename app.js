@@ -88,7 +88,7 @@ app.post("/login", async (req, res) => {
 
 /**
  * ENDPOINT 3
- * Turn this into a POST request. have foreign key be the transactions.user and connect it w username of body param
+ * Turn this into a POST
  */
 app.post('/user/history', async (req, res) => {
   if (req.body.username && req.body.password) {
