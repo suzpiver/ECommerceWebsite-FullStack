@@ -54,10 +54,10 @@ button:active {
 }
 
 /* color when button is disabled */
-button[disabled] {
+button:disabled {
   background-color: rgb(117, 100, 102);
 }
-/* ------------------------- button styling end ------------------------- */
+/*  ------------------------- button styling end -------------------------  */
 
 /* ------------------------ Header Nav Bar Start ------------------------ */
 header {
@@ -356,14 +356,6 @@ header a {
   background-color: rgb(128, 59, 70);
 }
 
-/* #add-to-cart:active {
-  background-color: rgb(190, 113, 126);
-} */
-
-/* #add-to-cart[disabled] {
-  background-color: rgb(144, 125, 128);
-} */
-
 /* ------------------------------------------------------------------------- */
 /* ------------------ CHECKOUT PAGE STYLING -------------------------------- */
 /* ------------------------------------------------------------------------- */
@@ -420,6 +412,8 @@ header a {
 
 #checkout-button {
   width: 60%;
+  flex: none;
+  text-align: center;
   padding: 10px;
   border: 0;
   margin: auto;
@@ -471,6 +465,5 @@ header a {
 }
 
 .hidden {
-  /* display: none !important; */
   display: none;
 }

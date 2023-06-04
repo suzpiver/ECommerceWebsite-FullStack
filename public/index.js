@@ -319,30 +319,32 @@
    */
   async function initializeHomePage() {
     hideOtherPages("home-page");
-    let resp = null;
     let categories = ["top", "bottom", "dress"];
     categories.forEach(async cat => {
-      resp = await fetchItems(cat);
-      for (let i = 0; i < 3; i++) { // three scrolls
+      let resp = await fetchItems(cat);
+      for (let i = 0; i < Math.ceil(resp.length / 4); i++) {
         let div = gen('div');
         div.classList.add("imageDiv");
         for (let j = i * 4; j < i * 4 + 4; j++) { // four images in each scroll
           let div2 = gen('div');
           div2.classList.add('scrollImage');
-          let item = makeImg("imgs/clothes/" + resp[j]["name"] + '.png', resp[j]["webname"]);
-          let ptag = gen('p');
-          let name = resp[j]["name"];
-          let price = resp[j]["price"];
-          let webname = resp[j]["webname"];
-          ptag.textContent = resp[j]["webname"];
-          div2.addEventListener("click", () => itemView(name, price, webname));
-          div2.append(item, ptag);
+          if (j < resp.length) {
+            let item = makeImg("imgs/clothes/" + resp[j]["name"] + '.png', resp[j]["webname"]);
+            item.classList.add(cat);
+            let ptag = gen('p');
+            let name = resp[j]["name"];
+            let price = resp[j]["price"];
+            let webname = resp[j]["webname"];
+            ptag.textContent = resp[j]["webname"];
+            div2.addEventListener("click", () => itemView(name, price, webname));
+            div2.append(item, ptag);
+          }
           div.appendChild(div2);
         }
         id(cat).appendChild(div);
       }
     });
-    resp = await fetchItems(null);
+    let resp = await fetchItems(null);
     fillGridView(resp, "grid-home-page");
   }
 
@@ -573,6 +575,7 @@
    * and there are items in the cart
    */
   function updateCheckoutStatus() {
+    console.log('here');
     if (!window.localStorage.getItem('username')) {
       id("checkout-button").disabled = true;
       id("checkout-button").textContent = "Please sign in to checkout";
@@ -607,13 +610,14 @@
       let res = await fetch('/checkout', {method: 'POST', body: data});
       await statusCheck(res);
       res = await res.text();
-      id("checkout-button").disabled = true;
-      id("checkout-button").textContent = "Cart is Empty";
+      //id("checkout-button").disabled = true;
+      //id("checkout-button").textContent = "Cart is Empty";
       let ptag = gen('p');
       ptag.textContent = "Items purchased! Your Confirmation code is: " + res;
       qsa("#checkout-page > div").forEach(el => {
         el.remove();
       });
+      updateCheckoutStatus();
       id("checkout-page").prepend(ptag);
     } catch (err) {
       handleError(err);
