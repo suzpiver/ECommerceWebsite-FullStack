@@ -141,7 +141,7 @@
       await statusCheck(res);
       let name = await res.text();
       updateProfilePage(name, password);
-    } catch(err) {
+    } catch (err) {
       handleError(err);
     }
   }
@@ -793,7 +793,8 @@
   function handleError(err) {
     let error = gen('p');
     error.textContent = err;
-    qs('body').prepend(error);
+    error.id = 'error-content';
+    id('error-msg').appendChild(error);
     setTimeout(() => {
       let errEl = qs('body p');
       errEl.parentElement.removeChild(errEl);
