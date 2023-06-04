@@ -361,7 +361,7 @@
     if (!(resp.length === 0)) {
       for (let i = 0; i < resp.length; i++) {
         let div = gen('div');
-        div.classList.add("grid", resp[i]["type"]);
+        div.classList.add("griditem", resp[i]["type"]);
         let ptag = gen('p');
         ptag.textContent = resp[i]["webname"];
         let item = makeImg("imgs/clothes/" + resp[i]["name"] + '.png', resp[i]["webname"]);
@@ -427,7 +427,7 @@
         scroll.classList.remove("hidden");
         scroll.previousSibling.previousSibling.classList.remove("hidden");
       });
-      qsa(".grid").forEach(item => {
+      qsa(".griditem").forEach(item => {
         item.classList.remove("hidden");
       });
     }
