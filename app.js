@@ -52,7 +52,7 @@ app.get("/clothes", async (req, res) => {
 
 /**
  * ENDPOINT 2
- * User log-in
+ * Checks database to confirm user exists in it
  */
 app.post("/login", async (req, res) => {
   try {
@@ -81,7 +81,7 @@ app.post("/login", async (req, res) => {
 
 /**
  * ENDPOINT 3
- * Turn this into a POST
+ * Searches for and sends the transaction history of a given user
  */
 app.post('/user/history', async (req, res) => {
   if (req.body.username && req.body.password) {
@@ -91,12 +91,13 @@ app.post('/user/history', async (req, res) => {
       let db = await getDBConnection();
       let query = 'SELECT username, email FROM users WHERE username = ? AND password = ?';
       let result = await db.get(query, [username, password]);
+      console.log(result);
       if (result) {
         query = 'SELECT * FROM transactions t, users u, items WHERE t.user = ? AND ' +
         'u.username = ? AND t.itemID = items.itemID ORDER BY datetime(date) DESC';
         let transactions = await db.all(query, [username, username]);
         await db.close();
-        let jsontxt = processHistoryResults(username, transactions);
+        let jsontxt = processHistoryResults(result['username'], result['email'], transactions);
         let obj = JSON.parse(jsontxt);
         res.json(obj);
       } else {
@@ -264,22 +265,23 @@ function makeSearchQuery(search) {
 /**
  * Parses through data from the database to make a json object that endpoint 3 returns
  * @param {string} username - username of user
- * @param {JSONObject} result - array of data from api endpoint 3
+ * @param {string} email - email of user
+ * @param {JSONObject} transactions - array of data from api endpoint 3
  * @returns {string} jsontxt - a string version of the json object to be returned from endpoint 3
  */
-function processHistoryResults(username, result) {
-  let jsontxt = '{ "user" : "' + username + '", "email" : "' + result['email'] + '", ' +
+function processHistoryResults(username, email, transactions) {
+  let jsontxt = '{ "user" : "' + username + '", "email" : "' + email + '", ' +
   '"transaction-history" : [';
-  for (let i = 0; i < result.length; i++) {
+  for (let i = 0; i < transactions.length; i++) {
     if (i > 0) {
       jsontxt += ', ';
     }
-    jsontxt += '{ "shortname" : "' + result[i]['name'] + '", ' +
-                  '"name" : "' + result[i]['webname'] + '", ' +
-                  '"size" : "' + result[i]['size'] + '", ' +
-                  '"price" : "$' + result[i]['price'] + '", ' +
-                  '"date-purchased" : "' + result[i]['date'] + '", ' +
-                  '"confirmation" : "' + result[i]['confirmation'] + '" }';
+    jsontxt += '{ "shortname" : "' + transactions[i]['name'] + '", ' +
+                  '"name" : "' + transactions[i]['webname'] + '", ' +
+                  '"size" : "' + transactions[i]['size'] + '", ' +
+                  '"price" : "$' + transactions[i]['price'] + '", ' +
+                  '"date-purchased" : "' + transactions[i]['date'] + '", ' +
+                  '"confirmation" : "' + transactions[i]['confirmation'] + '" }';
   }
   jsontxt += ']}';
   return jsontxt;
