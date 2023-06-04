@@ -33,7 +33,7 @@
     qsa("#size-buttons button").forEach(button => {
       button.addEventListener("click", toggleChecked);
     });
-    id("tmp-review-button").addEventListener("click", () => hideOtherPages("review-page"));
+    //id("tmp-review-button").addEventListener("click", () => hideOtherPages("review-page"));
     id("rating").addEventListener("submit", (evt) => {
       evt.preventDefault();
       console.log(id("rating").textContent);
@@ -286,6 +286,9 @@
     qsa(".homeSwitchButtons").forEach(button => {
       button.addEventListener("click", toggleViews);
     });
+    id("top-filter").addEventListener("click", toggleFilter);
+    id("bottom-filter").addEventListener("click", toggleFilter);
+    id("dress-filter").addEventListener("click", toggleFilter);
   }
 
   /**
@@ -319,18 +322,18 @@
    */
   async function initializeHomePage() {
     hideOtherPages("home-page");
-    let categories = ["top", "bottom", "dress"];
-    categories.forEach(async cat => {
+    ["top", "bottom", "dress"].forEach(async cat => {
       let resp = await fetchItems(cat);
       for (let i = 0; i < Math.ceil(resp.length / 4); i++) {
         let div = gen('div');
         div.classList.add("imageDiv");
+        //div.classList.add("top");
         for (let j = i * 4; j < i * 4 + 4; j++) { // four images in each scroll
           let div2 = gen('div');
           div2.classList.add('scrollImage');
           if (j < resp.length) {
             let item = makeImg("imgs/clothes/" + resp[j]["name"] + '.png', resp[j]["webname"]);
-            item.classList.add(cat);
+            //item.classList.add(cat);
             let ptag = gen('p');
             let name = resp[j]["name"];
             let price = resp[j]["price"];
@@ -358,6 +361,7 @@
     if (!(resp.length === 0)) {
       for (let i = 0; i < resp.length; i++) {
         let div = gen('div');
+        div.classList.add("grid", resp[i]["type"]);
         let ptag = gen('p');
         ptag.textContent = resp[i]["webname"];
         let item = makeImg("imgs/clothes/" + resp[i]["name"] + '.png', resp[i]["webname"]);
@@ -390,6 +394,42 @@
       id("compact-button").classList.remove("hidden");
       id('grid-home-page').classList.remove("hidden");
       id('compact-home-page').classList.add("hidden");
+    }
+  }
+
+  /**
+   * When a filter button is selected, the unfiltered items are hidden
+   * if no filter is selected, all items are shown
+   * no parameteres, returns nothing
+   */
+  function toggleFilter() {
+    if (this.classList.contains("filtered")) {
+      this.classList.remove("filtered");
+    } else {this.classList.add("filtered");}
+    if (!(qsa(".filtered").length === 0)) {
+      qsa(".filtered").forEach(bt => {
+        let scroller = bt.id.split('-')[0] + '-scroll';
+        id(scroller).classList.remove('hidden');
+        id(scroller).previousSibling.previousSibling.classList.remove("hidden");
+        qsa("." + bt.id.split('-')[0]).forEach(item => {
+          item.classList.remove("hidden");
+        });
+      });
+      qsa(".filter:not(.filtered)").forEach(bt => {
+        id(bt.id.split('-')[0] + '-scroll').classList.add('hidden');
+        id(bt.id.split('-')[0] + '-scroll').previousSibling.previousSibling.classList.add("hidden");
+        qsa("." + bt.id.split('-')[0]).forEach(item => {
+          item.classList.add("hidden");
+        });
+      });
+    } else {
+      qsa(".scroller").forEach(scroll => {
+        scroll.classList.remove("hidden");
+        scroll.previousSibling.previousSibling.classList.remove("hidden");
+      });
+      qsa(".grid").forEach(item => {
+        item.classList.remove("hidden");
+      });
     }
   }
 

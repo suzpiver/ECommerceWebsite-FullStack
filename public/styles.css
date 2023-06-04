@@ -125,11 +125,23 @@ header a {
   margin-bottom: 15px;
 }
 
+.homeSwitchButtons, .filter {
+  height: 20px;
+  border-radius: 10px;
+}
+
 .homeSwitchButtons {
   width: 200px;
-  height: 20px;
   margin: 20px;
-  border-radius: 10px;
+}
+
+.filter {
+  width: 120px;
+  margin: 8px;
+}
+
+button.filtered {
+  background-color: rgb(128, 59, 70);
 }
 
 .grid {
@@ -410,7 +422,7 @@ header a {
   margin-left: 13px;
 }
 
-#checkout-button {
+button#checkout-button {
   width: 60%;
   flex: none;
   text-align: center;
