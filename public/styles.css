@@ -462,7 +462,7 @@ div.review > p {
   margin-left: 13px;
 }
 
-#checkout-button {
+#checkout-button, #confirm-button {
   width: 60%;
   flex: none;
   text-align: center;
@@ -471,8 +471,12 @@ div.review > p {
   margin: auto;
 }
 
-#checkout-button:disabled {
+#checkout-button:disabled, #confirm-button:disabled {
   width: 60%;
+}
+
+#checkout-button:disabled {
+  color: white;
 }
 
 /* ------------------------------------------------------------------------- */

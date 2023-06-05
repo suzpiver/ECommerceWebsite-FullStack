@@ -30,6 +30,10 @@
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
     id("add-to-cart").addEventListener("click", addToCart);
     id("checkout-button").addEventListener("click", checkout);
+    id("confirm-button").addEventListener("click", () => {
+      id("confirm-button").classList.add("confirmed");
+      updateCheckoutStatus();
+    });
     qsa("#size-buttons button").forEach(button => {
       button.addEventListener("click", toggleChecked);
     });
@@ -650,14 +654,21 @@
    */
   function updateCheckoutStatus() {
     if (!window.localStorage.getItem('username')) {
+      id("confirm-button").disabled = true;
       id("checkout-button").disabled = true;
       id("checkout-button").textContent = "Please sign in to checkout";
     } else if (!qs("#checkout-page div")) {
+      id("confirm-button").disabled = true;
       id("checkout-button").disabled = true;
       id("checkout-button").textContent = "Cart is Empty";
-    } else {
+    } else if (id("confirm-button").classList.contains("confirmed")) {
+      id("confirm-button").disabled = true;
+      id("confirm-button").classList.remove("confirmed");
       id("checkout-button").disabled = false;
       id("checkout-button").textContent = "Checkout";
+    } else {
+      id("confirm-button").disabled = false;
+      id("checkout-button").textContent = "Confirm to Checkout";
     }
   }
 
