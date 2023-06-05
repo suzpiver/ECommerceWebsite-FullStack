@@ -204,7 +204,25 @@ app.post("/review", async (req, res) => {
  * ENDPOINT 7
  *description
  */
-app.get("/inventory", async (req, res) => {
+app.get("/getreviews/:shortname", async (req, res) => {
+  try {
+    let db = await getDBConnection();
+    let shortname = req.params.shortname;
+    let result = await db.all(`SELECT r.itemID, r.user, r.stars, r.comments FROM reviews r, items i
+                            WHERE i.name = ? and r.itemID=i.itemID`, shortname);
+    await db.close();
+    res.json(result);
+  } catch (err) {
+    res.type('text');
+    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
+  }
+});
+
+/**
+ * ENDPOINT 8
+ *description
+ */
+ app.get("/inventory", async (req, res) => {
   try {
     let db = await getDBConnection();
     let result = null;

@@ -495,7 +495,7 @@
    * @param {string} webname - the web offical name of an item
    * No paramaters, returns nothing
    */
-  function itemView(name, price, webname) {
+  async function itemView(name, price, webname) {
     hideOtherPages("item-page");
     id("item-name").textContent = webname;
     qs("#item-page img").src = "/imgs/clothes/" + name + '.png';
@@ -503,6 +503,8 @@
     qs("#item-page img").alt = 'image of ' + webname;
     id("item-price").textContent = "$" + price + ".00";
     checkInventory();
+    let reviews = await fetchReviews(name);
+    attachReviews(reviews);
   }
 
   /**
@@ -582,6 +584,44 @@
       if (inv[size] === 0) {
         sizebuttons[i].disabled = true;
       } else {sizebuttons[i].disabled = false;}
+    }
+  }
+
+  /**
+   * asdg
+   * @param {string} shortname - name of item you want inventory for
+   * @returns {response} reveiws - json
+   */
+  async function fetchReviews(shortname) {
+    try {
+      let resp = await fetch("/getreviews/" + shortname);
+      await statusCheck(resp);
+      let reviews = await resp.json();
+      return reviews;
+    } catch (err) {
+      handleError(err);
+    }
+  }
+
+  /**
+   * attaches the reviews in a list to the item page
+   * @param {json} resp - json of all reveiws for an item
+   */
+  function attachReviews(resp) {
+    id("reviews").innerHTML = '';
+    for (let i = 0; i < resp.length; i++) {
+      let review = gen('div');
+      review.classList.add("review");
+      let user = gen('p');
+      let details = gen('div');
+      user.textContent = resp[i]["user"];
+      let rating = gen('p');
+      rating.textContent = "stars: " + resp[i]["stars"] + "\\5";
+      let comments = gen("p");
+      comments.textContent = "Comments: " + resp[i]["comments"];
+      details.append(rating, comments);
+      review.append(user, details);
+      id("reviews").append(review);
     }
   }
 
