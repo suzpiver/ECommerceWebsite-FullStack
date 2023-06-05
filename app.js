@@ -381,6 +381,7 @@ async function validateTransactionRequest(id, db, size) {
  * Checks if all the parameters are present to create a new user
  * @param {object} res - the response object of the post request
  * @param {object} newUserObj - contains all information of the new user including: the response
+ * @return {boolean} -returns false
  * object of the post request, the intended username of the user, the intended password of the user,
  * and the intended email of the user
  */
@@ -399,6 +400,7 @@ function userParamsCheck(res, newUserObj) {
  * Checks if new user's password is valid
  * @param {object} res - the response object of the post request
  * @param {object} newUserObj - contains all information of the new user including: the response
+ * @return {boolean} -returns false
  * object of the post request, the intended username of the user, the intended password of the user,
  * and the intended email of the user
  */
