@@ -33,10 +33,8 @@
     qsa("#size-buttons button").forEach(button => {
       button.addEventListener("click", toggleChecked);
     });
-    //id("tmp-review-button").addEventListener("click", () => hideOtherPages("review-page"));
     id("rating").addEventListener("submit", (evt) => {
       evt.preventDefault();
-      console.log(id("rating").textContent);
     });
     id("post-review").addEventListener("click", addReview);
   }
@@ -219,7 +217,7 @@
     } else {
       for (let i = 0; i < history['transaction-history'].length; i++) {
         let arr = makeHistoryArr(history['transaction-history'][i]);
-        let card = makeCard(arr, 'remove-button', 'Leave Review');
+        let card = makeCard(arr, 'review-button', 'Leave Review');
         id('history-box').appendChild(card);
       }
     }
@@ -325,13 +323,11 @@
       for (let i = 0; i < Math.ceil(resp.length / 4); i++) {
         let div = gen('div');
         div.classList.add("imageDiv");
-        //div.classList.add("top");
         for (let j = i * 4; j < i * 4 + 4; j++) { // four images in each scroll
           let div2 = gen('div');
           div2.classList.add('scrollImage');
           if (j < resp.length) {
             let item = makeImg("imgs/clothes/" + resp[j]["name"] + '.png', resp[j]["webname"]);
-            //item.classList.add(cat);
             let ptag = gen('p');
             let name = resp[j]["name"];
             let price = resp[j]["price"];
@@ -653,7 +649,6 @@
    * and there are items in the cart
    */
   function updateCheckoutStatus() {
-    console.log('here');
     if (!window.localStorage.getItem('username')) {
       id("checkout-button").disabled = true;
       id("checkout-button").textContent = "Please sign in to checkout";
@@ -688,8 +683,6 @@
       let res = await fetch('/checkout', {method: 'POST', body: data});
       await statusCheck(res);
       res = await res.text();
-      //id("checkout-button").disabled = true;
-      //id("checkout-button").textContent = "Cart is Empty";
       let ptag = gen('p');
       ptag.textContent = "Items purchased! Your Confirmation code is: " + res;
       qsa("#checkout-page > div").forEach(el => {
@@ -717,11 +710,6 @@
     let size = qs(".checked").textContent;
     let params = [src, alt, webname, shortname, price, size];
     let card = makeCard(params, "remove-button", "Remove Item");
-    let removebutton = card.childNodes[1].lastChild;
-    removebutton.addEventListener("click", () => {
-      removebutton.parentNode.parentNode.remove(); // remove item
-      updateCheckoutStatus(); // check if the cart is empty
-    });
     id("checkout-page").prepend(card);
     uncheckSizes();
   }
@@ -746,6 +734,7 @@
   async function addReview() {
     try {
       let url = '/review';
+      let confirmation = qs("#review-page p").textContent.split(':')[1].trim();
       if (parseInt(id("rating").value) > 5) {
         handleError("Please enter a value between 1 and 5");
       } else {
@@ -754,7 +743,7 @@
         }
         let data = new FormData();
         data.append('username', window.localStorage.getItem('username'));
-        data.append('confirmation', "K2F6AF7J");
+        data.append('confirmation', confirmation);
         data.append('rating', id("rating").value);
         let res = await fetch(url, {method: 'POST', body: data});
         await statusCheck(res);
@@ -767,6 +756,15 @@
     } catch (err) {
       handleError(err);
     }
+  }
+
+  /**
+   * opens reveiw page and appends in the confirmation code to prove purchase
+   * @param {string} code - confirmation code for a specific purchased item
+   */
+  function setupReview(code) {
+    qs("#review-page p").textContent = "Confirmation Code: " + code;
+    hideOtherPages("review-page");
   }
 
   /**
@@ -803,15 +801,17 @@
     let cardButton = gen('button');
     cardButton.textContent = buttonLabel;
     cardButton.classList.add(buttonClass);
-    if (buttonLabel === "Remove Item") {
+    if (buttonClass === "remove-button") {
       cardButton.addEventListener("click", () => {
         cardButton.parentNode.parentNode.remove(); // remove item
         updateCheckoutStatus(); // check if the cart is empty
       });
       text.append(nameText, priceText, sizeText, cardButton);
     } else {
-      cardButton.addEventListener('click', addReview);
       let extra = historyCardExtra(itemArray);
+      cardButton.addEventListener('click', () => {
+        setupReview(itemArray[7]);
+      });
       text.append(nameText, priceText, sizeText, extra[0], extra[1], cardButton);
     }
     card.append(img, text);

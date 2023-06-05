@@ -408,7 +408,6 @@ div.review > p {
   font-weight: bold;
 }
 
-
 /* ------------------------------------------------------------------------- */
 /* ------------------ CHECKOUT PAGE STYLING -------------------------------- */
 /* ------------------------------------------------------------------------- */
@@ -453,7 +452,7 @@ div.review > p {
   margin: 5px;
 }
 
-.remove-button {
+.remove-button, .review-button {
   font-family: 'Inter', sans-serif;
   width: 80%;
   height: 10%;
@@ -463,7 +462,7 @@ div.review > p {
   margin-left: 13px;
 }
 
-button#checkout-button {
+#checkout-button {
   width: 60%;
   flex: none;
   text-align: center;
@@ -472,10 +471,14 @@ button#checkout-button {
   margin: auto;
 }
 
+#checkout-button:disabled {
+  width: 60%;
+}
+
 /* ------------------------------------------------------------------------- */
 /* ------------------ REVIEW  PAGE STYLING --------------------------------- */
 /* ------------------------------------------------------------------------- */
-#review-page h2 {
+#review-page h2, #review-page p {
   margin: 10px;
   text-align: center;
 }
