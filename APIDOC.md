@@ -10,69 +10,73 @@ The Free People API provides information on Free People's women's clothing, spec
 
 **Request Type:** GET
 
-**Returned Data Format**: Plain text
+**Returned Data Format**: json
 
-**Description:** Returns a plain text response of all the items in the API with their full name and shortname seperated by a ":".
-  eq. Full name:shortname
-The shortname is used as the base string to access further details about the item such as its image and color whereas the Full name is the official company assigned name
+**Description:** Returns a json response of all the items including their id, name, webname, type, color, and price. The name is used to access images and whereas the webname is it's display name
 
 **Example Request:** /clothes
 
 **Example Response:**
-```
-FP One Lumi Maxi Dress:fp-one-lumi-maxi-dress
-Love Letter Cami:love-letter-cami
-Cool Harbor Wide-Leg Pants:cool-harbor-wide-leg-pants
-Nina Tee:nina-tee
-...
+```json
+[
+  {
+    "itemID": 10314,
+    "name": "saltwater-shirt",
+    "webname": "Saltwater Shirt",
+    "type": "top",
+    "color": "white",
+    "price": 55
+  },
+  {
+    "itemID": 51658,
+    "name": "amelia-corset",
+    "webname": "Amelia Corset",
+    "type": "top",
+    "color": "pink red",
+    "price": 84
+  },
+  ...
+]
 ```
 
 **QUERY PARAM 2:**
 
-**Request Format:** /clothes?item={shortname}&type={type}&color={color};
+**Request Format:** /clothes?item={search};
 
 **Request Type:** GET
 
 **Returned Data Format**: JSON
 
-**Description:** Given a valid query filter parameter (item, type, color) an item or list of items is returned containing the related clothes. If no query parameter given then all items are returned (see query1).
+**Description:** Given a valid item parameter an item or list of items is returned containing the related clothes as a json. If no query parameter is given then all items are returned (see query1).
 
-**Example Request:** /clothes?item=fp-one-lumi-maxi-dress
+Users can input any number and combination of item name, color, or type as long as they are seperated by commas with no prefixed or trailing whitespace. If no items match the request (for example an item doesn't exist or a search is mispelled), no items will be returned.
+
+**Example Request:** /clothes?item=red,dress
 
 **Example Response:**
 ```json
-{
-    "name": "FP One Lumi Maxi Dress",
-    "shortname": "fp-one-lumi-maxi-dress",
+[
+  {
+    "itemID": 53283,
+    "name": "sundrenched-printed-maxi-dress",
+    "webname": "Sundrenched Printed Maxi Dress",
     "type": "dress",
-    "sizes": {"small":25, "medium":0, "large":15},
-    "color": "white",
-    "image": "....whitedress.jpg",
-    "description": "Just as effortless as it is ethereal, this head-turning maxi dress is featured
-    in a strapless silhouette with crochet-adorned top piecing, sheer piecing at center, and
-    handkerchief bottom hem for added dimension.",
-    "averageRating": 4.2,
-    "reviews": [
-      {
-        "Rating": 4,
-        "comments": ["Love this dress! It's a little see through but perfect for summer."]
-      },
-      {
-        "Rating": 5,
-        "comments": ["Got so
-      many compliments on this dress. BUY IT NOW!!"]
-      },
-      {
-        "Rating": 3,
-        "comments": ["It was alright"]
-      }
-    ]
-}
+    "color": "white red",
+    "price": 170
+  },
+  {
+    "itemID": 60413,
+    "name": "east-side-lace-up-mini-dress",
+    "webname": "East Side Lace Up Mini Dress",
+    "type": "dress",
+    "color": "red",
+    "price": 176
+  },
+  ...
+]
 ```
 
 **Error Handling:**
-- Possible 400 (invalid request) errors (all plain text):
-  - If no items match the passed in query parameters, returns an error with message: `No items found`
 - Possible 500 errors (all plain text):
   - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
 
@@ -144,26 +148,30 @@ suzpiver
   - If something else goes wrong on the server, returns an error with the message: `Something went wrong on the server.`
 
 ## Endpoint 4: Make a transaction
-**Request Format:** /checkout endpoint with POST parameters of `username`, `shortname`, and `size`
+**Request Format:** /checkout endpoint with POST parameters of `username`and `items`
+where `items` is a list of all item in a transaction in json format with fields `shortname` and `size`. User MUST stringify list before sending post request.
+example: [{"shortname": saltwater-shirt, "size": M},...]
 
 **Request Type:** POST
 
 **Returned Data Format**: plain text
 
-**Description:** Given that a user is logged in and there are items available, plain text containing a generated confirmation code is returned. This confirmation code is saved to the user's account
+**Description:** Given that a user is logged in and there are items available, plain text containing an 8 character confirmation code is returned. This confirmation code is saved under transaction history. Users can purchase multiple items at once by listing multiple items in the `items` parameter. They will all have the same confirmation code.
 
-**Example Request:** /checkout with POST parameters of `username=suzpiver`, `shortname=fp-one-lumi-maxi-dress`, and `size=small`
+**Example Request:** /checkout with POST parameters of `username=suzpiver`, `items=[{"shortname":"cya-later-skate-trouser","size":"XL"},{"shortname":"jainsons-jewel-margaux-beaded-set","size":"M"}]`
 
 **Example Response:**
 ```
-AG678RDJF8P2B
+ON3ZBKKJ
 ```
 
 **Error Handling:**
 - Possible 400 (invalid request) errors (all plain text):
-  - If passed in an invalid or empty username, returns an error with the message: `Please enter a valid user to purchase items`
-  - If passed an invalid or empty shortname, returns an error with the message: `Invalid product name {shortname}`
-  - If passed an invalid or empty size, returns an error with the message: `Invalid size or no size {size} available`
+  - If not passed a username and items parameter, returns an error with the message: `Missing one or more of the required params.`
+  - If passed an invalid username, returns an error with the message: `Invalid User, Not found in user list`
+  - If passed an invalid or empty shortname, returns an error with the message: `This item does not exist`
+  - If passed an invalid or out of stock size, returns an error with the message: `Item out of stock: select another size`
+  - If passed an invalid or out of stock size, returns an error with the message: `Failed to checkout {itemName, size},."see inventory"`
 - Possible 500 errors (all plain text):
   - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
 
@@ -194,26 +202,132 @@ miyan
   - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
 
 ## Endpoint 6: Add a review
-**Request Format:** /review endpoint with POST parameters of `username`, `confirmation`, `rating`, and `comments`
+**Request Format:** /review endpoint with POST parameters of `username`, `confirmation`, `rating`, and option query parameter `comment`
 
 **Request Type:** POST
 
 **Returned Data Format**: plain text
 
-**Description:** given a valid username, confirmation number, rating between 1 and 5, and an optional comment, a review is attached to the item for all other users to view. This also updates the average rating for the item.
+**Description:** given a valid username, confirmation number, rating between 1 and 5, and an optional comment, a review is added to the list of reviews uncluding the username
 
-**Example Request:** /review with POST parameters of `username=suzpiver`,`confirmation=AG678RDJF8P2B`, `rating=4` and `comments=It was alright`
+**Example Request:** /review with POST parameters of `username=suzpiver`,`confirmation=YGX669HT`, `rating=4` and `comments=Not bad`
 
 **Example Response:**
 ```
-added 4 star review for fp-one-lumi-maxi-dress.
+Added a 4 star review
 ```
 
 **Error Handling:**
 - Possible 400 (invalid request) errors (all plain text):
-  - If invalid or empty username, returns an error with the message: `Enter a valid username`
-  - If confirmation code is not found under user's transaction history or empty, returns error message: `No transaction {confirmation} found for user {username}`
-  - If empty or rating outside of 1-5 range, returns error message: `Please enter a rating between 1 and 5`
-  - If comments are more than 200 characters, returns error with message: `comments must be less that 200 characters`
+  - If missing any of the parameters, returns an error with the message: `Missing one or more of the required params.`
+  - If the username and confirmation number does not match a transaction, returns an error with the message: `This user or transaction does not exist.`
+  - If the passed a rating that is not between 1 and 5: `Please enter a value between 1 and 5.`
+- Possible 500 errors (all plain text):
+  - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
+
+## Endpoint 7: Gets a list reviews for a specfic item.
+**Request Format:** /getreviews/:shortname
+
+**Request Type:** GET
+
+**Returned Data Format**: json
+
+**Description:** Given a valid item shortname (name of the item seperated by hyphens), endpoint returns a json response of all the reviews posted for the specific item including the itemID, user, stars, and comment. If an invalid shortname is given, no reviews are returned
+
+**Example Request:** /getreviews/saltwater-shirt
+
+**Example Response:**
+```json
+[
+  {
+    "itemID": 10314,
+    "user": "suzpiver",
+    "stars": 4,
+    "comments": "Great shirt but I wish it wasn't as see through"
+  },
+  {
+    "itemID": 10314,
+    "user": "miyan",
+    "stars": 5,
+    "comments": ""
+  },
+  ...
+]
+```
+
+**Error Handling:**
+- Possible 400 (invalid request) errors (all plain text):
+  - If an invalid shortname is given, returns an error with the message: `There are no items under this name.`
+- Possible 500 errors (all plain text):
+  - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`
+
+## Endpoint 8: Gets the current inventory
+**Request Format:** /inventory
+
+**QUERY PARAM 1:**
+
+**Request Format:** /inventory
+
+**Request Type:** GET
+
+**Returned Data Format**: json
+
+**Description:** Returns a json response of all the inventory stock including the shortname, and number of items in stock for sizes XS, S, M, L, XL, and XXL
+
+**Example Request:** /inventory
+
+**Example Response:**
+```json
+[
+  {
+    "name": "saltwater-shirt",
+    "XS": 0,
+    "S": 5,
+    "M": 23,
+    "L": 29,
+    "XL": 24,
+    "XXL": 2
+  },
+  {
+    "name": "shayla-lace-mini-dress",
+    "XS": 5,
+    "S": 1,
+    "M": 17,
+    "L": 22,
+    "XL": 30,
+    "XXL": 23
+  },
+  ...
+]
+```
+
+**QUERY PARAM 2:**
+
+**Request Format:** /inventory?shortname={search};
+
+**Request Type:** GET
+
+**Returned Data Format**: JSON
+
+**Description:** Given a valid shortname parameter, a json containing the inventory stock including the shortname, and number of items in stock for sizes XS, S, M, L, XL, and XXL is returned. If no query parameter is passed then all inventory is returned (see query 1).
+
+**Example Request:** /inventory?shortname=saltwater-shirt
+
+**Example Response:**
+```json
+{
+  "name": "saltwater-shirt",
+  "XS": 0,
+  "S": 5,
+  "M": 23,
+  "L": 29,
+  "XL": 24,
+  "XXL": 2
+}
+```
+
+**Error Handling:**
+- Possible 400 (invalid request) errors (all plain text):
+  - If an invalid shortname is given, returns an error with the message: `Invalid item name {shortname}.`
 - Possible 500 errors (all plain text):
   - If something else goes wrong on the server, returns an error with the message: `Uh oh. Something went wrong. Please try again later.`

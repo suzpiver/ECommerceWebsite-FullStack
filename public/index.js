@@ -17,6 +17,7 @@
 
   /**
    * runs once the window has loaded and DOM is ready to access
+   * contains the eventlisteners and page setup details
    */
   function init() {
     initializeHomePage();
@@ -30,13 +31,15 @@
     qsa(".scroll-button").forEach(button => button.addEventListener('click', scrollBehavior));
     id("add-to-cart").addEventListener("click", addToCart);
     id("checkout-button").addEventListener("click", checkout);
+    id("confirm-button").addEventListener("click", () => {
+      id("confirm-button").classList.add("confirmed");
+      updateCheckoutStatus();
+    });
     qsa("#size-buttons button").forEach(button => {
       button.addEventListener("click", toggleChecked);
     });
-    //id("tmp-review-button").addEventListener("click", () => hideOtherPages("review-page"));
     id("rating").addEventListener("submit", (evt) => {
       evt.preventDefault();
-      console.log(id("rating").textContent);
     });
     id("post-review").addEventListener("click", addReview);
   }
@@ -219,7 +222,7 @@
     } else {
       for (let i = 0; i < history['transaction-history'].length; i++) {
         let arr = makeHistoryArr(history['transaction-history'][i]);
-        let card = makeCard(arr, 'remove-button', 'Leave Review');
+        let card = makeCard(arr, 'review-button', 'Leave Review');
         id('history-box').appendChild(card);
       }
     }
@@ -281,7 +284,7 @@
         getSearchItems();
       }
     });
-    qsa(".homeSwitchButtons").forEach(button => {
+    qsa(".home-switch-buttons").forEach(button => {
       button.addEventListener("click", toggleViews);
     });
     id("top-filter").addEventListener("click", toggleFilter);
@@ -290,12 +293,11 @@
   }
 
   /**
-   * requests items and their details from teh server
+   * requests items and their details from the server as a json
    * if search is the shortname of an item, a specific item is returned. Otherwise
    * all items are returned
    * @param {string} search - filter for search
    * @returns {response} items - json of items
-   * No paramaters, returns nothing
    */
   async function fetchItems(search) {
     try {
@@ -314,8 +316,10 @@
   }
 
   /**
-   * fetches 12 of each top, bottom, and dress, and adds it to the home page for viewing
-   * in a compact scroll format. Also adds clock events to access each items image-page
+   * fetches each top, bottom, and dress, and adds it to the home page for viewing
+   * in a compact scroll format, then calls the fillGridView function to fill the items into
+   * an alternate view. Also adds event listener for image click behavior
+   * images in the scrollbar are grouped by 4's for even viewing
    * No paramaters, returns nothing
    */
   async function initializeHomePage() {
@@ -325,13 +329,11 @@
       for (let i = 0; i < Math.ceil(resp.length / 4); i++) {
         let div = gen('div');
         div.classList.add("imageDiv");
-        //div.classList.add("top");
         for (let j = i * 4; j < i * 4 + 4; j++) { // four images in each scroll
           let div2 = gen('div');
           div2.classList.add('scrollImage');
           if (j < resp.length) {
             let item = makeImg("imgs/clothes/" + resp[j]["name"] + '.png', resp[j]["webname"]);
-            //item.classList.add(cat);
             let ptag = gen('p');
             let name = resp[j]["name"];
             let price = resp[j]["price"];
@@ -350,8 +352,9 @@
   }
 
   /**
-   * inserts items in rows by formatting the image and name and
-   * adding click behaciro to access the items item-page
+   * Inserts items in rows by formatting the image and name and
+   * adding click behvaior to view the items in the item-page
+   * A specific section can be specified to add the grid to.
    * @param {Response} resp - list of items from server as json
    * @param {string} section - id of section being appended too
    */
@@ -398,7 +401,7 @@
   /**
    * When a filter button is selected, the unfiltered items are hidden
    * if no filter is selected, all items are shown
-   * no parameteres, returns nothing
+   * no parameters, returns nothing
    */
   function toggleFilter() {
     if (this.classList.contains("filtered")) {
@@ -486,14 +489,14 @@
    */
 
   /**
-   * fills in the item page with the item information the user clicked on
+   * Fills in the item page with the item information the user clicked on
    * then checks the inventory to disable any sizes that are out of stock
    * @param {string} name - db name of the item
    * @param {string} price - price of the item
    * @param {string} webname - the web offical name of an item
    * No paramaters, returns nothing
    */
-  function itemView(name, price, webname) {
+  async function itemView(name, price, webname) {
     hideOtherPages("item-page");
     id("item-name").textContent = webname;
     qs("#item-page img").src = "/imgs/clothes/" + name + '.png';
@@ -501,10 +504,12 @@
     qs("#item-page img").alt = 'image of ' + webname;
     id("item-price").textContent = "$" + price + ".00";
     checkInventory();
+    let reviews = await fetchReviews(name);
+    attachReviews(reviews);
   }
 
   /**
-   * fetches inventory from the server with an option query of an item
+   * Fetches inventory from the server with an option query of an item
    * if shortname is set to null instead of an item, all items are returned
    * @param {string} shortname - name of item you want inventory for
    * @returns {response} stock - json of inventory for selected items
@@ -576,11 +581,58 @@
     let inv = await fetchInventory(shortname);
     let sizebuttons = qsa("#size-buttons button");
     for (let i = 0; i < sizebuttons.length; i++) {
-      let size = sizebuttons[i].textContent;
+      let size = sizebuttons[i].textContent.toUpperCase();
       if (inv[size] === 0) {
         sizebuttons[i].disabled = true;
       } else {sizebuttons[i].disabled = false;}
     }
+  }
+
+  /**
+   * Fetches the reviews for a specific item based on the shortname passed in
+   * and returns them as json
+   * @param {string} shortname - name of item you want inventory for
+   * @returns {response} reveiws - json
+   */
+  async function fetchReviews(shortname) {
+    try {
+      let resp = await fetch("/getreviews/" + shortname);
+      await statusCheck(resp);
+      let reviews = await resp.json();
+      return reviews;
+    } catch (err) {
+      handleError(err);
+    }
+  }
+
+  /**
+   * Attaches all reviews for a specific itme to the item page as well as computes
+   * the average rating of the item
+   * @param {json} resp - json of all reveiws for an item
+   */
+  function attachReviews(resp) {
+    let total = null;
+    id("reviews").innerHTML = '';
+    for (let i = 0; i < resp.length; i++) {
+      let review = gen('div');
+      review.classList.add("review");
+      let user = gen('p');
+      let details = gen('div');
+      user.textContent = resp[i]["user"];
+      let rating = gen('p');
+      rating.textContent = "stars: " + resp[i]["stars"] + "\\5";
+      total = total + resp[i]["stars"];
+      let comments = gen("p");
+      comments.textContent = "Comments: " + resp[i]["comments"];
+      details.append(rating, comments);
+      review.append(user, details);
+      id("reviews").append(review);
+    }
+    let avg = gen("p");
+    if (resp.length === 0) {
+      avg.textContent = "Average Rating: No Reviews Yet";
+    } else {avg.textContent = "Average Rating: " + (total / resp.length).toFixed(1) + " stars";}
+    id("reviews").prepend(avg);
   }
 
   /**
@@ -610,26 +662,35 @@
 
   /**
    * The checkout button is only enabled if a user is logged in
-   * and there are items in the cart
+   * there are items in the cart, and it has been confirmed
+   * otherwise messages indicating the user to login, fill the cart, or confirm
+   * are displayed on the buttons
    */
   function updateCheckoutStatus() {
-    console.log('here');
     if (!window.localStorage.getItem('username')) {
+      id("confirm-button").disabled = true;
       id("checkout-button").disabled = true;
       id("checkout-button").textContent = "Please sign in to checkout";
     } else if (!qs("#checkout-page div")) {
+      id("confirm-button").disabled = true;
       id("checkout-button").disabled = true;
       id("checkout-button").textContent = "Cart is Empty";
-    } else {
+    } else if (id("confirm-button").classList.contains("confirmed")) {
+      id("confirm-button").disabled = true;
+      id("confirm-button").classList.remove("confirmed");
       id("checkout-button").disabled = false;
       id("checkout-button").textContent = "Checkout";
+    } else {
+      id("confirm-button").disabled = false;
+      id("checkout-button").textContent = "Confirm to Checkout";
     }
   }
 
   /**
    * Called when the user selects the checkout button
-   * checkout button is only enabled if a user is logged in
-   * formats cart items into a json string and request transaction from server
+   * Checkout button is only enabled if a user is logged in, confirmed and there are items
+   * in the cart
+   * Formats cart items into a json string and request transaction from server
    * No paramaters, returns nothing
    */
   async function checkout() {
@@ -648,8 +709,6 @@
       let res = await fetch('/checkout', {method: 'POST', body: data});
       await statusCheck(res);
       res = await res.text();
-      //id("checkout-button").disabled = true;
-      //id("checkout-button").textContent = "Cart is Empty";
       let ptag = gen('p');
       ptag.textContent = "Items purchased! Your Confirmation code is: " + res;
       qsa("#checkout-page > div").forEach(el => {
@@ -663,7 +722,7 @@
   }
 
   /**
-   * Takes information about a users selection and inserts a formated
+   * Takes information about a users selection and inserts a formatted
    * layout into the checkout page. Creates a remove button for each
    * item in the cart
    * No paramaters, returns nothing
@@ -677,11 +736,6 @@
     let size = qs(".checked").textContent;
     let params = [src, alt, webname, shortname, price, size];
     let card = makeCard(params, "remove-button", "Remove Item");
-    let removebutton = card.childNodes[1].lastChild;
-    removebutton.addEventListener("click", () => {
-      removebutton.parentNode.parentNode.remove(); // remove item
-      updateCheckoutStatus(); // check if the cart is empty
-    });
     id("checkout-page").prepend(card);
     uncheckSizes();
   }
@@ -706,7 +760,8 @@
   async function addReview() {
     try {
       let url = '/review';
-      if (parseInt(id("rating").value) > 5) {
+      let confirmation = qs("#review-page p").textContent.split(':')[1].trim();
+      if (parseInt(id("rating").value) > 5 || parseInt(id("rating").value) < 1) {
         handleError("Please enter a value between 1 and 5");
       } else {
         if (!(id("comments").value === '')) {
@@ -714,7 +769,7 @@
         }
         let data = new FormData();
         data.append('username', window.localStorage.getItem('username'));
-        data.append('confirmation', "K2F6AF7J");
+        data.append('confirmation', confirmation);
         data.append('rating', id("rating").value);
         let res = await fetch(url, {method: 'POST', body: data});
         await statusCheck(res);
@@ -727,6 +782,16 @@
     } catch (err) {
       handleError(err);
     }
+  }
+
+  /**
+   * opens reveiw page and appends in the confirmation code to prove purchase
+   * really only needed due to line length of other function
+   * @param {string} code - confirmation code for a specific purchased item
+   */
+  function setupReview(code) {
+    qs("#review-page p").textContent = "Confirmation Code: " + code;
+    hideOtherPages("review-page");
   }
 
   /**
@@ -743,6 +808,7 @@
 
   /**
    * Creates a card containing a specific item's information
+   * used to keep all item information formatted and styled the same
    * @param {Array} itemArray - array containg item img.src, img.alt, webname, shortname, price,
    * and size (and confirmation code if it is for displaying transaction history)
    * @param {string} buttonClass -  class of button to add
@@ -763,15 +829,17 @@
     let cardButton = gen('button');
     cardButton.textContent = buttonLabel;
     cardButton.classList.add(buttonClass);
-    if (buttonLabel === "Remove Item") {
+    if (buttonClass === "remove-button") {
       cardButton.addEventListener("click", () => {
         cardButton.parentNode.parentNode.remove(); // remove item
         updateCheckoutStatus(); // check if the cart is empty
       });
       text.append(nameText, priceText, sizeText, cardButton);
     } else {
-      cardButton.addEventListener('click', addReview);
       let extra = historyCardExtra(itemArray);
+      cardButton.addEventListener('click', () => {
+        setupReview(itemArray[7]);
+      });
       text.append(nameText, priceText, sizeText, extra[0], extra[1], cardButton);
     }
     card.append(img, text);
@@ -812,7 +880,8 @@
   }
 
   /**
-   * Creates a new image object and sets it's src and alt text
+   * Creates a new image object and sets it's src and alt text to reduce
+   * line usage
    * @param {string} src - string of the src location of an image
    * @param {string} alt - string of the alt text for an image
    * @returns {object} - DOM img object .
