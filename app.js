@@ -28,7 +28,9 @@ app.use(multer().none()); // requires the "multer" module
 
 /**
  * ENDPOINT 1: GET
- * items must be a comma seperated string of words
+ * Fetches the id, name, webname, type, color, and price of items.
+ * An option query parameter item can be passed which includes search values
+ * seperated by commas
  *
  */
 app.get("/clothes", async (req, res) => {
@@ -46,7 +48,7 @@ app.get("/clothes", async (req, res) => {
     res.json(result);
   } catch (err) {
     res.type('text');
-    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
+    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG);
   }
 });
 
@@ -75,7 +77,7 @@ app.post("/login", async (req, res) => {
     }
   } catch (err) {
     res.type('text');
-    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + ' ' + err);
+    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG);
   }
 });
 
@@ -91,7 +93,6 @@ app.post('/user/history', async (req, res) => {
       let db = await getDBConnection();
       let query = 'SELECT username, email FROM users WHERE username = ? AND password = ?';
       let result = await db.get(query, [username, password]);
-      console.log(result);
       if (result) {
         query = 'SELECT * FROM transactions t, users u, items WHERE t.user = ? AND ' +
         'u.username = ? AND t.itemID = items.itemID ORDER BY datetime(date) DESC';
@@ -106,7 +107,7 @@ app.post('/user/history', async (req, res) => {
       }
     } catch (err) {
       res.type('text');
-      res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + ' ' + err);
+      res.status(SERVER_ERROR).send(SERVER_ERROR_MSG);
     }
   } else {
     res.type('text').status(INVALID_PARAM_ERROR);
@@ -116,7 +117,10 @@ app.post('/user/history', async (req, res) => {
 
 /**
  * ENDPOINT 4
- *description
+ * Adds transaction to the database given a valud username and a list of items to purchase.
+ * The inventory is checked to verify that sizes are in stock before purchasing
+ * The items parameter must be a list of jsons in the format [{"shortname": name, "size": size}]
+ * the json must be converted to a string before being sent to endpoint.
  */
 app.post("/checkout", async (req, res) => {
   try {
@@ -131,7 +135,7 @@ app.post("/checkout", async (req, res) => {
         for (let i = 0; i < items.length; i++) {
           let size = items[i]["size"];
           let id = await db.get('SELECT itemID from items WHERE name=?', items[i]["shortname"]);
-          let inv = await validateTransactionRequest(id, db, res, items[i]["size"]);
+          let inv = await validateTransactionRequest(id, db, items[i]["size"]);
           if (inv) {
             let date = new Date().toJSON();
             let query = `INSERT INTO transactions (confirmation, user, date, itemID, size)
@@ -139,13 +143,13 @@ app.post("/checkout", async (req, res) => {
             await db.run(query, [code, req.body.username, date.slice(0, 10), id["itemID"], size]);
             await db.run(`UPDATE inventory SET ` + size + ' = ' + size + ` - 1
                   WHERE ` + size + ` > 0 AND itemID = ?`, id["itemID"]); // dec. inventory
-          } else {failed = "Failed to checkout " + items[i]["shortname"];}
+          } else {failed = "Failed to checkout " + items[i]["shortname"] + size + inv;}
         }
         res.type('text').send(code + " " + failed);
       } else {res.status(INVALID_PARAM_ERROR).send("Invalid User, Not found in user list");}
       await db.close();
     } else {res.status(INVALID_PARAM_ERROR).send("Missing one or more of the required params.");}
-  } catch (err) {res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);}
+  } catch (err) {res.status(SERVER_ERROR).send(SERVER_ERROR_MSG);}
 });
 
 /**
@@ -167,7 +171,8 @@ app.post('/newuser', async (req, res) => {
 
 /**
  * ENDPOINT 6
- *description
+ * Adds a review to the database for a specific item given a valud username, confirmation code,
+ * rating between 1-5, and an optional query parameter of comment.
  */
 app.post("/review", async (req, res) => {
   if (req.body.username && req.body.confirmation && req.body.rating) {
@@ -178,8 +183,8 @@ app.post("/review", async (req, res) => {
                               confirmation=?`, req.body.username, req.body.confirmation);
       if (!id) {
         res.status(INVALID_PARAM_ERROR).send('This user or transaction does not exist.');
-      } else if (!([0, 1, 2, 3, 4, 5].includes(Number(req.body.rating)))) {
-        res.status(INVALID_PARAM_ERROR).send('Please enter a value between 0 and 5');
+      } else if (!([1, 2, 3, 4, 5].includes(Number(req.body.rating)))) {
+        res.status(INVALID_PARAM_ERROR).send('Please enter a value between 1 and 5.');
       } else {
         if (req.query.comment) {
           query = "INSERT INTO reviews (itemID, user, stars, comments) VALUES (?, ?, ?, ?)";
@@ -193,7 +198,7 @@ app.post("/review", async (req, res) => {
       }
       await db.close();
     } catch (err) {
-      res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
+      res.status(SERVER_ERROR).send(SERVER_ERROR_MSG);
     }
   } else {
     res.status(INVALID_PARAM_ERROR).send("Missing one or more of the required params.");
@@ -202,27 +207,37 @@ app.post("/review", async (req, res) => {
 
 /**
  * ENDPOINT 7
- *description
+ * Given a valud shortname path parameter, a list of all the reviews posted for a specific item
+ * in json form is returned including itemID, user, stars, and comments
+ * If the shortname passed in the path is invalid, it will return an error that
+ * no item is found
  */
 app.get("/getreviews/:shortname", async (req, res) => {
   try {
     let db = await getDBConnection();
     let shortname = req.params.shortname;
-    let result = await db.all(`SELECT r.itemID, r.user, r.stars, r.comments FROM reviews r, items i
-                            WHERE i.name = ? and r.itemID=i.itemID`, shortname);
+    if (!(await db.get(`SELECT name FROM items WHERE name=?`, shortname))) {
+      res.status(INVALID_PARAM_ERROR).send("There are no items under this name.");
+    } else {
+      let result = await db.all(`SELECT r.itemID, r.user, r.stars, r.comments FROM reviews r,
+                              items i WHERE i.name = ? and r.itemID=i.itemID`, shortname);
+      res.json(result);
+    }
     await db.close();
-    res.json(result);
   } catch (err) {
     res.type('text');
-    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
+    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG);
   }
 });
 
 /**
  * ENDPOINT 8
- *description
+ * Returns the inventory for the items in the database.
+ * If a shortname if passed as a query param, it will fetch only the inventory for the one item
+ * otherwise all inventory information is sent in a json including the name and stock for
+ * XS S M L XL and XXL
  */
- app.get("/inventory", async (req, res) => {
+app.get("/inventory", async (req, res) => {
   try {
     let db = await getDBConnection();
     let result = null;
@@ -230,20 +245,17 @@ app.get("/getreviews/:shortname", async (req, res) => {
       if (await db.get('SELECT name FROM items WHERE name=?', req.query.shortname)) {
         result = await db.get(`SELECT p.name, i.XS, i.S, i.M, i.L, i.XL, i.XXL  FROM inventory i,
                 items p WHERE p.name=? AND p.itemID=i.itemID`, req.query.shortname);
-      } else {res.status(INVALID_PARAM_ERROR).send("Invalid item name" + req.query.shortname);}
+        res.json(result);
+      } else {res.status(INVALID_PARAM_ERROR).send("Invalid item name " + req.query.shortname);}
     } else {
       result = await db.all(`SELECT p.name, i.XS, i.S, i.M, i.L, i.XL, i.XXL  FROM inventory i,
                       items p WHERE i.itemID=p.itemID`);
-    }
-    if (!result) {
-      res.status(INVALID_PARAM_ERROR).send("No inventory information for this item");
-    } else {
       res.json(result);
     }
     await db.close();
   } catch (err) {
     res.type('text');
-    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + err);
+    res.status(SERVER_ERROR).send(SERVER_ERROR_MSG);
   }
 });
 
@@ -262,7 +274,8 @@ async function getDBConnection() {
 }
 
 /**
- * creates a query out of the multiple strings passed in
+ * Creates a query out of the multiple strings passed in so that individual words
+ * can be searched
  * @param {array} search -array of search words
  * @returns {string} query - a query string to search for each word
  */
@@ -306,11 +319,12 @@ function processHistoryResults(username, email, transactions) {
 }
 
 /**
- * descrip
+ * Generates a unqiue confirmation code given a length, and type(letters and numbers or
+ * just numbers), and a list of the current codes present to prevent duplicates
  * @param {string} size - length of code returned
- * @param {boolean} type - to include letters in randomization
+ * @param {boolean} type - true is to include letters and numbers
  * @param {json} currentCodes -current list of values
- * @returns {string} - The database object for the connection.
+ * @returns {string} - The generated code
  */
 function confirmationCode(size, type, currentCodes) {
   let chars = null;
@@ -334,30 +348,33 @@ function confirmationCode(size, type, currentCodes) {
 }
 
 /**
- * Checks that item transaction will be valid
- * @param {json} id - json containing database response
- * @param {Database} db - json containing database response
- * @param {Response} res - response for the endpoint
- * @param {Request} size - string containing size of item
- * @returns {json} - json containing inventory for item
+ * Checks that item transaction will be valid based on the parameters given by the client
+ * checks that the item exists, and sizes are available
+ * @param {json} id - json containing database response about item details
+ * @param {Database} db - database connection
+ * @param {Request} size - string containing size of transaction item
+ * @returns {json} - json containing inventory for item or a false if failed
  */
-async function validateTransactionRequest(id, db, res, size) {
-  if (!id) {
-    res.status(INVALID_PARAM_ERROR).send('This item does not exist');
+async function validateTransactionRequest(id, db, size) {
+  let response = null;
+  if (id) {
+    response = 'This item does not exist';
   } else {
     let inv = await db.get("SELECT * FROM inventory WHERE itemID=?", id["itemID"]);
     if (!inv) {
-      res.status(SERVER_ERROR).send(SERVER_ERROR_MSG); // if id passes this isn't client's err
+      response = 'an error occured on the server'; // if id passes this isn't client's err
     } else {
       if (!sizes.includes(size)) {
-        res.status(INVALID_PARAM_ERROR).send('Invalid item size');
+        response = 'Invalid item size';
       } else if (inv[size] === 0) {
-        res.status(SERVER_ERROR).send(SERVER_ERROR_MSG + 'Item out of stock: select another size');
+        response = 'Item out of stock: select another size';
+      } else {
+        return inv;
       }
-      return inv;
+      return response;
     }
   }
-  return false;
+  return response;
 }
 
 /**
