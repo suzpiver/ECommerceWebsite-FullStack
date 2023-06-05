@@ -17,6 +17,7 @@
 
   /**
    * runs once the window has loaded and DOM is ready to access
+   * contains the eventlisteners and page setup details
    */
   function init() {
     initializeHomePage();
@@ -292,12 +293,11 @@
   }
 
   /**
-   * requests items and their details from teh server
+   * requests items and their details from the server as a json
    * if search is the shortname of an item, a specific item is returned. Otherwise
    * all items are returned
    * @param {string} search - filter for search
    * @returns {response} items - json of items
-   * No paramaters, returns nothing
    */
   async function fetchItems(search) {
     try {
@@ -316,8 +316,10 @@
   }
 
   /**
-   * fetches 12 of each top, bottom, and dress, and adds it to the home page for viewing
-   * in a compact scroll format. Also adds clock events to access each items image-page
+   * fetches each top, bottom, and dress, and adds it to the home page for viewing
+   * in a compact scroll format, then calls the fillGridView function to fill the items into
+   * an alternate view. Also adds event listener for image click behavior
+   * images in the scrollbar are grouped by 4's for even viewing
    * No paramaters, returns nothing
    */
   async function initializeHomePage() {
@@ -350,8 +352,9 @@
   }
 
   /**
-   * inserts items in rows by formatting the image and name and
-   * adding click behaciro to access the items item-page
+   * Inserts items in rows by formatting the image and name and
+   * adding click behvaior to view the items in the item-page
+   * A specific section can be specified to add the grid to.
    * @param {Response} resp - list of items from server as json
    * @param {string} section - id of section being appended too
    */
@@ -398,7 +401,7 @@
   /**
    * When a filter button is selected, the unfiltered items are hidden
    * if no filter is selected, all items are shown
-   * no parameteres, returns nothing
+   * no parameters, returns nothing
    */
   function toggleFilter() {
     if (this.classList.contains("filtered")) {
@@ -486,7 +489,7 @@
    */
 
   /**
-   * fills in the item page with the item information the user clicked on
+   * Fills in the item page with the item information the user clicked on
    * then checks the inventory to disable any sizes that are out of stock
    * @param {string} name - db name of the item
    * @param {string} price - price of the item
@@ -506,7 +509,7 @@
   }
 
   /**
-   * fetches inventory from the server with an option query of an item
+   * Fetches inventory from the server with an option query of an item
    * if shortname is set to null instead of an item, all items are returned
    * @param {string} shortname - name of item you want inventory for
    * @returns {response} stock - json of inventory for selected items
@@ -586,7 +589,8 @@
   }
 
   /**
-   * asdg
+   * Fetches the reviews for a specific item based on the shortname passed in
+   * and returns them as json
    * @param {string} shortname - name of item you want inventory for
    * @returns {response} reveiws - json
    */
@@ -602,10 +606,12 @@
   }
 
   /**
-   * attaches the reviews in a list to the item page
+   * Attaches all reviews for a specific itme to the item page as well as computes
+   * the average rating of the item
    * @param {json} resp - json of all reveiws for an item
    */
   function attachReviews(resp) {
+    let total = null;
     id("reviews").innerHTML = '';
     for (let i = 0; i < resp.length; i++) {
       let review = gen('div');
@@ -615,12 +621,18 @@
       user.textContent = resp[i]["user"];
       let rating = gen('p');
       rating.textContent = "stars: " + resp[i]["stars"] + "\\5";
+      total = total + resp[i]["stars"];
       let comments = gen("p");
       comments.textContent = "Comments: " + resp[i]["comments"];
       details.append(rating, comments);
       review.append(user, details);
       id("reviews").append(review);
     }
+    let avg = gen("p");
+    if (resp.length === 0) {
+      avg.textContent = "Average Rating: No Reviews Yet";
+    } else {avg.textContent = "Average Rating: " + (total / resp.length).toFixed(1) + " stars";}
+    id("reviews").prepend(avg);
   }
 
   /**
@@ -650,7 +662,9 @@
 
   /**
    * The checkout button is only enabled if a user is logged in
-   * and there are items in the cart
+   * there are items in the cart, and it has been confirmed
+   * otherwise messages indicating the user to login, fill the cart, or confirm
+   * are displayed on the buttons
    */
   function updateCheckoutStatus() {
     if (!window.localStorage.getItem('username')) {
@@ -674,8 +688,9 @@
 
   /**
    * Called when the user selects the checkout button
-   * checkout button is only enabled if a user is logged in
-   * formats cart items into a json string and request transaction from server
+   * Checkout button is only enabled if a user is logged in, confirmed and there are items
+   * in the cart
+   * Formats cart items into a json string and request transaction from server
    * No paramaters, returns nothing
    */
   async function checkout() {
@@ -707,7 +722,7 @@
   }
 
   /**
-   * Takes information about a users selection and inserts a formated
+   * Takes information about a users selection and inserts a formatted
    * layout into the checkout page. Creates a remove button for each
    * item in the cart
    * No paramaters, returns nothing
@@ -746,7 +761,7 @@
     try {
       let url = '/review';
       let confirmation = qs("#review-page p").textContent.split(':')[1].trim();
-      if (parseInt(id("rating").value) > 5) {
+      if (parseInt(id("rating").value) > 5 || parseInt(id("rating").value) < 1) {
         handleError("Please enter a value between 1 and 5");
       } else {
         if (!(id("comments").value === '')) {
@@ -771,6 +786,7 @@
 
   /**
    * opens reveiw page and appends in the confirmation code to prove purchase
+   * really only needed due to line length of other function
    * @param {string} code - confirmation code for a specific purchased item
    */
   function setupReview(code) {
@@ -792,6 +808,7 @@
 
   /**
    * Creates a card containing a specific item's information
+   * used to keep all item information formatted and styled the same
    * @param {Array} itemArray - array containg item img.src, img.alt, webname, shortname, price,
    * and size (and confirmation code if it is for displaying transaction history)
    * @param {string} buttonClass -  class of button to add
@@ -863,7 +880,8 @@
   }
 
   /**
-   * Creates a new image object and sets it's src and alt text
+   * Creates a new image object and sets it's src and alt text to reduce
+   * line usage
    * @param {string} src - string of the src location of an image
    * @param {string} alt - string of the alt text for an image
    * @returns {object} - DOM img object .
