@@ -353,7 +353,6 @@ function userParamsCheck(res, newUserObj) {
   if (newUserObj['username'] && newUserObj['password'] && newUserObj['email']) {
     // go onto next user check
     userPasswordCheck(res, newUserObj);
-    return false;
   } else {
     res.type('text').status(INVALID_PARAM_ERROR);
     res.send('Missing one or more of the required params.');
@@ -370,7 +369,6 @@ function userParamsCheck(res, newUserObj) {
 function userPasswordCheck(res, newUserObj) {
   if (newUserObj['password'].length > 6) {
     userUsernameCheck(res, newUserObj);
-    return false;
   } else {
     res.type('text').status(INVALID_PARAM_ERROR);
     res.send('Password must be longer than 6 characters.');
