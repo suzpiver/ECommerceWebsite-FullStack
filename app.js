@@ -156,7 +156,7 @@ app.post("/checkout", async (req, res) => {
  * ENDPOINT 5
  * Creates new user
  */
-app.post('/newuser', async (req, res) => {
+app.post('/newuser', (req, res) => {
   try {
     let username = req.body.username;
     let email = req.body.email;
