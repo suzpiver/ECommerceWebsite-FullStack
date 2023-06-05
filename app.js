@@ -53,8 +53,9 @@ app.get("/clothes", async (req, res) => {
 });
 
 /**
- * ENDPOINT 2
- * Checks database to confirm user exists in it
+ * ENDPOINT 2: POST
+ * Checks the user's username and password against the database's information to confirm if the
+ * user is valid/exists.
  */
 app.post("/login", async (req, res) => {
   try {
@@ -82,8 +83,8 @@ app.post("/login", async (req, res) => {
 });
 
 /**
- * ENDPOINT 3
- * Searches for and sends the transaction history of a given user
+ * ENDPOINT 3: POST
+ * Searches for and sends the transaction history, username, and email of a given user
  */
 app.post('/user/history', async (req, res) => {
   if (req.body.username && req.body.password) {
@@ -153,8 +154,8 @@ app.post("/checkout", async (req, res) => {
 });
 
 /**
- * ENDPOINT 5
- * Creates new user
+ * ENDPOINT 5: POST
+ * Creates new user with valid username, email, and password data.
  */
 app.post('/newuser', (req, res) => {
   try {
@@ -381,7 +382,6 @@ async function validateTransactionRequest(id, db, size) {
  * Checks if all the parameters are present to create a new user
  * @param {object} res - the response object of the post request
  * @param {object} newUserObj - contains all information of the new user including: the response
- * @return {boolean} -returns false
  * object of the post request, the intended username of the user, the intended password of the user,
  * and the intended email of the user
  */
@@ -399,7 +399,6 @@ function userParamsCheck(res, newUserObj) {
  * Checks if new user's password is valid
  * @param {object} res - the response object of the post request
  * @param {object} newUserObj - contains all information of the new user including: the response
- * @return {boolean} -returns false
  * object of the post request, the intended username of the user, the intended password of the user,
  * and the intended email of the user
  */
@@ -454,12 +453,13 @@ function userEmailCheck1(res, newUserObj) {
 }
 
 /**
- * Checks if an existing user is already using the email of the new user
+ * Checks if an existing user is already using the email of the new user. This is the last check
+ * for a new user. If a new user passes this test, a new user profile will be created for them
+ * in the database.
  * @param {object} res - the response object of the post request
  * @param {object} newUserObj - contains all information of the new user including: the response
  * object of the post request, the intended username of the user, the intended password of the user,
  * and the intended email of the user
- * @returns {boolean} validNewUser - returns true if new user passes all checks. False if not.
  */
 async function userEmailCheck2(res, newUserObj) {
   try {
