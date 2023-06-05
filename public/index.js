@@ -54,8 +54,7 @@
   function loadProfilePage() {
     uncheckSizes();
     let name = this.textContent;
-    // check the div button content that was clicked
-    if (name === 'Log in/Sign up') { // show log in page
+    if (name === 'Log in/Sign up') {
       hideOtherPages("login-page");
       let logFields = ['log-name', 'log-password'];
       let signFields = ['sign-name', 'sign-email', 'sign-password'];
@@ -67,10 +66,9 @@
       }
       id('login-btn').addEventListener('click', getLoginInfo);
       id('sign-btn').addEventListener('click', getSignInInfo);
-    } else { // show profile/history page
+    } else {
       hideOtherPages("history-page");
       id('logout-btn').addEventListener('click', logout);
-      // await getPurchaseHistory();
       id('history-box').innerHTML = '';
       getUserInfoForHistory();
     }
