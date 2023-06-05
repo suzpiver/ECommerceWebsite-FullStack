@@ -284,7 +284,7 @@
         getSearchItems();
       }
     });
-    qsa(".homeSwitchButtons").forEach(button => {
+    qsa(".home-switch-buttons").forEach(button => {
       button.addEventListener("click", toggleViews);
     });
     id("top-filter").addEventListener("click", toggleFilter);
@@ -581,7 +581,7 @@
     let inv = await fetchInventory(shortname);
     let sizebuttons = qsa("#size-buttons button");
     for (let i = 0; i < sizebuttons.length; i++) {
-      let size = sizebuttons[i].textContent;
+      let size = sizebuttons[i].textContent.toUpperCase();
       if (inv[size] === 0) {
         sizebuttons[i].disabled = true;
       } else {sizebuttons[i].disabled = false;}

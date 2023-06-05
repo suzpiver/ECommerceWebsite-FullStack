@@ -27,12 +27,11 @@ the structure/layout of our webpage.
     </header>
     <section id="error-msg"></section>
     <section id="home-page">
-      <button id="compact-button" class="homeSwitchButtons hidden">Switch to Compact View</button>
-      <button id="grid-button"class="homeSwitchButtons">Switch to Grid View</button>
-    <!-- <button id="tmp-review-button homeSwitchButtons">Add-Review</button> -->
-      <button id="top-filter" class = "filter">Filter Tops</button>
-      <button id="bottom-filter" class =  "filter">Filter Bottoms</button>
-      <button id="dress-filter" class =  "filter">Filter Dresses</button>
+      <button id="compact-button" class="home-switch-buttons hidden">Switch to Compact View</button>
+      <button id="grid-button" class="home-switch-buttons">Switch to Grid View</button>
+      <button id="top-filter" class="filter">Filter Tops</button>
+      <button id="bottom-filter" class="filter">Filter Bottoms</button>
+      <button id="dress-filter" class="filter">Filter Dresses</button>
       <section id="compact-home-page">
         <h2>Tops</h2>
         <section id="top-scroll" class="scroller">
@@ -60,12 +59,12 @@ the structure/layout of our webpage.
       <img src="imgs/sampleimg1.png" alt="sample image">
       <p id="item-price"></p>
       <div id="size-buttons">
-        <button id="XS">XS</button>
-        <button id="S">S</button>
-        <button id="M">M</button>
-        <button id="L">L</button>
-        <button id="XL">XL</button>
-        <button id="XXL">XXL</button>
+        <button id="xs">XS</button>
+        <button id="s">S</button>
+        <button id="m">M</button>
+        <button id="l">L</button>
+        <button id="xl">XL</button>
+        <button id="xxl">XXL</button>
       </div>
       <button id="add-to-cart" disabled>Add to Cart</button>
       <h2>Reviews</h2>
@@ -73,7 +72,7 @@ the structure/layout of our webpage.
     </section>
     <section id="checkout-page" class="hidden">
       <button id="confirm-button">Are You Sure You're Ready to Checkout?</button>
-      <button id="checkout-button" disabled="true">Checkout</button>
+      <button id="checkout-button" disabled>Checkout</button>
     </section>
     <section id="login-page" class="hidden">
       <article id="login-signup">
@@ -106,8 +105,8 @@ the structure/layout of our webpage.
       <h2>New Review</h2>
       <p></p>
       <form id="new-review">
-        <textarea rows="1" name = 'rating' cols="10" required id="rating" placeholder="Rate: 1-5"
-            required minlength="1" maxlength="1"></textarea>
+        <textarea rows="1" name='rating' cols="10" id="rating" placeholder="Rate: 1-5"
+          required minlength="1" maxlength="1"></textarea>
         <textarea rows="5" cols="30"  id="comments" placeholder="Comments"></textarea>
       </form>
       <button id="post-review">Post Review</button>

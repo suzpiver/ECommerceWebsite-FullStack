@@ -136,12 +136,12 @@ header a {
   margin-bottom: 15px;
 }
 
-.homeSwitchButtons, .filter {
+.home-switch-buttons, .filter {
   height: 20px;
   border-radius: 10px;
 }
 
-.homeSwitchButtons {
+.home-switch-buttons {
   width: 200px;
   margin: 20px;
 }
