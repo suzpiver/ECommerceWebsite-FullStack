@@ -18,10 +18,10 @@ CREATE TABLE "items" (
 	PRIMARY KEY("itemID")
 )
 CREATE TABLE "reviews" (
-	"rid"	INTEGER,
-	"itemID"	INTEGER,
-	"user"	TEXT,
-	"stars"	INTEGER,
+	"rid"	INTEGER NOT NULL,
+	"itemID"	INTEGER NOT NULL,
+	"user"	TEXT NOT NULL,
+	"stars"	INTEGER NOT NULL,
 	"comments"	TEXT,
 	PRIMARY KEY("rid")
 )
@@ -35,8 +35,8 @@ CREATE TABLE "transactions" (
 	PRIMARY KEY("id")
 )
 CREATE TABLE "users" (
-	"username"	TEXT,
+	"username"	TEXT NOT NULL,
 	"password"	TEXT NOT NULL,
-	"email"	TEXT,
+	"email"	TEXT NOT NULL,
 	PRIMARY KEY("username")
 )
