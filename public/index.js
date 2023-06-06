@@ -4,7 +4,9 @@
  * Section: CSE 154 AA
  *
  * This is the index.js file for our e-commerce final project webpage. It is in charge of all the
- * functionalities and user-interactions of the webpage.
+ * functionalities and user-interactions of the webpage specifically containing navigation of a
+ * home-page, cart, user, transaction, and review page
+ * All included clothing images are from the Free People clothing company's website: https://www.freepeople.com/?ref=logo
  */
 
 "use strict";
@@ -761,7 +763,8 @@
     try {
       let url = '/review';
       let confirmation = qs("#review-page p").textContent.split(':')[1].trim();
-      if (parseInt(id("rating").value) > 5 || parseInt(id("rating").value) < 1) {
+      let input = parseInt(id("rating").value);
+      if (input > 5 || input < 1 || isNaN(input)) {
         handleError("Please enter a value between 1 and 5");
       } else {
         if (!(id("comments").value === '')) {
