@@ -6,6 +6,9 @@ This is the styles.css file for our e-commerce final project webpage. It is in c
 all the styling you see on the webpage.
 */
 
+/* ------------------------------------------------------------------------- */
+/* --------------------- GENERAL STYLING START ----------------------------- */
+/* ------------------------------------------------------------------------- */
 * {
   margin: 0;
   padding: 0;
@@ -13,18 +16,19 @@ all the styling you see on the webpage.
   font-family: 'Inter', sans-serif;
 }
 
+/* ------------------ GENERAL BODY STYLING ------------------ */
 body {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
 }
 
+/* ------------------ GENERAL FOOTER STYLING ------------------ */
 footer {
   background-color: #4F4646;
   padding: 10px;
   text-align: center;
   width: 100%;
-  /* position: absolute; */
   margin-top: auto;
 }
 
@@ -33,6 +37,7 @@ footer p {
   color: #FCF9EF;
 }
 
+/* ------------------ GENERAL ERROR MSG STYLING ------------------ */
 #error-msg {
   display: flex;
   justify-content: center;
@@ -43,9 +48,13 @@ footer p {
 #error-content {
   background-color: rgb(231, 153, 166);
 }
+/* ------------------------------------------------------------------------- */
+/* --------------------- GENERAL STYLING START ----------------------------- */
+/* ------------------------------------------------------------------------- */
 
-/* ---------------------------- button styling ----------------------------
-----add your own rules for the button size, border, and orientation------ */
+/* ------------------------------------------------------------------------- */
+/* --------------------- BUTTON STYLING START ------------------------------ */
+/* ------------------------------------------------------------------------- */
 
 /* color of button when not clicked
   ------also the font ----------- */
@@ -68,9 +77,13 @@ button:active {
 button:disabled {
   background-color: rgb(117, 100, 102);
 }
-/*  ------------------------- button styling end -------------------------  */
+/* ------------------------------------------------------------------------- */
+/* --------------------- BUTTON STYLING END -------------------------------- */
+/* ------------------------------------------------------------------------- */
 
-/* ------------------------ Header Nav Bar Start ------------------------ */
+/* ------------------------------------------------------------------------- */
+/* --------------------- NAV BAR STYLING START ----------------------------- */
+/* ------------------------------------------------------------------------- */
 header {
   display: flex;
   justify-content: flex-end;
@@ -120,15 +133,10 @@ header a {
   background-color: #4F4646;
 }
 
-/* End: Header Nav Bar */
-
-#home-page, #item-page, #checkout-page {
-  font-family: 'Inter', sans-serif;
-}
-
 /* ------------------------------------------------------------------------- */
-/* ------------------ HOMEPAGE STYLING ------------------------------------- */
+/* --------------------- HOMEPAGE STYLING START ---------------------------- */
 /* ------------------------------------------------------------------------- */
+
 #home-page h2 {
   font-size: 3vw;
   margin-top: 20px;
@@ -242,9 +250,12 @@ button.filtered {
 .scroll-button:hover {
   box-shadow: 0px 0px 5px #4F4646;
 }
+/* ------------------------------------------------------------------------- */
+/* --------------------- HOMEPAGE STYLING END ------------------------------ */
+/* ------------------------------------------------------------------------- */
 
 /* ------------------------------------------------------------------------- */
-/* ------------------ LOGIN & SIGN UP STYLING ------------------------------ */
+/* ------------------ LOGIN & SIGN UP STYLING START ------------------------ */
 /* ------------------------------------------------------------------------- */
 #login-signup {
   display: flex;
@@ -274,25 +285,17 @@ button.filtered {
   padding: 5px;
   margin: 5px;
 }
+/* ------------------------------------------------------------------------- */
+/* --------------------- LOGIN & SIGN UP STYLING END ----------------------- */
+/* ------------------------------------------------------------------------- */
 
-/* #login-signup button {
-  background-color: #4F4646;
-  color: #FCF9EF;
-  border: 2px solid #4F4646;
-  border-radius: 30px;
-  padding: 5px;
-  margin: auto;
-  width: 50%;
-} */
-/* USER PURCHASE HISTORY STYLING */
+/* ------------------------------------------------------------------------- */
+/* --------------------- TRANSACTION HISTORY STYLING START ----------------- */
+/* ------------------------------------------------------------------------- */
 #logout-btn-box {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-#history-page h2, #history-page h3 {
-  margin-bottom: 10px;
 }
 
 #history-box {
@@ -302,39 +305,19 @@ button.filtered {
   justify-content: center;
 }
 
-/* .single-item-box {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin: 10px;
-  background-color: #e3e0d7;
-  width: 80%;
+#history-page h2, #history-page h3 {
+  margin-bottom: 10px;
 }
 
-.single-item-box img {
-  width: 15%;
-  height: 20%;
-  margin: 5px;
-  margin-left: 10%;
-  background-color: #e3e0d7;
+#history-page h2 {
+  text-align: center;
 }
-
-.single-item-info-box {
-  display: flex;
-  justify-content: flex-end;
-  align-items: right;
-  flex-direction: column;
-  margin-left: 40%;
-  background-color: #e3e0d7;
-}
-
-.single-item-info-box p {
-  background-color: #e3e0d7;
-  margin: 12px;
-} */
+/* ------------------------------------------------------------------------- */
+/* --------------------- TRANSACTION HISTORY STYLING END ------------------- */
+/* ------------------------------------------------------------------------- */
 
 /* ------------------------------------------------------------------------- */
-/* ------------------ SINGLE ITEM PAGE STYLING ----------------------------- */
+/* ------------------ SINGLE ITEM PAGE STYLING START ----------------------- */
 /* ------------------------------------------------------------------------- */
 #item-page {
   margin: auto;
@@ -364,7 +347,6 @@ button.filtered {
   width: 60%;
   padding: 10px;
   margin: 15px;
-  /* background-color: rgb(231, 153, 166); */
   border: 0;
   color: white;
 }
@@ -409,7 +391,11 @@ div.review > p {
 }
 
 /* ------------------------------------------------------------------------- */
-/* ------------------ CHECKOUT PAGE STYLING -------------------------------- */
+/* ------------------ SINGLE ITEM PAGE STYLING END ------------------------- */
+/* ------------------------------------------------------------------------- */
+
+/* ------------------------------------------------------------------------- */
+/* ------------------ CHECKOUT PAGE STYLING START -------------------------- */
 /* ------------------------------------------------------------------------- */
 /* center cards on page */
 #checkout-page {
@@ -480,7 +466,11 @@ div.review > p {
 }
 
 /* ------------------------------------------------------------------------- */
-/* ------------------ REVIEW  PAGE STYLING --------------------------------- */
+/* ------------------ CHECKOUT PAGE STYLING END ---------------------------- */
+/* ------------------------------------------------------------------------- */
+
+/* ------------------------------------------------------------------------- */
+/* ------------------ REVIEW  PAGE STYLING START --------------------------- */
 /* ------------------------------------------------------------------------- */
 #review-page h2, #review-page p {
   margin: 10px;
@@ -517,12 +507,10 @@ div.review > p {
   margin-top: 20px;
   border-radius: 10px;
 }
+
 /* ------------------------------------------------------------------------- */
-/* ------------------ PURCHASE HISTORY PAGE STYLING ------------------------ */
+/* ------------------ REVIEW PAGE STYLING END ------------------------------ */
 /* ------------------------------------------------------------------------- */
-#history-page h2 {
-  text-align: center;
-}
 
 .hidden {
   display: none;

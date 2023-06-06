@@ -277,6 +277,7 @@
     id("logo").addEventListener("click", () => {
       hideOtherPages("home-page");
       uncheckSizes();
+      handleError("You clicked marina's favorite!");
     });
     id("cart").addEventListener("click", setupCartPage);
     id("search-bar").addEventListener("keypress", (event) => {
@@ -898,6 +899,7 @@
    * @param {Error} err - error from catch statment
    */
   function handleError(err) {
+    id('error-msg').innerHTML = '';
     let error = gen('p');
     error.textContent = err;
     error.id = 'error-content';
