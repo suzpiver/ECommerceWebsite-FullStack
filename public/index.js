@@ -141,7 +141,10 @@
       let res = await fetch('/login', {method: 'POST', body: data});
       await statusCheck(res);
       let name = await res.text();
-      updateProfilePage(name, password);
+      handleError('Welcome back ' + username);
+      setTimeout(() => {
+        updateProfilePage(name, password);
+      }, 5000);
     } catch (err) {
       handleError(err);
     }
@@ -163,8 +166,12 @@
       let res = await fetch('/newuser', {method: 'POST', body: data});
       await statusCheck(res);
       let newUser = await res.text();
-      updateProfilePage(newUser, password);
+      handleError('Welcome ' + newUser);
+      setTimeout(() => {
+        updateProfilePage(newUser, password);
+      }, 5000);
     } catch (err) {
+      console.log('i am here');
       handleError(err);
     }
   }
